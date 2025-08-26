@@ -1,10 +1,9 @@
 import eslintPluginAstro from 'eslint-plugin-astro'
-import { defineConfig } from 'eslint-define-config'
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
 
-export default defineConfig([
+export default [
     eslint.configs.recommended,
     ...eslintPluginAstro.configs.recommended,
     ...tseslint.configs.recommended,
@@ -31,4 +30,4 @@ export default defineConfig([
             'comma-dangle': ['error', 'always-multiline'],
         },
     },
-]);
+];
