@@ -19,6 +19,7 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
+          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,8 +27,17 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
+      - name: Configure pnpm to avoid rate limits
+        run: pnpm config set network-concurrency 4 # Reduce number of concurrent requests
+
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile # Avoid using the incompatible lockfile
+
+      - name: Verify installation
+        run: |
+          echo "Node modules installed:"
+          ls -la node_modules | head -n 10
+          echo "..."
 
       - name: Build site
         run: pnpm run build
