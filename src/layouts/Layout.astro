@@ -1,22 +1,57 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+import '@styles/global.css'
+---
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>ARVI Chile - Empresa de Juegos mecánicos y sustentables</title>
+
+    <link rel="icon" type="image/x-icon" href="/LOGO_ARVI.png" />
+
+    <!--
+		Etiquetas 'SEO' meta tags, icons, open graph, etc.
+	-->
+
+    <meta
+      name="description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+
+    <meta property="og:url" content="https://arvi.cl" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="ARVI Chile - Empresa de Juegos mecánicos y sustentables"
+    />
+    <meta
+      property="og:description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+    <meta property="og:image" content="https://arvi.cl/og.jpg" />
+    <meta property="og:locale" content="es_CL" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@arvi.cl" />
+    <meta
+      name="twitter:title"
+      content="Reserva juegos mecánicos sustentables en ARVI"
+    />
+    <meta
+      name="twitter:description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+	<meta name="twitter:image" content="https://arvi.cl/og.jpg" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
