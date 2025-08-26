@@ -1,10 +1,287 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@import '@midudev/tailwind-animations/css';
+
+:root {
+  --font-fallback:
+    system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI',
+    'Noto Sans', helvetica, arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-heading: 'Fira Sans';
+  --font-body: 'Inter';
+
+  /* ARVI Custom Colors */
+  --color-text: #333333;
+  --color-background: #F5F6F7;
+  --color-primary: #C3A93C; /* amarillo logo */
+  --color-secondary: #049b3d; /* verde logo */
+  --color-accent: #8ecd20;
+  
+  /* Aseguramos que las variables CSS estén disponibles para Tailwind */
+  --tw-text-opacity: 1;
+  --tw-bg-opacity: 1;
+  
+  /* Colores Tailwind disponibles como variables CSS */
+  --arvi-text: #333333;
+  --arvi-background: #F5F6F7;
+  --arvi-primary: #C3A93C;
+  --arvi-secondary: #049b3d;
+  --arvi-accent: #8ecd20;
+}
 
 @layer base {
   html,
   body {
+    display: flex;
+    flex-direction: column;
     margin: 0;
     width: 100%;
     height: 100%;
+    /* Disable overscroll behavior */
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
+
+  html {
+    scrollbar-gutter: stable;
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+
+  body {
+    background: var(--color-background);
+  }
+
+  /* Webkit Browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 5px;
+    border: 2px solid rgba(195, 169, 60, 0.4);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-secondary);
+    /* Efecto hover */
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-color: var(--color-primary) var(--color-background);
+    scrollbar-width: thin;
+  }
+}
+
+@layer utilities {
+  /* Clases explícitas para los colores ARVI */
+  .text-arvi-text {
+    color: var(--arvi-text) !important;
+  }
+  .text-arvi-background {
+    color: var(--arvi-background) !important;
+  }
+  .text-arvi-primary {
+    color: var(--arvi-primary) !important;
+  }
+  .text-arvi-secondary {
+    color: var(--arvi-secondary) !important;
+  }
+  .text-arvi-accent {
+    color: var(--arvi-accent) !important;
+  }
+  
+  .bg-arvi-text {
+    background-color: var(--arvi-text) !important;
+  }
+  .bg-arvi-background {
+    background-color: var(--arvi-background) !important;
+  }
+  .bg-arvi-primary {
+    background-color: var(--arvi-primary) !important;
+  }
+  .bg-arvi-secondary {
+    background-color: var(--arvi-secondary) !important;
+  }
+  .bg-arvi-accent {
+    background-color: var(--arvi-accent) !important;
+  }
+  
+  /* Efecto resaltado sutil para elementos importantes */
+  .eco-highlight {
+    color: var(--color-secondary);
+    text-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.2),
+      0 0 2px #049b3d,
+      0 0 4px #8ecd20;
+    animation: eco-pulse 3s infinite both;
+    transition: text-shadow 0.3s;
+  }
+
+  @keyframes eco-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      text-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        0 0 2px #049b3d,
+        0 0 3px #8ecd20;
+    }
+    50% {
+      opacity: 0.95;
+      text-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        0 0 3px #049b3d,
+        0 0 5px #8ecd20;
+    }
+  }
+
+  .eco-highlight:hover {
+    text-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      0 0 4px #049b3d,
+      0 0 8px #8ecd20;
+    animation: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .min-h-screen {
+    min-height: 100svh;
+  }
+
+  .h-screen {
+    height: 100svh;
+  }
+
+  @media (min-width: 768px) {
+    .min-h-screen {
+      min-height: 100vh;
+    }
+
+    .h-screen {
+      height: 100vh;
+    }
+  }
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: url('/fonts/fira-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: url('/fonts/fira-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fira Sans', var(--font-fallback);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+body {
+  font-family: 'Inter', var(--font-fallback);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.mask-fade-bottom-quick {
+  mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
+}
+
+/* Estilos para animaciones del footer */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0.5; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-15px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.footer-info > div {
+  animation: fadeIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.footer-info > div:nth-child(1) { animation-delay: 0.1s; }
+.footer-info > div:nth-child(2) { animation-delay: 0.2s; }
+.footer-info > div:nth-child(3) { animation-delay: 0.3s; }
+.footer-info > div:nth-child(4) { animation-delay: 0.4s; }
+
+.footer-form {
+  animation: scaleIn 0.6s ease-out forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.footer-bottom {
+  animation: slideIn 0.6s ease-out forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+.link-hover-effect {
+  position: relative;
+}
+
+.link-hover-effect::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--arvi-primary);
+  transition: width 0.3s ease;
+}
+
+.link-hover-effect:hover::after {
+  width: 100%;
 }
