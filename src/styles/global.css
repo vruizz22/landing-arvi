@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@import '@midudev/tailwind-animations/css';
-
 :root {
   --font-fallback:
     system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI',
