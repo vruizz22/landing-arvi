@@ -1,0 +1,57 @@
+name: Deploy to S3 + CloudFront (OIDC)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::084414214145:role/GitHubActionsDeployRole
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sync assets (long cache)
+        run: |
+          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET }} \
+            --delete \
+            --exclude "*.html" --exclude "index.html" \
+            --cache-control "max-age=31536000,public"
+
+      - name: Sync HTML (short cache)
+        run: |
+          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET }} \
+            --delete \
+            --exclude "*" --include "*.html" --include "index.html" \
+            --cache-control "max-age=60,public"
+
+      - name: Upload sitemap/robots (if any)
+        run: |
+          aws s3 cp ./dist/sitemap.xml s3://${{ secrets.S3_BUCKET }}/sitemap.xml --cache-control "max-age=3600,public" || true
+          aws s3 cp ./dist/robots.txt s3://${{ secrets.S3_BUCKET }}/robots.txt --cache-control "max-age=3600,public" || true
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
