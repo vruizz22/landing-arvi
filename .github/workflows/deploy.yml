@@ -15,23 +15,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm"
-
-      - name: Configure pnpm to avoid rate limits
-        run: pnpm config set network-concurrency 4 # Reduce number of concurrent requests
+          cache: "npm"
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile # Avoid using the incompatible lockfile
+        run: npm ci
 
       - name: Verify installation
         run: |
@@ -40,7 +31,7 @@ jobs:
           echo "..."
 
       - name: Build site
-        run: pnpm run build
+        run: npm run build
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v2
