@@ -1,0 +1,166 @@
+---
+import { Image } from 'astro:assets';
+import ArviLogo from '@assets/LOGO_ARVI.png';
+---
+
+<section class="relative flex flex-col overflow-hidden pt-0 md:pt-0 pb-0 md:pb-0 min-h-screen">
+  <!-- Imagen de fondo con overlay y efecto parallax -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-[url('/images/hero.webp')] bg-cover bg-center transform scale-105 origin-center" id="parallaxBg"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
+  </div>
+
+  <!-- Contenido: usamos estrategias diferentes para móvil vs desktop -->
+  <div class="relative z-10 container mx-auto px-4 py-0 text-center text-white h-full">
+    <!-- Versión móvil con scroll vertical - sin altura mínima para evitar cortes -->
+    <div class="flex flex-col justify-start py-10 pb-24 md:hidden">
+      <div class="max-w-4xl w-full mx-auto">
+        <!-- Logo ARVI para móvil -->
+        <div class="flex justify-center mt-4 mb-6">
+          <Image 
+            src={ArviLogo} 
+            alt="ARVI Entretenciones" 
+            width={140} 
+            class="hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+
+        <h1 class="mb-4 text-3xl font-heading animate-fade-in">
+          ¡Diversión Sin Límites para Tus Eventos!
+        </h1>
+        <p class="mb-6 text-base opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+          Juegos mecánicos, inflables y soluciones sustentables para crear experiencias inolvidables. 
+          Desde Algarrobo para todo Chile.
+        </p>
+        
+        <!-- Emojis para móvil con más espacio vertical -->
+        <div class="mt-2 mb-14 grid grid-cols-1 gap-4 text-center">
+          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-1">
+            <div class="text-4xl mb-1">🎪</div>
+            <p class="text-sm opacity-90">+15 años de experiencia</p>
+          </div>
+          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-1">
+            <div class="text-4xl mb-1">🌱</div>
+            <p class="text-sm opacity-90">Soluciones eco-sustentables</p>
+          </div>
+          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-1">
+            <div class="text-4xl mb-1">🏆</div>
+            <p class="text-sm opacity-90">+1000 eventos realizados</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Versión desktop centrada verticalmente -->
+    <div class="hidden md:flex flex-col justify-center items-center h-full">
+      <div class="max-w-4xl w-full">
+        <!-- Logo ARVI para desktop -->
+        <div class="flex justify-center mb-8">
+          <Image 
+            src={ArviLogo} 
+            alt="ARVI Entretenciones" 
+            width={180} 
+            class="hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+
+        <h1 class="mb-6 text-5xl lg:text-6xl font-heading animate-fade-in">
+          ¡Diversión Sin Límites para Tus Eventos!
+        </h1>
+        <p class="mb-8 text-xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+          Juegos mecánicos, inflables y soluciones sustentables para crear experiencias inolvidables. 
+          Desde Algarrobo para todo Chile.
+        </p>
+        
+        <!-- Emojis para desktop en formato horizontal -->
+        <div class="mt-8 mb-8 grid grid-cols-3 gap-6 text-center">
+          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
+            <div class="text-4xl md:text-4xl mb-3 md:mb-2">🎪</div>
+            <p class="text-base md:text-lg opacity-90">+15 años de experiencia</p>
+          </div>
+          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
+            <div class="text-4xl md:text-4xl mb-3 md:mb-2">🌱</div>
+            <p class="text-base md:text-lg opacity-90">Soluciones eco-sustentables</p>
+          </div>
+          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
+            <div class="text-4xl md:text-4xl mb-3 md:mb-2">🏆</div>
+            <p class="text-base md:text-lg opacity-90">+1000 eventos realizados</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicador de scroll - Versión de escritorio -->
+  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
+    <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+      <div class="w-1 h-3 bg-white rounded-full mt-2"></div>
+    </div>
+  </div>
+  
+  <!-- Indicador de scroll - Versión móvil (más pequeño y en posición fija) -->
+  <div class="fixed bottom-4 right-4 animate-bounce block md:hidden z-20">
+    <div class="w-5 h-8 border-2 border-white rounded-full flex justify-center bg-black/30 backdrop-blur-sm">
+      <div class="w-1 h-2 bg-white rounded-full mt-2"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Efecto parallax sutil para el fondo con optimización para móviles
+  document.addEventListener('DOMContentLoaded', () => {
+    const parallaxBg = document.getElementById('parallaxBg');
+    
+    if (parallaxBg) {
+      // Detectar si es un dispositivo móvil para aplicar un efecto más ligero
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      const parallaxIntensity = isMobile ? 0.08 : 0.15; // Menor intensidad en móviles
+      
+      window.addEventListener('scroll', () => {
+        // Usar requestAnimationFrame para mejor rendimiento
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          // Mueve el fondo más lento que el scroll con una intensidad adaptada al dispositivo
+          parallaxBg.style.transform = `scale(1.05) translateY(${scrollY * parallaxIntensity}px)`;
+        });
+      });
+    }
+  });
+</script>
+
+<style>
+  /* Animaciones adicionales para el Hero */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  .animate-delay-100 {
+    animation-delay: 0.1s;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .animate-delay-400 {
+    animation-delay: 0.4s;
+  }
+  
+  h1 {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Efecto de brillo sutil para el logo */
+  :global(img[alt="ARVI Entretenciones"]) {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+  }
+</style>
