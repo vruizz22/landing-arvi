@@ -1,0 +1,222 @@
+---
+import { Image } from 'astro:assets';
+import ArviLogo from '@assets/LOGO_ARVI.png';
+---
+
+<footer class="bg-arvi-background text-arvi-text relative">
+  <!-- Imagen de fondo con overlay y mask gradient -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-[url('/images/footer.webp')] bg-center bg-cover [mask-image:linear-gradient(transparent,black_50%)]"></div>
+    <div class="absolute inset-0 bg-arvi-text opacity-60"></div>
+  </div>
+  
+  <div class="container mx-auto px-4 py-16 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <!-- Información de Contacto -->
+      <div class="footer-info">
+        <div class="mb-8">
+          <div class="mb-4">
+            <Image src={ArviLogo} alt="ARVI Entretenciones" width={150} class="mb-4 hover:scale-105 transition-transform duration-300" />
+            <h3 class="text-arvi-primary font-heading text-2xl relative after:content-[''] after:block after:w-0 after:h-0.5 after:bg-arvi-primary after:transition-all after:duration-300 hover:after:w-48">ARVI Entretenciones</h3>
+          </div>
+          <p class="text-white mb-6">
+            Más de 15 años creando experiencias inolvidables con un enfoque 
+            sustentable y responsable. Desde Algarrobo para todo Chile.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex items-start space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <div>
+              <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Ubicación</h4>
+              <p class="text-arvi-background">
+                Algarrobo, Región de Valparaíso<br />
+                Atendemos toda la zona central de Chile
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <div>
+              <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Contacto</h4>
+              <p class="text-arvi-background">
+                WhatsApp: +56 9 1234 5678<br />
+                Teléfono: (33) 246 1000
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <div>
+              <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Horarios</h4>
+              <p class="text-arvi-background">
+                Lun - Vie: 9:00 - 18:00<br />
+                Sáb - Dom: 9:00 - 16:00
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+            </svg>
+            <div>
+              <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Síguenos</h4>
+              <a 
+                href="https://www.instagram.com/arvi.cl/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="text-arvi-background hover:text-arvi-primary transition-all duration-300 inline-flex items-center group"
+              >
+                @arvi.cl
+                <span class="inline-block ml-1 transform group-hover:translate-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario de Contacto -->
+      <div>
+        <div class="bg-white text-arvi-text rounded-lg shadow-xl">
+          <div class="p-6">
+            <h3 class="text-center font-heading text-2xl mb-2 relative hover:-rotate-1 transform transition-transform duration-300">
+              <span class="inline-block transform hover:scale-110 transition-transform duration-200">💬</span> Solicita tu Cotización
+            </h3>
+            <p class="text-center text-gray-600 mb-6">
+              Cuéntanos sobre tu evento y te contactaremos en menos de 24 horas
+            </p>
+            
+            <form id="contactForm" class="space-y-4">
+              <div>
+                <label for="name" class="block text-sm mb-2 font-medium">
+                  Nombre completo
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Tu nombre completo"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-arvi-primary/60 transition-all duration-300 hover:border-arvi-primary/50 hover:shadow-sm"
+                />
+              </div>
+
+              <div>
+                <label for="eventDate" class="block text-sm mb-2 font-medium">
+                  Fecha del evento
+                </label>
+                <input
+                  id="eventDate"
+                  name="eventDate"
+                  type="date"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-arvi-primary/60 transition-all duration-300 hover:border-arvi-primary/50 hover:shadow-sm"
+                />
+              </div>
+
+              <div>
+                <label for="message" class="block text-sm mb-2 font-medium">
+                  Cuéntanos sobre tu evento
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Tipo de evento, cantidad de personas, ubicación, servicios de interés..."
+                  rows="4"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-arvi-primary/60 transition-all duration-300 hover:border-arvi-primary/50 hover:shadow-sm"
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit" 
+                class="w-full bg-arvi-primary hover:bg-arvi-primary/90 text-arvi-background font-heading py-4 rounded-md transition-all duration-300 hover:shadow-lg hover:shadow-arvi-primary/20 transform hover:-translate-y-1 relative overflow-hidden group"
+              >
+                <span class="absolute inset-0 bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
+                <span class="relative flex items-center justify-center gap-2">
+                  <span class="transform group-hover:scale-110 transition-transform duration-300">📱</span>
+                  Enviar por WhatsApp
+                </span>
+              </button>
+            </form>
+
+            <p class="text-xs text-gray-500 text-center mt-4">
+              Al enviar este formulario, serás redirigido a WhatsApp con tu mensaje pre-cargado
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección inferior -->
+    <div class="border-t border-gray-700 mt-12 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div class="text-center md:text-left">
+          <div class="flex items-center gap-2">
+            <p class="text-arvi-background">
+              Desarrollada por
+            </p>
+            <a 
+              href="https://github.com/vruizz22" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 text-arvi-background hover:text-arvi-primary group transition-all duration-300"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              <span class="font-medium">vruizz22</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="text-center md:text-right">
+          <p class="text-arvi-background group cursor-default">
+            <span class="transform group-hover:scale-105 inline-block transition-transform duration-300">©</span> 2025 ARVI Entretenciones. Todos los derechos reservados.
+          </p>
+          <p class="text-sm text-arvi-background mt-1 hover:tracking-wide transition-all duration-300 cursor-default">
+            Empresa certificada en seguridad y medio ambiente
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Función para manejar el envío del formulario
+  document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = (document.getElementById('name') as HTMLInputElement).value;
+    const eventDate = (document.getElementById('eventDate') as HTMLInputElement).value;
+    const message = (document.getElementById('message') as HTMLTextAreaElement).value;
+    
+    // Formatear la fecha si es necesario
+    const formattedDate = new Date(eventDate).toLocaleDateString('es-CL');
+    
+    // formatear mensaje y nombre para borrar espacios finales
+    const trimmedName = name.trim();
+    const trimmedMessage = message.trim();
+
+    // Construir el mensaje para WhatsApp
+    const whatsappMessage = `Hola! Mi nombre es ${trimmedName}. Mi evento es el ${formattedDate}. ${trimmedMessage}`;
+
+    // Abrir WhatsApp con el mensaje
+    window.open(`https://wa.me/56912345678?text=${encodeURIComponent(whatsappMessage)}`, "_blank");
+  });
+</script>
