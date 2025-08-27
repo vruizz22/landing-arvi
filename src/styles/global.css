@@ -283,3 +283,38 @@ body {
 .link-hover-effect:hover::after {
   width: 100%;
 }
+
+  /* Animaciones adicionales para el Hero */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  .animate-delay-100 {
+    animation-delay: 0.1s;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .animate-delay-400 {
+    animation-delay: 0.4s;
+  }
+  
+  h1 {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Efecto de brillo sutil para el logo */
+  :global(img[alt="ARVI Entretenciones"]) {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+  }
