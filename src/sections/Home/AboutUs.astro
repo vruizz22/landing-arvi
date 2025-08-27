@@ -58,7 +58,7 @@ import CardContent from '@components/ui/CardContent.astro';
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="bg-arvi-secondary/10 border-arvi-secondary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-secondary/20">
             <CardContent className="p-6 text-center">
               <div class="text-3xl mb-3">🎪</div>
@@ -151,11 +151,11 @@ import CardContent from '@components/ui/CardContent.astro';
   }
   
   /* Efectos de hover para las cards */
-  :global(.grid-cols-2 .rounded-lg) {
+  :global(.sm\:grid-cols-2 .rounded-lg) {
     transition: all 0.3s ease;
   }
   
-  :global(.grid-cols-2 .rounded-lg:hover .text-3xl) {
+  :global(.sm\:grid-cols-2 .rounded-lg:hover .text-3xl) {
     transform: scale(1.2);
     transition: transform 0.3s ease;
   }
@@ -166,7 +166,7 @@ import CardContent from '@components/ui/CardContent.astro';
   }
 
   @media (min-width: 1024px) {
-    .grid-cols-2 {
+    .grid-cols-1.sm\:grid-cols-2 {
       gap: 1rem;
     }
   }
