@@ -97,14 +97,6 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
       <div class="w-1 h-3 bg-white rounded-full mt-2"></div>
     </div>
   </div>
-  
-  <!-- Indicador de scroll - Versión móvil (más pequeño) -->
-  <div class="absolute bottom-4 right-4 animate-bounce block md:hidden z-20">
-    <div class="w-5 h-8 border-2 border-white rounded-full flex justify-center bg-black/30 backdrop-blur-sm">
-      <div class="w-1 h-2 bg-white rounded-full mt-2"></div>
-    </div>
-  </div>
-</section>
 
 <script>
   // Efecto parallax sutil para el fondo con optimización para móviles
@@ -127,40 +119,3 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
     }
   });
 </script>
-
-<style>
-  /* Animaciones adicionales para el Hero */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease-out forwards;
-  }
-  
-  .animate-delay-100 {
-    animation-delay: 0.1s;
-  }
-  
-  .animate-delay-200 {
-    animation-delay: 0.2s;
-  }
-  
-  .animate-delay-300 {
-    animation-delay: 0.3s;
-  }
-  
-  .animate-delay-400 {
-    animation-delay: 0.4s;
-  }
-  
-  h1 {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  }
-  
-  /* Efecto de brillo sutil para el logo */
-  :global(img[alt="ARVI Entretenciones"]) {
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
-  }
-</style>
