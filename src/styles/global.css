@@ -314,6 +314,51 @@ body {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   }
   
+  h2 {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilos para el componente AboutUs */
+  .space-y-6 > div {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  .space-y-6 > div:nth-child(1) { animation-delay: 0.1s; }
+  .space-y-6 > div:nth-child(2) { animation-delay: 0.3s; }
+  .space-y-6 > div:nth-child(3) { animation-delay: 0.5s; }
+  
+  /* Sombras adicionales */
+  .shadow-md {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Efectos de hover para las cards */
+  .grid-cols-1.sm\:grid-cols-2 .rounded-lg {
+    transition: all 0.3s ease;
+  }
+  
+  .grid-cols-1.sm\:grid-cols-2 .rounded-lg:hover .text-3xl {
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Efectos de hover para los features */
+  .space-y-6 > div:hover .w-12 {
+    background-color: var(--arvi-accent);
+  }
+
+  @media (min-width: 1024px) {
+    .grid-cols-1.sm\:grid-cols-2 {
+      gap: 1rem;
+    }
+  }
+  
   /* Efecto de brillo sutil para el logo */
   :global(img[alt="ARVI Entretenciones"]) {
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
