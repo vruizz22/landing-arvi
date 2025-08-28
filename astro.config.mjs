@@ -9,9 +9,13 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://arvi.cl',
   vite: {
     plugins: [tailwindcss()]
   },
 
-  integrations: [icon(), sitemap()]
+  integrations: [
+    icon(),
+    sitemap()
+  ]
 });
