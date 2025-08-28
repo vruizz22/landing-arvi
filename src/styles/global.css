@@ -343,7 +343,7 @@ body {
     transition: all 0.3s ease;
   }
   
-  .grid-cols-1.sm\:grid-cols-2 .rounded-lg:hover .text-3xl {
+  .grid-cols-1.sm\:grid-cols-2 .rounded-lg:hover svg {
     transform: scale(1.2);
     transition: transform 0.3s ease;
   }
