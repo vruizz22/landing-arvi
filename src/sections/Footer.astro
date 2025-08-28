@@ -1,12 +1,13 @@
 ---
 import { Image } from 'astro:assets';
 import ArviLogo from '@assets/LOGO_ARVI.png';
+import { Icon } from 'astro-icon/components';
 ---
 
 <footer class="bg-arvi-background text-arvi-text relative">
   <!-- Imagen de fondo con overlay y mask gradient -->
   <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-[url('/images/footer.webp')] bg-center bg-cover [mask-image:linear-gradient(transparent,black_50%)]"></div>
+    <div class="absolute inset-0 bg-[url('/images/footer.webp')] bg-center bg-cover"></div>
     <div class="absolute inset-0 bg-arvi-text opacity-60"></div>
   </div>
   
@@ -27,10 +28,7 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
 
         <div class="space-y-6">
           <div class="flex items-start space-x-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
+            <Icon name="mdi:map-marker" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" />
             <div>
               <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Ubicación</h4>
               <p class="text-arvi-background">
@@ -41,9 +39,7 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
           </div>
 
           <div class="flex items-start space-x-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
+            <Icon name="mdi:phone" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" />
             <div>
               <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Contacto</h4>
               <p class="text-arvi-background">
@@ -54,10 +50,7 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
           </div>
 
           <div class="flex items-start space-x-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
+            <Icon name="mdi:clock" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" />
             <div>
               <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Horarios</h4>
               <p class="text-arvi-background">
@@ -68,11 +61,7 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
           </div>
 
           <div class="flex items-start space-x-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-            </svg>
+            <Icon name="mdi:instagram" class="w-6 h-6 text-arvi-primary flex-shrink-0 mt-1 transform hover:scale-125 hover:rotate-6 transition-all duration-300" />
             <div>
               <h4 class="text-arvi-primary font-heading mb-1 transform hover:translate-x-1 transition-transform duration-300 cursor-default">Síguenos</h4>
               <a 
@@ -91,10 +80,10 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
 
       <!-- Formulario de Contacto -->
       <div>
-        <div class="bg-white text-arvi-text rounded-lg shadow-xl">
+        <div class="bg-arvi-background text-arvi-text rounded-lg shadow-xl">
           <div class="p-6">
             <h3 class="text-center font-heading text-2xl mb-2 relative hover:-rotate-1 transform transition-transform duration-300">
-              <span class="inline-block transform hover:scale-110 transition-transform duration-200">💬</span> Solicita tu Cotización
+              <span class="inline-block transform hover:scale-110 transition-transform duration-200"><Icon name="mdi:comment-text" class="w-6 h-6 inline" /></span> Solicita tu Cotización
             </h3>
             <p class="text-center text-gray-600 mb-6">
               Cuéntanos sobre tu evento y te contactaremos en menos de 24 horas
@@ -148,13 +137,13 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
               >
                 <span class="absolute inset-0 bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
                 <span class="relative flex items-center justify-center gap-2">
-                  <span class="transform group-hover:scale-110 transition-transform duration-300">📱</span>
+                  <span class="transform group-hover:scale-110 transition-transform duration-300"><Icon name="mdi:whatsapp" class="w-6 h-6" /></span>
                   Enviar por WhatsApp
                 </span>
               </button>
             </form>
 
-            <p class="text-xs text-gray-500 text-center mt-4">
+            <p class="text-xs text-arvi-text text-center mt-4">
               Al enviar este formulario, serás redirigido a WhatsApp con tu mensaje pre-cargado
             </p>
           </div>
@@ -163,7 +152,7 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
     </div>
 
     <!-- Sección inferior -->
-    <div class="border-t border-gray-700 mt-12 pt-8">
+    <div class="border-t border-t-stone-50 mt-12 pt-8">
       <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
         <div class="text-center md:text-left">
           <div class="flex items-center gap-2">
@@ -176,9 +165,7 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
               rel="noopener noreferrer"
               class="flex items-center gap-1 text-arvi-background hover:text-arvi-primary group transition-all duration-300"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
+              <Icon name="mdi:github" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               <span class="font-medium">vruizz22</span>
             </a>
           </div>
@@ -217,6 +204,6 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
     const whatsappMessage = `Hola! Mi nombre es ${trimmedName}. Mi evento es el ${formattedDate}. ${trimmedMessage}`;
 
     // Abrir WhatsApp con el mensaje
-    window.open(`https://wa.me/56912345678?text=${encodeURIComponent(whatsappMessage)}`, "_blank");
+    window.open(`https://wa.me/56988082320?text=${encodeURIComponent(whatsappMessage)}`, "_blank");
   });
 </script>
