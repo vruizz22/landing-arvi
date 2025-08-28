@@ -1,9 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import ArviLogo from '@assets/LOGO_ARVI.png';
+import { Icon } from 'astro-icon/components';
 ---
 
-<section class="relative flex flex-col overflow-hidden pt-0 md:pt-0 pb-0 md:pb-0 min-h-screen">
+<section class="relative flex flex-col overflow-hidden pt-0 md:pt-0 pb-0 md:pb-0 md:min-h-screen" id="heroSection">
   <!-- Imagen de fondo con overlay y efecto parallax -->
   <div class="absolute inset-0 z-0">
     <div class="absolute inset-0 bg-[url('/images/hero.webp')] bg-cover bg-center transform scale-105 origin-center" id="parallaxBg"></div>
@@ -12,78 +13,94 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
 
   <!-- Contenido: usamos estrategias diferentes para móvil vs desktop -->
   <div class="relative z-10 container mx-auto px-4 py-0 text-center text-white h-full">
-    <!-- Versión móvil con scroll vertical - sin altura mínima para evitar cortes -->
-    <div class="flex flex-col justify-start py-10 pb-24 md:hidden">
+    <!-- Versión móvil con scroll vertical - altura natural con contenido completo -->
+    <div class="flex flex-col justify-start py-12 pb-24 md:hidden" id="heroMobileContent">
       <div class="max-w-4xl w-full mx-auto">
         <!-- Logo ARVI para móvil -->
-        <div class="flex justify-center mt-4 mb-6">
+        <div class="flex justify-center mt-4 mb-10">
           <Image 
             src={ArviLogo} 
             alt="ARVI Entretenciones" 
-            width={140} 
+            width={300} 
             class="hover:scale-105 transition-transform duration-500"
           />
         </div>
 
-        <h1 class="mb-4 text-3xl font-heading animate-fade-in">
-          ¡Diversión Sin Límites para Tus Eventos!
+        <h1 class="mb-12 text-6xl font-heading animate-fade-in">
+          ¡<span class="text-arvi-accent">Diversión</span> 
+          <span class="text-arvi-primary">Sin Límites</span>
+          para Tus <span class="text-arvi-secondary">Eventos</span>! 
         </h1>
-        <p class="mb-6 text-base opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+        <p class="mb-10 text-2xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
           Juegos mecánicos, inflables y soluciones sustentables para crear experiencias inolvidables. 
           Desde Algarrobo para todo Chile.
         </p>
         
-        <!-- Emojis para móvil con más espacio vertical -->
-        <div class="mt-2 mb-14 grid grid-cols-1 gap-4 text-center">
-          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-1">
-            <div class="text-4xl mb-1">🎪</div>
-            <p class="text-sm opacity-90">+15 años de experiencia</p>
+        <!-- Iconos para móvil en disposición vertical -->
+        <div class="mt-8 mb-8 grid grid-cols-1 gap-8 text-center">
+          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-2">
+            <div class="flex justify-center mb-3">
+              <Icon name="streamline-freehand:circus-tent" class="w-16 h-16 text-arvi-primary" />
+            </div>
+            <p class="text-2xl opacity-90">+15 años de experiencia</p>
           </div>
-          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-1">
-            <div class="text-4xl mb-1">🌱</div>
-            <p class="text-sm opacity-90">Soluciones eco-sustentables</p>
+          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-2">
+            <div class="flex justify-center mb-3">
+              <Icon name="mdi:leaf" class="w-16 h-16 text-arvi-secondary" />
+            </div>
+            <p class="text-xl opacity-90">Soluciones eco-sustentables</p>
           </div>
-          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-1">
-            <div class="text-4xl mb-1">🏆</div>
-            <p class="text-sm opacity-90">+1000 eventos realizados</p>
+          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-2">
+            <div class="flex justify-center mb-3">
+              <Icon name="mdi:trophy" class="w-16 h-16 text-arvi-accent" />
+            </div>
+            <p class="text-xl opacity-90">+1000 eventos realizados</p>
           </div>
         </div>
       </div>
     </div>
     
     <!-- Versión desktop centrada verticalmente -->
-    <div class="hidden md:flex flex-col justify-center items-center h-full">
-      <div class="max-w-4xl w-full">
+    <div class="hidden md:flex flex-col justify-center items-center min-h-screen py-12">
+      <div class="max-w-5xl w-full">
         <!-- Logo ARVI para desktop -->
         <div class="flex justify-center mb-8">
           <Image 
             src={ArviLogo} 
             alt="ARVI Entretenciones" 
-            width={180} 
+            width={350} 
             class="hover:scale-105 transition-transform duration-500"
           />
         </div>
 
         <h1 class="mb-6 text-5xl lg:text-6xl font-heading animate-fade-in">
-          ¡Diversión Sin Límites para Tus Eventos!
+          ¡<span class="text-arvi-accent">Diversión</span> 
+          <span class="text-arvi-primary">Sin Límites</span>
+          para Tus <span class="text-arvi-secondary">Eventos</span>! 
         </h1>
-        <p class="mb-8 text-xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+        <p class="mb-8 text-2xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100 text-shadow-black">
           Juegos mecánicos, inflables y soluciones sustentables para crear experiencias inolvidables. 
           Desde Algarrobo para todo Chile.
         </p>
         
-        <!-- Emojis para desktop en formato horizontal -->
+        <!-- Iconos para desktop en formato horizontal -->
         <div class="mt-8 mb-8 grid grid-cols-3 gap-6 text-center">
           <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
-            <div class="text-4xl md:text-4xl mb-3 md:mb-2">🎪</div>
+            <div class="flex justify-center mb-3 md:mb-2">
+              <Icon name="streamline-freehand:circus-tent" class="w-14 h-14 text-arvi-primary" />
+            </div>
             <p class="text-base md:text-lg opacity-90">+15 años de experiencia</p>
           </div>
           <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
-            <div class="text-4xl md:text-4xl mb-3 md:mb-2">🌱</div>
+            <div class="flex justify-center mb-3 md:mb-2">
+              <Icon name="mdi:leaf" class="w-14 h-14 text-arvi-secondary" />
+            </div>
             <p class="text-base md:text-lg opacity-90">Soluciones eco-sustentables</p>
           </div>
           <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
-            <div class="text-4xl md:text-4xl mb-3 md:mb-2">🏆</div>
+            <div class="flex justify-center mb-3 md:mb-2">
+              <Icon name="mdi:trophy" class="w-14 h-14 text-arvi-accent" />
+            </div>
             <p class="text-base md:text-lg opacity-90">+1000 eventos realizados</p>
           </div>
         </div>
@@ -91,29 +108,74 @@ import ArviLogo from '@assets/LOGO_ARVI.png';
     </div>
   </div>
 
-  <!-- Indicador de scroll - Versión de escritorio -->
-  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
-    <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+  <!-- Indicador de scroll - Solo visible en desktop -->
+  <div class=" absolute hidden md:block bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+    <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center bg-black/20 backdrop-blur-sm">
       <div class="w-1 h-3 bg-white rounded-full mt-2"></div>
     </div>
   </div>
 
 <script>
-  // Efecto parallax sutil para el fondo con optimización para móviles
+  // Efecto parallax optimizado con límite de traslación para evitar huecos
   document.addEventListener('DOMContentLoaded', () => {
     const parallaxBg = document.getElementById('parallaxBg');
+    const heroSection = document.getElementById('heroSection');
+    const heroMobileContent = document.getElementById('heroMobileContent');
     
-    if (parallaxBg) {
-      // Detectar si es un dispositivo móvil para aplicar un efecto más ligero
-      const isMobile = window.matchMedia("(max-width: 768px)").matches;
-      const parallaxIntensity = isMobile ? 0.08 : 0.15; // Menor intensidad en móviles
+    if (parallaxBg && heroSection) {
+      // Función para detectar si estamos en vista móvil
+      const checkMobile = () => window.matchMedia("(max-width: 768px)").matches;
+      let isMobile = checkMobile();
+      
+      // Valores para efectos visuales
+      const getParallaxIntensity = () => checkMobile() ? 0.06 : 0.12;
+      const getMaxTranslate = () => checkMobile() ? 60 : 120;
+      
+      // Ajustar el tamaño del fondo para asegurar cobertura completa
+      // Usamos un enfoque más robusto que no depende de clases específicas
+      const adjustBackgroundCoverage = () => {
+        // Verificar el modo actual (móvil o desktop)
+        const currentMobile = checkMobile();
+        
+        // En móvil, aseguramos que el fondo cubra todo el contenido
+        if (currentMobile) {
+          // Si existe el contenido móvil, usamos su altura
+          if (heroMobileContent) {
+            const contentHeight = heroMobileContent.getBoundingClientRect().height;
+            // Aseguramos que el fondo tenga al menos la altura del contenido + margen extra
+            parallaxBg.style.minHeight = `${contentHeight + 120}px`;
+            // Aseguramos que la sección sea suficientemente alta
+            heroSection.style.minHeight = `${contentHeight + 50}px`;
+          }
+        } else {
+          // En desktop, aseguramos que el fondo cubra toda la pantalla
+          parallaxBg.style.minHeight = '100vh';
+          heroSection.style.minHeight = '100vh';
+        }
+        
+        // Actualizar el valor de isMobile si ha cambiado
+        isMobile = currentMobile;
+      };
+      
+      // Ejecutar ajuste inicial después de un pequeño retraso para asegurar que los elementos estén cargados
+      setTimeout(adjustBackgroundCoverage, 50);
+      
+      // Ajustar cuando cambia el tamaño de la ventana
+      window.addEventListener('resize', adjustBackgroundCoverage);
+      
+      // Ajustamos varias veces durante la carga para asegurar la configuración correcta
+      const adjustIntervals = [100, 300, 500, 1000, 2000, 3000];
+      adjustIntervals.forEach(delay => {
+        setTimeout(adjustBackgroundCoverage, delay);
+      });
       
       window.addEventListener('scroll', () => {
         // Usar requestAnimationFrame para mejor rendimiento
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
-          // Mueve el fondo más lento que el scroll con una intensidad adaptada al dispositivo
-          parallaxBg.style.transform = `scale(1.05) translateY(${scrollY * parallaxIntensity}px)`;
+          // Limitamos la traslación para evitar huecos en el borde inferior
+          const translate = Math.min(scrollY * getParallaxIntensity(), getMaxTranslate());
+          parallaxBg.style.transform = `translateY(${translate}px) scale(1.05)`;
         });
       });
     }
