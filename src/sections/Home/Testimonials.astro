@@ -1,0 +1,124 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '@components/ui/Button.astro';
+---
+
+<section class="py-16 md:py-24 px-4">
+  <div class="container mx-auto">
+    <div class="text-center mb-12 md:mb-16">
+      <h2 class="text-3xl md:text-4xl font-heading text-arvi-text mb-4">
+        Lo que dicen <span class="text-arvi-primary">nuestros clientes</span>
+      </h2>
+      <p class="text-arvi-text/70 max-w-2xl mx-auto">
+        Nos enorgullece ofrecer experiencias memorables para todo tipo de eventos. 
+        Estos son algunos comentarios de nuestros clientes satisfechos.
+      </p>
+    </div>
+    
+    <div class="relative overflow-visible mx-6">
+      <!-- Decorative elements -->
+      <div class="absolute -top-6 -left-6 w-20 h-20 text-arvi-primary/20 hidden md:block">
+        <Icon name="mdi:format-quote-open" class="w-full h-full" />
+      </div>
+      <div class="absolute -bottom-6 -right-6 w-20 h-20 text-arvi-primary/20 hidden md:block">
+        <Icon name="mdi:format-quote-close" class="w-full h-full" />
+      </div>
+      
+      <!-- Testimonial cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+        <!-- Testimonial 1 -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-arvi-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-arvi-primary/10 rounded-full flex items-center justify-center mr-4">
+              <span class="text-arvi-text font-heading text-lg">MJ</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-arvi-text">María Jiménez</h4>
+              <p class="text-sm text-arvi-text/70">Cumpleaños infantil</p>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="flex text-arvi-primary">
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+            </div>
+          </div>
+          <p class="text-arvi-text/80 italic">
+            "El inflable que contratamos para el cumpleaños de mi hijo fue un éxito total. 
+            La instalación fue rápida y el personal muy amable. Los niños estuvieron entretenidos toda la tarde."
+          </p>
+        </div>
+        
+        <!-- Testimonial 2 -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-arvi-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-arvi-secondary/10 rounded-full flex items-center justify-center mr-4">
+              <span class="text-arvi-text font-heading text-lg">RC</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-arvi-text">Roberto Cárdenas</h4>
+              <p class="text-sm text-arvi-text/70">Evento empresarial</p>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="flex text-arvi-primary">
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star-half" class="w-5 h-5" />
+            </div>
+          </div>
+          <p class="text-arvi-text/80 italic">
+            "Contratamos varios juegos para nuestra fiesta de empresa y fue increíble. 
+            El equipo de ARVI se encargó de todo, desde la instalación hasta la supervisión. 
+            Sin duda volveremos a contar con ellos para nuestros próximos eventos."
+          </p>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-arvi-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-arvi-accent/10 rounded-full flex items-center justify-center mr-4">
+              <span class="text-arvi-text font-heading text-lg">PL</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-arvi-text">Patricia López</h4>
+              <p class="text-sm text-arvi-text/70">Fiesta vecinal</p>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="flex text-arvi-primary">
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+            </div>
+          </div>
+          <p class="text-arvi-text/80 italic">
+            "Organizamos una fiesta en nuestra comunidad y ARVI nos proporcionó todas las atracciones. 
+            Lo que más valoramos fue su compromiso con el medio ambiente, usando energías renovables para 
+            el funcionamiento de los juegos. ¡Un servicio excelente!"
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Call to action -->
+    <div class="text-center mt-12">
+      <Button
+        href="#contact"
+        variant="gradient"
+        size="lg"
+        icon="mdi:arrow-right"
+        iconPosition="right"
+      >
+        Reserva ahora
+      </Button>
+    </div>
+  </div>
+</section>

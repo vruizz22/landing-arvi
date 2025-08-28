@@ -1,0 +1,61 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { Icon } from 'astro-icon/components';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'accent' | 'gradient';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+  external?: boolean;
+  class?: string;
+}
+
+const { 
+  href, 
+  variant = 'primary', 
+  size = 'md', 
+  icon, 
+  iconPosition = 'left',
+  external = false,
+  class: className = '',
+  ...rest 
+} = Astro.props;
+
+// Base styles for all buttons
+let baseClasses = 'inline-flex items-center justify-center font-medium rounded-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1';
+
+// Size variants
+const sizeClasses = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-6 py-3',
+  lg: 'px-8 py-4 text-lg'
+};
+
+// Color variants
+const variantClasses = {
+  primary: 'bg-arvi-primary text-arvi-background hover:bg-arvi-primary/90',
+  secondary: 'bg-arvi-secondary text-arvi-background hover:bg-arvi-secondary/90',
+  accent: 'bg-arvi-accent text-arvi-background hover:bg-arvi-accent/90',
+  gradient: 'bg-arvi-primary bg-gradient-to-r from-arvi-primary to-arvi-secondary text-arvi-background'
+};
+
+// External link attributes
+const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
+// Compile all classes
+const buttonClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
+---
+
+<a href={href} class={buttonClasses} {...externalAttrs} {...rest}>
+  {icon && iconPosition === 'left' && (
+    <Icon name={icon} class={`w-5 h-5 ${iconPosition === 'left' ? 'mr-2' : 'ml-2'}`} />
+  )}
+  <slot />
+  {icon && iconPosition === 'right' && (
+    <Icon name={icon} class={`w-5 h-5 ${iconPosition === 'left' ? 'mr-2' : 'ml-2'}`} />
+  )}
+</a>
+
+
