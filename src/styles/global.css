@@ -21,6 +21,7 @@
   /* Colores Tailwind disponibles como variables CSS */
   --arvi-text: #333333;
   --arvi-background: #F5F6F7;
+  --arvi-background2: #C8CED4;
   --arvi-primary: #C3A93C;
   --arvi-secondary: #049b3d;
   --arvi-accent: #8ecd20;
@@ -99,6 +100,9 @@
   }
   .bg-arvi-background {
     background-color: var(--arvi-background) !important;
+  }
+  .bg-arvi-background2 {
+    background-color: var(--arvi-background2) !important;
   }
   .bg-arvi-primary {
     background-color: var(--arvi-primary) !important;
