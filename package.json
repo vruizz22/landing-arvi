@@ -12,6 +12,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.5.1",
     "@iconify-json/lucide": "^1.2.65",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/streamline-freehand": "^1.2.1",
