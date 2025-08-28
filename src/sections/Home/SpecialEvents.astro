@@ -1,0 +1,175 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '@components/ui/Button.astro';
+import Card from '@components/ui/Card.astro';
+import CardContent from '@components/ui/CardContent.astro';
+---
+
+<section class="py-16 bg-gradient-to-br from-arvi-primary/10 via-arvi-background to-arvi-secondary/10 relative">
+  {/* Elementos decorativos de fondo */}
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute top-10 left-10 w-32 h-32 bg-arvi-primary rounded-2xl blur-3xl"></div>
+    <div class="absolute bottom-10 right-10 w-40 h-40 bg-arvi-secondary rounded-2xl blur-3xl"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-arvi-accent rounded-2xl blur-3xl"></div>
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10">
+    {/* Encabezado con elementos festivos */}
+    <div class="text-center mb-12">
+      <div class="flex justify-center items-center gap-2 mb-4">
+        <Icon name="lucide:sparkles" class="w-8 h-8 text-arvi-primary animate-pulse" />
+        <div class="bg-arvi-primary text-arvi-background border border-arvi-primary px-4 py-2 animate-bounce rounded-2xl">
+          <Icon name="lucide:tent" class="inline-block w-5 h-5 mr-1" /> EVENTO ESPECIAL <Icon name="lucide:tent" class="inline-block w-5 h-5 ml-1" />
+        </div>
+        <Icon name="lucide:sparkles" class="w-8 h-8 text-arvi-primary animate-pulse" />
+      </div>
+      
+      <h2 class="text-5xl md:text-4xl font-heading text-arvi-text mb-6">
+        ¡<span class="text-white">Vive</span> las <span class="text-red-500">Fiestas</span> <span class="text-blue-800">Patrias</span> con ARVI!
+      </h2>
+      
+      <p class="text-xl text-arvi-text/80 max-w-3xl mx-auto">
+        Te invitamos a celebrar las fiestas patrias chilenas con nosotros en el emblemático 
+        <span class="text-arvi-secondary font-bold"> Estadio Nacional</span>
+      </p>
+    </div>
+
+    {/* Tarjeta de evento principal */}
+    <div class="max-w-5xl mx-auto mb-12">
+      <Card customClass="overflow-hidden border-2 border-arvi-primary/30 shadow-2xl bg-gradient-to-r from-white via-arvi-background/30 to-white">
+        <CardContent customClass="p-0">
+          <div class="grid md:grid-cols-2 gap-0">
+            {/* Detalles del evento */}
+            <div class="p-8 space-y-6">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-red-500 rounded-2xl animate-pulse"></div>
+                <div class="bg-red-500 text-white px-3 py-1 rounded-2xl text-sm">
+                  🔴 EN VIVO AHORA
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-2xl font-heading text-arvi-text mb-3">
+                  Fiestas Patrias 2025
+                </h3>
+                <p class="text-arvi-text/70 mb-4">
+                  Únete a la celebración más grande del año con juegos mecánicos, 
+                  inflables gigantes y entretenimiento familiar en el corazón de Santiago.
+                </p>
+              </div>
+
+              <div class="space-y-4">
+                <div class="flex items-center gap-3 text-arvi-text/80">
+                  <Icon name="lucide:map-pin" class="w-5 h-5 text-arvi-secondary" />
+                  <span>Estadio Nacional, Santiago - Chile</span>
+                </div>
+                
+                <div class="flex items-center gap-3 text-arvi-text/80">
+                  <Icon name="lucide:calendar" class="w-5 h-5 text-arvi-secondary" />
+                  <span>15 - 18 de Septiembre, 2024</span>
+                </div>
+                
+                <div class="flex items-center gap-3 text-arvi-text/80">
+                  <Icon name="lucide:users" class="w-5 h-5 text-arvi-secondary" />
+                  <span>Para toda la familia</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a 
+                  href="https://wa.me/56912345678?text=¡Hola!%20Me%20interesa%20saber%20más%20sobre%20los%20eventos%20especiales%20de%20ARVI%20en%20el%20Estadio%20Nacional.%20¿Podrían%20darme%20más%20información?" 
+                  target="_blank"
+                  class="bg-arvi-primary hover:bg-arvi-primary/90 text-arvi-text py-2 px-4 rounded-2xl flex items-center justify-center flex-1 transition-colors duration-300"
+                >
+                  <Icon name="lucide:message-circle" class="w-5 h-5 mr-2" /> ¡Quiero participar!
+                </a>
+                <a 
+                  href="https://www.google.com/maps/place/Estadio+Nacional+Julio+Mart%C3%ADnez+Pr%C3%A1danos/@-33.4644994,-70.6106319,17z/data=!3m1!4b1!4m6!3m5!1s0x9662cfed639ab813:0xb92488060556a1df!8m2!3d-33.4644994!4d-70.6106319!16zL20vMDdkcjFx?hl=es-419&entry=ttu" 
+                  target="_blank"
+                  class="border border-arvi-secondary text-arvi-secondary hover:bg-arvi-secondary hover:text-white py-2 px-4 rounded-2xl flex items-center justify-center flex-1 transition-colors duration-300"
+                >
+                  <Icon name="lucide:map-pin" class="w-5 h-5 mr-2" /> Ver ubicación
+                </a>
+              </div>
+            </div>
+
+            {/* Sección visual - Reemplazado por imagen del estadio */}
+            <div class="relative h-full min-h-[300px]">
+              <img 
+                src="/images/estadio_nacional.jpg" 
+                alt="Estadio Nacional - Evento de Fiestas Patrias" 
+                class="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    {/* Próximos eventos */}
+    <div class="text-center">
+      <h3 class="text-3xl font-heading text-arvi-text mb-8">
+        Próximos <span class="text-arvi-primary">Eventos Especiales</span>
+      </h3>
+      
+      <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-shadow bg-arvi-background/50">
+          <CardContent customClass="p-6 text-center">
+            <div class="text-4xl mb-3">
+              <Icon name="lucide:tree-pine" class="w-16 h-16 mx-auto text-arvi-accent" />
+            </div>
+            <h4 class="text-xl font-heading text-arvi-text mb-2">Navidad Mágica</h4>
+            <p class="text-sm text-arvi-text/70 mb-4">
+              Celebra la Navidad con juegos temáticos y shows especiales
+            </p>
+            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm">
+              Diciembre 2025
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-shadow bg-arvi-background/50">
+          <CardContent customClass="p-6 text-center">
+            <div class="text-4xl mb-3">
+              <Icon name="lucide:sun" class="w-16 h-16 mx-auto text-arvi-primary" />
+            </div>
+            <h4 class="text-xl font-heading text-arvi-text mb-2">Verano Divertido</h4>
+            <p class="text-sm text-arvi-text/70 mb-4">
+              Juegos acuáticos y actividades para combatir el calor
+            </p>
+            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm">
+              Enero 2026
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-shadow bg-arvi-background/50">
+          <CardContent customClass="p-6 text-center">
+            <div class="text-4xl mb-3">
+              <Icon name="lucide:heart" class="w-16 h-16 mx-auto text-red-500" />
+            </div>
+            <h4 class="text-xl font-heading text-arvi-text mb-2">Festival del Amor</h4>
+            <p class="text-sm text-arvi-text/70 mb-4">
+              Eventos especiales para celebrar San Valentín en pareja y familia
+            </p>
+            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm">
+              Febrero 2026
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div class="mt-12">
+        <Button 
+          href="https://wa.me/56912345678?text=¡Hola!%20Me%20interesa%20saber%20más%20sobre%20eventos%20personalizados%20con%20ARVI.%20¿Podrían%20darme%20más%20información?"
+          variant="secondary"
+          size="lg"
+          target="_blank"
+        >
+          <Icon name="lucide:star" class="w-5 h-5 mr-2" />
+          ¡Contáctanos para eventos personalizados!
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
