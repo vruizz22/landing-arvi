@@ -114,6 +114,72 @@
     background-color: var(--arvi-accent) !important;
   }
   
+  /* Gradientes personalizados para fondos */
+  .bg-gradient-to-br {
+    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+  }
+  
+  .bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+  }
+  .from-arvi-primary\/60 {
+    --tw-gradient-from: rgba(195, 169, 60, 0.6) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+  }
+  .from-arvi-primary\/10 {
+    --tw-gradient-from: rgba(195, 169, 60, 0.1) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+  }
+  
+  .from-arvi-primary\/5 {
+    --tw-gradient-from: rgba(195, 169, 60, 0.05) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+  }
+  
+  .via-arvi-background {
+    --tw-gradient-via: var(--arvi-background) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
+  }
+  
+  .via-white {
+    --tw-gradient-via: white !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+  }
+  
+  .to-arvi-secondary\/60 {
+    --tw-gradient-to: rgba(4, 155, 61, 0.6) !important;
+  }
+  .to-arvi-secondary\/10 {
+    --tw-gradient-to: rgba(4, 155, 61, 0.1) !important;
+  }
+  
+  .to-arvi-secondary\/5 {
+    --tw-gradient-to: rgba(4, 155, 61, 0.05) !important;
+  }
+  
+  .from-white {
+    --tw-gradient-from: white !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+  }
+  
+  .via-arvi-background\/30 {
+    --tw-gradient-via: rgba(245, 246, 247, 0.3) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
+  }
+  
+  .to-white {
+    --tw-gradient-to: white !important;
+  }
+  
+  .from-arvi-primary {
+    --tw-gradient-from: var(--arvi-primary) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+  }
+  
+  .to-arvi-secondary {
+    --tw-gradient-to: var(--arvi-secondary) !important;
+  }
+  
   /* Efecto resaltado sutil para elementos importantes */
   .eco-highlight {
     color: var(--color-secondary);
@@ -366,4 +432,81 @@ body {
   /* Efecto de brillo sutil para el logo */
   :global(img[alt="ARVI Entretenciones"]) {
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+  }
+  
+  /* Utilidades para efectos de blur */
+  .blur-3xl {
+    --tw-blur: blur(64px);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+  }
+  
+  /* Sombras adicionales para cards */
+  .shadow-2xl {
+    --tw-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+  
+  /* Animaciones para secciones especiales */
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-5%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+  
+  .animate-bounce {
+    animation: bounce 1s infinite;
+  }
+  
+  /* Bordes redondeados para UI */
+  .rounded-2xl {
+    border-radius: 1rem;
+  }
+  
+  .rounded-xl {
+    border-radius: 0.75rem;
+  }
+  
+  /* Opacidades adicionales para fondos y bordes */
+  .bg-arvi-primary\/5 {
+    background-color: rgba(195, 169, 60, 0.05);
+  }
+  
+  .bg-arvi-secondary\/5 {
+    background-color: rgba(4, 155, 61, 0.05);
+  }
+  
+  .border-arvi-primary\/10 {
+    border-color: rgba(195, 169, 60, 0.1);
+  }
+  
+  .border-arvi-secondary\/10 {
+    border-color: rgba(4, 155, 61, 0.1);
+  }
+  
+  /* Transformaciones para efectos hover */
+  .hover\:-translate-y-1:hover {
+    --tw-translate-y: -0.25rem;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+  
+  /* Transiciones y sombras para efectos hover */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .duration-300 {
+    transition-duration: 300ms;
+  }
+  
+  .hover\:shadow-lg:hover {
+    --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
