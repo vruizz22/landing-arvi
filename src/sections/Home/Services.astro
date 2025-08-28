@@ -1,0 +1,142 @@
+---
+import Card from '@components/ui/Card.astro';
+import CardContent from '@components/ui/CardContent.astro';
+import { Icon } from 'astro-icon/components';
+
+// Datos de los servicios
+const services = [
+  {
+    title: "Arriendo Juegos Mecánicos",
+    description: "Carruseles, mini montañas rusas, autos chocadores y más para todas las edades",
+    icon: "tabler:wheel",
+    features: ["Equipos certificados", "Operador incluido", "Seguro de responsabilidad"],
+    bgColor: "bg-arvi-primary/10",
+    borderColor: "border-arvi-primary/20"
+  },
+  {
+    title: "Inflables",
+    description: "Castillos, toboganes y juegos inflables para la diversión más segura",
+    icon: "streamline-freehand:amusement-park-castle",
+    features: ["Desinfección garantizada", "Supervisión incluida", "Materiales premium"],
+    bgColor: "bg-arvi-accent/10",
+    borderColor: "border-arvi-accent/20"
+  },
+  {
+    title: "Proyectos Sustentables",
+    description: "Entretenimiento eco-friendly con energías renovables y materiales reciclables",
+    icon: "mdi:leaf",
+    features: ["Energía solar", "Materiales eco", "Certificación verde"],
+    bgColor: "bg-arvi-secondary/10",
+    borderColor: "border-arvi-secondary/30"
+  },
+  {
+    title: "Eventos Corporativos",
+    description: "Soluciones integrales para team building y celebraciones empresariales",
+    icon: "mdi:office-building",
+    features: ["Logística completa", "Coordinación profesional", "Actividades personalizadas"],
+    bgColor: "bg-arvi-secondary/10",
+    borderColor: "border-arvi-secondary/20"
+  },
+  {
+    title: "Celebraciones Municipales",
+    description: "Eventos masivos para fiestas patrias, aniversarios y celebraciones públicas",
+    icon: "mdi:party-popper",
+    features: ["Capacidad masiva", "Permisos incluidos", "Logística especializada"],
+    bgColor: "bg-arvi-primary/10",
+    borderColor: "border-arvi-primary/20"
+  },
+  {
+    title: "Eventos Escolares",
+    description: "Diversión educativa y segura para colegios y jardines infantiles",
+    icon: "mdi:school",
+    features: ["Actividades educativas", "Seguridad reforzada", "Precios especiales"],
+    bgColor: "bg-arvi-accent/10",
+    borderColor: "border-arvi-accent/20"
+  }
+];
+---
+
+<section class="py-16 bg-arvi-background2" id="servicios">
+  <div class="container mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl md:text-5xl mb-4 font-heading text-arvi-text">Nuestros 
+          <span class="text-arvi-primary">Servicios</span>
+        </h2>
+        <p class="text-lg text-arvi-text/80 max-w-2xl mx-auto">
+          Soluciones completas de entretenimiento para todo tipo de eventos. 
+          Desde pequeñas celebraciones hasta grandes festivales.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {services.map((service, index) => (
+          <div class="service-card group">
+            <Card className={`${service.bgColor} ${service.borderColor} hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full border-2`}>
+              <CardContent className="text-center p-6">
+                <div class="mb-6 flex justify-center">
+                  <div class="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border-2 border-arvi-background">
+                    <Icon name={service.icon} class="w-12 h-12 text-arvi-secondary group-hover:text-arvi-primary transition-colors duration-300" />
+                  </div>
+                </div>
+                <h3 class="text-xl md:text-2xl font-heading text-arvi-text mb-3 group-hover:text-arvi-secondary transition-colors duration-300">{service.title}</h3>
+                <p class="text-arvi-text/80 mb-6 text-sm">
+                  {service.description}
+                </p>
+                <ul class="space-y-3 mb-6 text-left">
+                  {service.features.map((feature) => (
+                    <li class="flex items-start text-sm text-arvi-text/90 group-hover:text-arvi-text transition-colors duration-300">
+                      <div class="w-2 h-2 bg-arvi-accent rounded-full mr-3 flex-shrink-0 mt-1.5 group-hover:bg-arvi-primary transition-colors duration-300"></div>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        ))}
+      </div>
+
+      <!-- Garantías de servicio -->
+      <div class="mt-24 py-12 px-6 bg-gradient-to-r from-arvi-primary/5 via-white to-arvi-secondary/5 rounded-2xl shadow-sm border border-arvi-primary/10">
+        <h3 class="text-2xl md:text-3xl font-heading text-center text-arvi-text mb-10">
+          Nuestra <span class="text-arvi-secondary">Garantía</span> de <span class="text-arvi-primary">Calidad</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-4 lg:gap-8">
+          <div class="text-center p-5 hover:bg-white rounded-xl transition-all duration-300 hover:shadow-md group hover:-translate-y-1 border border-transparent hover:border-arvi-primary/10">
+            <div class="w-16 h-16 bg-arvi-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-arvi-primary/20 transition-colors duration-300">
+              <Icon name="mdi:clock-fast" class="w-8 h-8 text-arvi-primary" />
+            </div>
+            <h4 class="text-lg font-heading text-arvi-text mb-2 group-hover:text-arvi-primary transition-colors duration-300">Montaje Rápido</h4>
+            <p class="text-sm text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">2-4 horas promedio para instalación completa</p>
+          </div>
+          
+          <div class="text-center p-5 hover:bg-white rounded-xl transition-all duration-300 hover:shadow-md group hover:-translate-y-1 border border-transparent hover:border-arvi-secondary/10">
+            <div class="w-16 h-16 bg-arvi-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-arvi-secondary/20 transition-colors duration-300">
+              <Icon name="mdi:shield-check" class="w-8 h-8 text-arvi-secondary" />
+            </div>
+            <h4 class="text-lg font-heading text-arvi-text mb-2 group-hover:text-arvi-secondary transition-colors duration-300">100% Seguro</h4>
+            <p class="text-sm text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">Todas nuestras certificaciones al día</p>
+          </div>
+          
+          <div class="text-center p-5 hover:bg-white rounded-xl transition-all duration-300 hover:shadow-md group hover:-translate-y-1 border border-transparent hover:border-arvi-accent/10">
+            <div class="w-16 h-16 bg-arvi-accent/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-arvi-accent/20 transition-colors duration-300">
+              <Icon name="mdi:account-group" class="w-8 h-8 text-arvi-accent" />
+            </div>
+            <h4 class="text-lg font-heading text-arvi-text mb-2 group-hover:text-arvi-accent transition-colors duration-300">Personal Capacitado</h4>
+            <p class="text-sm text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">Operadores con experiencia y certificaciones</p>
+          </div>
+          
+          <div class="text-center p-5 hover:bg-white rounded-xl transition-all duration-300 hover:shadow-md group hover:-translate-y-1 border border-transparent hover:border-arvi-primary/10">
+            <div class="w-16 h-16 bg-arvi-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-arvi-secondary/20 transition-colors duration-300">
+              <Icon name="mdi:leaf-circle" class="w-8 h-8 text-arvi-secondary" />
+            </div>
+            <h4 class="text-lg font-heading text-arvi-text mb-2 group-hover:text-arvi-secondary transition-colors duration-300">Energía Sustentable</h4>
+            <p class="text-sm text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">Opciones eco-amigables para tu evento</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

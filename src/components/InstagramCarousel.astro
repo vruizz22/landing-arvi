@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import Button from '@components/ui/Button.astro';
 
 // En un entorno real, se usaría la API de Instagram o un servicio como Instagram Basic Display API
 // Mientras, usaremos datos simulados
@@ -127,15 +128,16 @@ const truncateText = (text: string, maxLength: number): string => {
   </div>
   
   <div class="text-center mt-10">
-    <a 
+    <Button 
       href="https://www.instagram.com/arvi.cl/" 
-      target="_blank" 
-      rel="noopener noreferrer"
-      class="inline-flex items-center bg-arvi-primary bg-gradient-to-r from-arvi-primary to-arvi-secondary text-arvi-background px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 font-medium"
+      external={true}
+      variant="gradient"
+      size="lg"
+      icon="mdi:instagram"
+      iconPosition="left"
     >
-      <Icon name="mdi:instagram" class="w-5 h-5 mr-2" />
-      <span>Seguir a ARVI en Instagram</span>
-    </a>
+      Seguir a ARVI en Instagram
+    </Button>
   </div>
 </div>
 
