@@ -95,6 +95,18 @@
     color: var(--arvi-accent) !important;
   }
   
+  .text-arvi-text\/70 {
+    color: rgba(51, 51, 51, 0.7) !important;
+  }
+  
+  .text-arvi-text\/80 {
+    color: rgba(51, 51, 51, 0.8) !important;
+  }
+  
+  .text-arvi-text\/90 {
+    color: rgba(51, 51, 51, 0.9) !important;
+  }
+  
   .bg-arvi-text {
     background-color: var(--arvi-text) !important;
   }
@@ -165,6 +177,11 @@
   .via-arvi-background\/30 {
     --tw-gradient-via: rgba(245, 246, 247, 0.3) !important;
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
+  }
+  
+  .via-white {
+    --tw-gradient-via: rgba(255, 255, 255, 1) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
   }
   
   .to-white {
@@ -481,12 +498,72 @@ body {
     background-color: rgba(4, 155, 61, 0.05);
   }
   
+  .bg-arvi-primary\/10 {
+    background-color: rgba(195, 169, 60, 0.1);
+  }
+  
+  .bg-arvi-secondary\/10 {
+    background-color: rgba(4, 155, 61, 0.1);
+  }
+  
+  .bg-arvi-accent\/10 {
+    background-color: rgba(142, 205, 32, 0.1);
+  }
+  
+  .bg-arvi-primary\/20 {
+    background-color: rgba(195, 169, 60, 0.2);
+  }
+  
+  .bg-arvi-secondary\/20 {
+    background-color: rgba(4, 155, 61, 0.2);
+  }
+  
+  .bg-arvi-accent\/20 {
+    background-color: rgba(142, 205, 32, 0.2);
+  }
+  
   .border-arvi-primary\/10 {
     border-color: rgba(195, 169, 60, 0.1);
   }
   
   .border-arvi-secondary\/10 {
     border-color: rgba(4, 155, 61, 0.1);
+  }
+  
+  .border-arvi-primary\/20 {
+    border-color: rgba(195, 169, 60, 0.2);
+  }
+  
+  .border-arvi-secondary\/20 {
+    border-color: rgba(4, 155, 61, 0.2);
+  }
+  
+  .border-arvi-secondary\/30 {
+    border-color: rgba(4, 155, 61, 0.3);
+  }
+  
+  .border-arvi-accent\/20 {
+    border-color: rgba(142, 205, 32, 0.2);
+  }
+  
+  .border-arvi-accent\/10 {
+    border-color: rgba(142, 205, 32, 0.1);
+  }
+  
+  .border-transparent {
+    border-color: transparent;
+  }
+  
+  .hover\:border-arvi-primary\/10:hover {
+    border-color: rgba(195, 169, 60, 0.1);
+  }
+  
+  .hover\:border-arvi-secondary\/10:hover {
+    border-color: rgba(4, 155, 61, 0.1);
+  }
+  
+  .hover\:border-arvi-accent\/10:hover {
+    border-color: rgba(142, 205, 32, 0.1);
   }
   
   /* Transformaciones para efectos hover */
@@ -509,4 +586,62 @@ body {
     --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
     --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+  
+  .hover\:shadow-md:hover {
+    --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+  
+  .hover\:shadow-xl:hover {
+    --tw-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+  
+  .group-hover\:scale-110:group-hover {
+    --tw-scale-x: 1.1;
+    --tw-scale-y: 1.1;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+  
+  .group-hover\:text-arvi-primary {
+    color: var(--arvi-primary) !important;
+  }
+  
+  .group-hover\:text-arvi-secondary {
+    color: var(--arvi-secondary) !important;
+  }
+  
+  .group-hover\:text-arvi-accent {
+    color: var(--arvi-accent) !important;
+  }
+  
+  .group-hover\:text-arvi-text {
+    color: var(--arvi-text) !important;
+  }
+  
+  .group-hover\:text-arvi-text\/90 {
+    color: rgba(51, 51, 51, 0.9) !important;
+  }
+  
+  .group-hover\:bg-arvi-primary {
+    background-color: var(--arvi-primary) !important;
+  }
+  
+  .transition-colors {
+    transition-property: color, background-color, border-color, fill, stroke, -webkit-text-decoration-color, text-decoration-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  
+  .transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  
+  .duration-500 {
+    transition-duration: 500ms;
   }
