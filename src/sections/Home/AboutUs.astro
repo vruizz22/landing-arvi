@@ -2,6 +2,7 @@
 import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
 import { Icon } from 'astro-icon/components';
+import InstagramCarousel from '@components/InstagramCarousel.astro';
 ---
 
 <section class="py-16 bg-arvi-background" id="nosotros">
@@ -125,6 +126,21 @@ import { Icon } from 'astro-icon/components';
           class="w-full h-[300px] md:h-[400px] object-cover transform hover:scale-105 transition-transform duration-700 ease-in-out"
         />
       </div>
+
+      <!-- Carrusel de Instagram -->
+      <div class="mt-24 mb-12 relative">
+        <!-- Fondo decorativo para la sección de Instagram -->
+        <div class="absolute inset-0 bg-gradient-to-b from-arvi-background to-arvi-primary/5 rounded-3xl -mx-4 -my-8 z-0"></div>
+        <!-- Patrón decorativo -->
+        <div class="absolute top-0 right-0 w-32 h-32 opacity-10">
+          <Icon name="mdi:instagram" class="w-full h-full text-arvi-primary" />
+        </div>
+        <!-- Contenido del carrusel -->
+        <div class="relative z-10">
+          <InstagramCarousel />
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
