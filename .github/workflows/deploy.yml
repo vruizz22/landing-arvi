@@ -27,6 +27,8 @@ jobs:
 
       - name: Verify installation
         run: |
+          echo "Node version: $(node -v)"
+          echo "NPM version: $(npm -v)"
           echo "Node modules installed:"
           ls -la node_modules | head -n 10
           echo "..."
@@ -54,10 +56,28 @@ jobs:
             --exclude "*" --include "*.html" --include "index.html" \
             --cache-control "max-age=60,public"
 
-      - name: Upload sitemap/robots (if any)
+      - name: Upload sitemaps (XML) and robots (ensure content-type)
+        shell: bash
         run: |
-          aws s3 cp ./dist/sitemap.xml s3://${{ secrets.S3_BUCKET }}/sitemap.xml --cache-control "max-age=3600,public" || true
-          aws s3 cp ./dist/robots.txt s3://${{ secrets.S3_BUCKET }}/robots.txt --cache-control "max-age=3600,public" || true
+          # upload sitemap-index.xml if present
+          if [ -f ./dist/sitemap-index.xml ]; then
+            aws s3 cp ./dist/sitemap-index.xml s3://${{ secrets.S3_BUCKET }}/sitemap-index.xml \
+              --content-type "application/xml" --cache-control "max-age=3600,public"
+          fi
+
+          # upload any sitemap-*.xml files
+          for f in ./dist/sitemap-*.xml; do
+            if [ -f "$f" ]; then
+              aws s3 cp "$f" s3://${{ secrets.S3_BUCKET }}/$(basename "$f") \
+                --content-type "application/xml" --cache-control "max-age=3600,public"
+            fi
+          done
+
+          # upload robots.txt if exists
+          if [ -f ./dist/robots.txt ]; then
+            aws s3 cp ./dist/robots.txt s3://${{ secrets.S3_BUCKET }}/robots.txt \
+              --content-type "text/plain" --cache-control "max-age=3600,public"
+          fi
 
       - name: Invalidate CloudFront
         run: |
