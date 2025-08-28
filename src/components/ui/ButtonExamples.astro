@@ -1,0 +1,88 @@
+---
+import Button from '@components/ui/Button.astro';
+---
+
+<!-- Estos son ejemplos de uso del componente Button.
+     Puedes copiar y pegar estos ejemplos en tu código 
+     para utilizarlos en diferentes secciones. -->
+
+<h3>Ejemplos de botones:</h3>
+
+<div class="space-y-4">
+  <div class="space-x-2">
+    <h4 class="mb-2">Variantes de color:</h4>
+    <Button href="#" variant="primary">
+      Botón Primario
+    </Button>
+    <Button href="#" variant="secondary">
+      Botón Secundario
+    </Button>
+    <Button href="#" variant="accent">
+      Botón Acento
+    </Button>
+    <Button href="#" variant="gradient">
+      Botón Gradiente
+    </Button>
+  </div>
+
+  <div class="space-x-2">
+    <h4 class="mb-2">Tamaños:</h4>
+    <Button href="#" variant="primary" size="sm">
+      Pequeño
+    </Button>
+    <Button href="#" variant="primary" size="md">
+      Mediano
+    </Button>
+    <Button href="#" variant="primary" size="lg">
+      Grande
+    </Button>
+  </div>
+
+  <div class="space-x-2">
+    <h4 class="mb-2">Con iconos:</h4>
+    <Button href="#" variant="primary" icon="mdi:heart" iconPosition="left">
+      Me gusta
+    </Button>
+    <Button href="#" variant="secondary" icon="mdi:arrow-right" iconPosition="right">
+      Siguiente
+    </Button>
+    <Button href="#" variant="gradient" icon="mdi:instagram" iconPosition="left">
+      Instagram
+    </Button>
+    <Button href="#" variant="accent" icon="mdi:whatsapp" iconPosition="left">
+      WhatsApp
+    </Button>
+  </div>
+
+  <div class="space-x-2">
+    <h4 class="mb-2">Enlaces externos:</h4>
+    <Button 
+      href="https://www.instagram.com/arvi.cl/" 
+      variant="gradient" 
+      icon="mdi:instagram" 
+      iconPosition="left"
+      external={true}
+    >
+      Instagram
+    </Button>
+  </div>
+</div>
+
+<!-- 
+Uso del componente Button:
+
+<Button 
+  href="URL_DESTINO"  // URL a la que dirigirá el botón
+  variant="primary"   // Opciones: "primary", "secondary", "accent", "gradient"
+  size="md"           // Opciones: "sm", "md", "lg"
+  icon="mdi:nombre-icono"  // Nombre del icono a utilizar (opcional)
+  iconPosition="left"      // Posición del icono: "left" o "right" (opcional)
+  external={true}          // Si es true, abre en nueva pestaña (opcional)
+  class="clases-adicionales" // Clases adicionales (opcional)
+>
+  Texto del botón
+</Button>
+-->
+
+<!-- Nota: Para mantener el estilo consistente, es recomendable 
+     usar la variante "gradient" para llamadas a la acción principales -->
