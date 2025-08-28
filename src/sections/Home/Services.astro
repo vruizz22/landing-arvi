@@ -9,6 +9,7 @@ const services = [
     title: "Arriendo Juegos Mecánicos",
     description: "Carruseles, mini montañas rusas, autos chocadores y más para todas las edades",
     icon: "tabler:wheel",
+    iconColor: "text-arvi-primary",
     features: ["Equipos certificados", "Operador incluido", "Seguro de responsabilidad"],
     bgColor: "bg-arvi-primary/10",
     borderColor: "border-arvi-primary/20"
@@ -17,6 +18,7 @@ const services = [
     title: "Inflables",
     description: "Castillos, toboganes y juegos inflables para la diversión más segura",
     icon: "streamline-freehand:amusement-park-castle",
+    iconColor: "text-arvi-accent",
     features: ["Desinfección garantizada", "Supervisión incluida", "Materiales premium"],
     bgColor: "bg-arvi-accent/10",
     borderColor: "border-arvi-accent/20"
@@ -25,6 +27,7 @@ const services = [
     title: "Proyectos Sustentables",
     description: "Entretenimiento eco-friendly con energías renovables y materiales reciclables",
     icon: "mdi:leaf",
+    iconColor: "text-arvi-secondary",
     features: ["Energía solar", "Materiales eco", "Certificación verde"],
     bgColor: "bg-arvi-secondary/10",
     borderColor: "border-arvi-secondary/30"
@@ -33,6 +36,7 @@ const services = [
     title: "Eventos Corporativos",
     description: "Soluciones integrales para team building y celebraciones empresariales",
     icon: "mdi:office-building",
+    iconColor: "text-arvi-secondary",
     features: ["Logística completa", "Coordinación profesional", "Actividades personalizadas"],
     bgColor: "bg-arvi-secondary/10",
     borderColor: "border-arvi-secondary/20"
@@ -41,6 +45,7 @@ const services = [
     title: "Celebraciones Municipales",
     description: "Eventos masivos para fiestas patrias, aniversarios y celebraciones públicas",
     icon: "mdi:party-popper",
+    iconColor: "text-arvi-primary",
     features: ["Capacidad masiva", "Permisos incluidos", "Logística especializada"],
     bgColor: "bg-arvi-primary/10",
     borderColor: "border-arvi-primary/20"
@@ -49,6 +54,7 @@ const services = [
     title: "Eventos Escolares",
     description: "Diversión educativa y segura para colegios y jardines infantiles",
     icon: "mdi:school",
+    iconColor: "text-arvi-accent",
     features: ["Actividades educativas", "Seguridad reforzada", "Precios especiales"],
     bgColor: "bg-arvi-accent/10",
     borderColor: "border-arvi-accent/20"
@@ -76,7 +82,7 @@ const services = [
               <CardContent className="text-center p-6">
                 <div class="mb-6 flex justify-center">
                   <div class="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border-2 border-arvi-background">
-                    <Icon name={service.icon} class="w-12 h-12 text-arvi-secondary group-hover:text-arvi-primary transition-colors duration-300" />
+                    <Icon name={service.icon} class={`w-12 h-12 ${service.iconColor} group-hover:text-arvi-primary transition-colors duration-300`} />
                   </div>
                 </div>
                 <h3 class="text-xl md:text-2xl font-heading text-arvi-text mb-3 group-hover:text-arvi-secondary transition-colors duration-300">{service.title}</h3>
