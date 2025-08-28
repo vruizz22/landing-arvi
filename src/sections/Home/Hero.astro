@@ -21,60 +21,64 @@ import { Icon } from 'astro-icon/components';
           <Image 
             src={ArviLogo} 
             alt="ARVI Entretenciones" 
-            width={140} 
+            width={250} 
             class="hover:scale-105 transition-transform duration-500"
           />
         </div>
 
-        <h1 class="mb-4 text-3xl font-heading animate-fade-in">
-          ¡Diversión Sin Límites para Tus Eventos!
+        <h1 class="mb-4 text-5xl font-heading animate-fade-in">
+          ¡<span class="text-arvi-accent">Diversión</span> 
+          <span class="text-arvi-primary">Sin Límites</span>
+          para Tus <span class="text-arvi-secondary">Eventos</span>! 
         </h1>
-        <p class="mb-6 text-base opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+        <p class="mb-4 text-lg opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
           Juegos mecánicos, inflables y soluciones sustentables para crear experiencias inolvidables. 
           Desde Algarrobo para todo Chile.
         </p>
         
-        <!-- Iconos para móvil con más espacio vertical -->
-        <div class="mt-2 mb-14 grid grid-cols-1 gap-4 text-center">
-          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-1">
-            <div class="flex justify-center mb-1">
-              <Icon name="streamline-freehand:circus-tent" class="w-12 h-12 text-arvi-primary" />
+        <!-- Iconos para móvil en disposición vertical -->
+        <div class="mt-6 mb-8 grid grid-cols-1 gap-8 text-center">
+          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-2">
+            <div class="flex justify-center mb-3">
+              <Icon name="streamline-freehand:circus-tent" class="w-16 h-16 text-arvi-primary" />
             </div>
-            <p class="text-sm opacity-90">+15 años de experiencia</p>
+            <p class="text-base opacity-90">+15 años de experiencia</p>
           </div>
-          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-1">
-            <div class="flex justify-center mb-1">
-              <Icon name="mdi:leaf" class="w-12 h-12 text-arvi-secondary" />
+          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-2">
+            <div class="flex justify-center mb-3">
+              <Icon name="mdi:leaf" class="w-16 h-16 text-arvi-secondary" />
             </div>
-            <p class="text-sm opacity-90">Soluciones eco-sustentables</p>
+            <p class="text-base opacity-90">Soluciones eco-sustentables</p>
           </div>
-          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-1">
-            <div class="flex justify-center mb-1">
-              <Icon name="mdi:trophy" class="w-12 h-12 text-arvi-accent" />
+          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-2">
+            <div class="flex justify-center mb-3">
+              <Icon name="mdi:trophy" class="w-16 h-16 text-arvi-accent" />
             </div>
-            <p class="text-sm opacity-90">+1000 eventos realizados</p>
+            <p class="text-base opacity-90">+1000 eventos realizados</p>
           </div>
         </div>
       </div>
     </div>
     
     <!-- Versión desktop centrada verticalmente -->
-    <div class="hidden md:flex flex-col justify-center items-center h-full">
-      <div class="max-w-4xl w-full">
+    <div class="hidden md:flex flex-col justify-center items-center min-h-screen py-12">
+      <div class="max-w-5xl w-full">
         <!-- Logo ARVI para desktop -->
         <div class="flex justify-center mb-8">
           <Image 
             src={ArviLogo} 
             alt="ARVI Entretenciones" 
-            width={180} 
+            width={350} 
             class="hover:scale-105 transition-transform duration-500"
           />
         </div>
 
         <h1 class="mb-6 text-5xl lg:text-6xl font-heading animate-fade-in">
-          ¡Diversión Sin Límites para Tus Eventos!
+          ¡<span class="text-arvi-accent">Diversión</span> 
+          <span class="text-arvi-primary">Sin Límites</span>
+          para Tus <span class="text-arvi-secondary">Eventos</span>! 
         </h1>
-        <p class="mb-8 text-xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+        <p class="mb-8 text-2xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100 text-shadow-black">
           Juegos mecánicos, inflables y soluciones sustentables para crear experiencias inolvidables. 
           Desde Algarrobo para todo Chile.
         </p>
@@ -104,29 +108,31 @@ import { Icon } from 'astro-icon/components';
     </div>
   </div>
 
-  <!-- Indicador de scroll - Versión de escritorio -->
-  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
-    <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+  <!-- Indicador de scroll - Solo visible en desktop -->
+  <div class=" absolute hidden md:block bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+    <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center bg-black/20 backdrop-blur-sm">
       <div class="w-1 h-3 bg-white rounded-full mt-2"></div>
     </div>
   </div>
 
 <script>
-  // Efecto parallax sutil para el fondo con optimización para móviles
+  // Efecto parallax optimizado con límite de traslación para evitar huecos
   document.addEventListener('DOMContentLoaded', () => {
     const parallaxBg = document.getElementById('parallaxBg');
     
     if (parallaxBg) {
       // Detectar si es un dispositivo móvil para aplicar un efecto más ligero
       const isMobile = window.matchMedia("(max-width: 768px)").matches;
-      const parallaxIntensity = isMobile ? 0.08 : 0.15; // Menor intensidad en móviles
+      const parallaxIntensity = isMobile ? 0.06 : 0.12; // Reducimos un poco la intensidad
+      const maxTranslate = isMobile ? 40 : 120; // Límite máximo de traslación en píxeles
       
       window.addEventListener('scroll', () => {
         // Usar requestAnimationFrame para mejor rendimiento
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
-          // Mueve el fondo más lento que el scroll con una intensidad adaptada al dispositivo
-          parallaxBg.style.transform = `scale(1.05) translateY(${scrollY * parallaxIntensity}px)`;
+          // Limitamos la traslación para evitar huecos en el borde inferior
+          const translate = Math.min(scrollY * parallaxIntensity, maxTranslate);
+          parallaxBg.style.transform = `translateY(${translate}px) scale(1.05)`;
         });
       });
     }
