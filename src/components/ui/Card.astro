@@ -1,11 +1,12 @@
 ---
 interface Props {
   className?: string;
+  customClass?: string;
 }
 
-const { className = "" } = Astro.props;
+const { className = "", customClass = "" } = Astro.props;
 ---
 
-<div class={`rounded-lg border border-arvi-text/10 bg-arvi-background p-4 shadow-sm ${className}`}>
+<div class={`rounded-lg border border-arvi-text/10 bg-arvi-background p-4 shadow-sm ${className} ${customClass}`}>
   <slot />
 </div>
