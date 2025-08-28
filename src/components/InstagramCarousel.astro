@@ -1,0 +1,154 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// En un entorno real, se usaría la API de Instagram o un servicio como Instagram Basic Display API
+// Mientras, usaremos datos simulados
+const instagramPosts = [
+  {
+    id: '1',
+    imageUrl: '/images/conocenos.jpg', // Ruta de imagen simulada (necesitarás crear estas imágenes)
+    caption: 'Nuestro equipo preparando un evento corporativo en Santiago. Diversión asegurada! 🎯 #ArviEntretenciones #EventosCorporativos',
+    likes: 70,
+    comments: 2,
+    date: '2025-03-26',
+    location: 'Santiago, Chile'
+  },
+  {
+    id: '2',
+    imageUrl: '/images/servicios.jpg',
+    caption: 'Celebrando la sustentabilidad con nuestros juegos eco-friendly. Cuidar el planeta mientras nos divertimos 🌱 #EcoSustentable #MedioAmbiente',
+    likes: 22,
+    comments: 0,
+    date: '2025-03-28',
+    location: 'Algarrobo, Chile'
+  },
+  {
+    id: '3',
+    imageUrl: '/images/productos.jpg',
+    caption: 'Preparando todo para un increíble cumpleaños infantil en Algarrobo. ¡Los más pequeños disfrutaron al máximo! 🎉 #CumpleañosInfantil #ArviDiversión',
+    likes: 17,
+    comments: 0,
+    date: '2025-03-30',
+    location: 'Algarrobo, Chile'
+  }
+];
+
+// Función para truncar texto
+const truncateText = (text: string, maxLength: number): string => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
+---
+
+<div class="instagram-carousel">
+  <div class="text-center mb-10">
+    <h2 class="text-3xl md:text-5xl font-heading text-arvi-text mb-3">
+      Síguenos en <span class="text-arvi-primary">Instagram</span>
+    </h2>
+    <p class="text-xl text-arvi-text/80 max-w-2xl mx-auto">
+      Mantente al día con nuestras últimas aventuras y eventos en <span class="font-medium text-arvi-secondary">@arvi.cl</span>
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {instagramPosts.map(post => (
+      <a 
+        href="https://www.instagram.com/arvi.cl/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="group"
+      >
+        <div class="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-100">
+          {/* Cabecera del post con logo */}
+          <div class="flex items-center p-3 border-b border-gray-100">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-arvi-primary to-arvi-secondary flex items-center justify-center flex-shrink-0">
+              <img 
+                src="/LOGO_ARVI.png" 
+                alt="ARVI Entretenciones Logo" 
+                class="w-6 h-6 object-contain"
+              />
+            </div>
+            <div class="ml-2">
+              <p class="text-arvi-text font-medium text-sm">arvi.cl</p>
+              <p class="text-xs text-arvi-text/60">{post.location}</p>
+            </div>
+          </div>
+          
+          {/* Imagen principal */}
+          <div class="relative aspect-square overflow-hidden">
+            <img 
+              src={post.imageUrl} 
+              alt={truncateText(post.caption, 30)} 
+              class="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <div class="bg-white/30 backdrop-blur-sm rounded-full p-4 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                <Icon name="mdi:instagram" class="w-8 h-8 text-white" />
+              </div>
+            </div>
+          </div>
+          
+          {/* Sección de interacciones */}
+          <div class="p-4">
+            <div class="flex space-x-3 mb-3">
+              <div class="flex items-center text-arvi-text">
+                <Icon name="mdi:heart" class="w-5 h-5 text-arvi-accent" />
+                <span class="ml-1 text-sm">{post.likes}</span>
+              </div>
+              <div class="flex items-center text-arvi-text">
+                <Icon name="mdi:comment-outline" class="w-5 h-5" />
+                <span class="ml-1 text-sm">{post.comments}</span>
+              </div>
+              <div class="flex items-center text-arvi-text ml-auto">
+                <Icon name="mdi:calendar" class="w-4 h-4 mr-1" />
+                <span class="text-xs">{new Date(post.date).toLocaleDateString('es-ES', {day: 'numeric', month: 'short'})}</span>
+              </div>
+            </div>
+            <p class="text-arvi-text/90 text-sm mb-2">
+              <span class="font-medium">arvi.cl</span>{" "}
+              {truncateText(post.caption, 85)}
+            </p>
+          </div>
+          
+          {/* Footer del post */}
+          <div class="bg-gradient-to-r from-arvi-secondary/10 to-arvi-primary/10 py-3 px-4 flex justify-between items-center">
+            <div class="flex items-center text-xs text-arvi-secondary">
+              <Icon name="mdi:instagram" class="w-4 h-4 mr-1" />
+              <span>Instagram</span>
+            </div>
+            <div class="text-arvi-primary flex items-center text-sm font-medium">
+              <span class="mr-1">Ver post</span>
+              <Icon name="mdi:arrow-right" class="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+  
+  <div class="text-center mt-10">
+    <a 
+      href="https://www.instagram.com/arvi.cl/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="inline-flex items-center bg-arvi-primary bg-gradient-to-r from-arvi-primary to-arvi-secondary text-arvi-background px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 font-medium"
+    >
+      <Icon name="mdi:instagram" class="w-5 h-5 mr-2" />
+      <span>Seguir a ARVI en Instagram</span>
+    </a>
+  </div>
+</div>
+
+<style>
+  /* Añadimos algunas mejoras visuales para el hover */
+  .instagram-carousel a:hover .bg-gradient-to-r {
+    background-size: 200%;
+    animation: gradient-shift 1.5s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>
