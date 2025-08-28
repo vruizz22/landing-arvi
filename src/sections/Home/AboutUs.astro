@@ -1,6 +1,7 @@
 ---
 import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
+import { Icon } from 'astro-icon/components';
 ---
 
 <section class="py-16 bg-arvi-background" id="nosotros">
@@ -22,7 +23,7 @@ import CardContent from '@components/ui/CardContent.astro';
           <div class="space-y-6">   
             <div class="flex items-start space-x-4 group hover:bg-arvi-background/80 hover:shadow-md p-2 rounded-lg transition-all duration-300">
               <div class="w-12 h-12 bg-arvi-secondary text-arvi-background rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
-                📍
+                <Icon name="mdi:map-marker" class="w-6 h-6" />
               </div>
               <div>
                 <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Ubicados en Algarrobo</h4>
@@ -34,7 +35,7 @@ import CardContent from '@components/ui/CardContent.astro';
 
             <div class="flex items-start space-x-4 group hover:bg-arvi-background/80 hover:shadow-md p-2 rounded-lg transition-all duration-300">
               <div class="w-12 h-12 bg-arvi-secondary text-arvi-background rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
-                🌱
+                <Icon name="mdi:leaf" class="w-6 h-6" />
               </div>
               <div>
                 <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Enfoque Eco-Sustentable</h4>
@@ -46,7 +47,7 @@ import CardContent from '@components/ui/CardContent.astro';
 
             <div class="flex items-start space-x-4 group hover:bg-arvi-background/80 hover:shadow-md p-2 rounded-lg transition-all duration-300">
               <div class="w-12 h-12 bg-arvi-secondary text-arvi-background rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
-                🏆
+                <Icon name="mdi:trophy" class="w-6 h-6" />
               </div>
               <div>
                 <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">15+ Años de Experiencia</h4>
@@ -61,7 +62,9 @@ import CardContent from '@components/ui/CardContent.astro';
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="bg-arvi-secondary/10 border-arvi-secondary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-secondary/20">
             <CardContent className="p-6 text-center">
-              <div class="text-3xl mb-3">🎪</div>
+              <div class="text-arvi-secondary mb-3 flex justify-center">
+                <Icon name="mdi:security" class="w-8 h-8" />
+              </div>
               <h4 class="mb-2 text-lg font-heading text-arvi-text">Seguridad</h4>
               <p class="text-sm text-arvi-text/70">
                 Equipos certificados y personal capacitado
@@ -71,7 +74,9 @@ import CardContent from '@components/ui/CardContent.astro';
 
           <Card className="bg-arvi-primary/10 border-arvi-primary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-primary/20">
             <CardContent className="p-6 text-center">
-              <div class="text-3xl mb-3">⚡</div>
+              <div class="text-arvi-primary mb-3 flex justify-center">
+                <Icon name="mdi:flash" class="w-8 h-8" />
+              </div>
               <h4 class="mb-2 text-lg font-heading text-arvi-text">Rapidez</h4>
               <p class="text-sm text-arvi-text/70">
                 Montaje eficiente en tiempo récord
@@ -81,7 +86,9 @@ import CardContent from '@components/ui/CardContent.astro';
 
           <Card className="bg-arvi-accent/10 border-arvi-accent/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-accent/20">
             <CardContent className="p-6 text-center">
-              <div class="text-3xl mb-3">🤝</div>
+              <div class="text-arvi-accent mb-3 flex justify-center">
+                <Icon name="mdi:handshake" class="w-8 h-8" />
+              </div>
               <h4 class="mb-2 text-lg font-heading text-arvi-text">Confianza</h4>
               <p class="text-sm text-arvi-text/70">
                 Respaldo y garantía en cada evento
@@ -91,7 +98,9 @@ import CardContent from '@components/ui/CardContent.astro';
 
           <Card className="bg-arvi-primary/10 border-arvi-secondary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-primary/20">
             <CardContent className="p-6 text-center">
-              <div class="text-3xl mb-3">🌟</div>
+              <div class="text-arvi-primary mb-3 flex justify-center">
+                <Icon name="mdi:star" class="w-8 h-8" />
+              </div>
               <h4 class="mb-2 text-lg font-heading text-arvi-text">Calidad</h4>
               <p class="text-sm text-arvi-text/70">
                 Equipos premium y servicio excepcional
