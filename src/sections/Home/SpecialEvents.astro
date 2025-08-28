@@ -5,7 +5,7 @@ import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
 ---
 
-<section class="py-16 bg-gradient-to-br from-arvi-primary/10 via-arvi-background to-arvi-secondary/10 relative">
+<section class="py-16 bg-gradient-to-br from-arvi-primary/60 via-arvi-background to-arvi-secondary/60 relative">
   {/* Elementos decorativos de fondo */}
   <div class="absolute inset-0 opacity-5">
     <div class="absolute top-10 left-10 w-32 h-32 bg-arvi-primary rounded-2xl blur-3xl"></div>
@@ -24,8 +24,10 @@ import CardContent from '@components/ui/CardContent.astro';
         <Icon name="lucide:sparkles" class="w-8 h-8 text-arvi-primary animate-pulse" />
       </div>
       
-      <h2 class="text-5xl md:text-4xl font-heading text-arvi-text mb-6">
-        ¡<span class="text-white">Vive</span> las <span class="text-red-500">Fiestas</span> <span class="text-blue-800">Patrias</span> con ARVI!
+      <h2 class="text-5xl md:text-6xl font-heading text-arvi-text mb-6">
+        ¡<span class="text-arvi-background">Vive</span> las
+         <span class="text-red-500">Fiestas</span> <span class="text-blue-800">Patrias</span>
+          con <span class="text-arvi-primary">ARVI</span>!
       </h2>
       
       <p class="text-xl text-arvi-text/80 max-w-3xl mx-auto">
@@ -35,8 +37,8 @@ import CardContent from '@components/ui/CardContent.astro';
     </div>
 
     {/* Tarjeta de evento principal */}
-    <div class="max-w-5xl mx-auto mb-12">
-      <Card customClass="overflow-hidden border-2 border-arvi-primary/30 shadow-2xl bg-gradient-to-r from-white via-arvi-background/30 to-white">
+    <div class="max-w-6xl mx-auto mb-16">
+      <Card customClass="overflow-hidden border-2 border-arvi-primary/30 shadow-2xl bg-gradient-to-r from-white via-arvi-background/30 to-white hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         <CardContent customClass="p-0">
           <div class="grid md:grid-cols-2 gap-0">
             {/* Detalles del evento */}
@@ -66,7 +68,7 @@ import CardContent from '@components/ui/CardContent.astro';
                 
                 <div class="flex items-center gap-3 text-arvi-text/80">
                   <Icon name="lucide:calendar" class="w-5 h-5 text-arvi-secondary" />
-                  <span>15 - 18 de Septiembre, 2024</span>
+                  <span>15 - 18 de Septiembre, 2025</span>
                 </div>
                 
                 <div class="flex items-center gap-3 text-arvi-text/80">
@@ -79,16 +81,16 @@ import CardContent from '@components/ui/CardContent.astro';
                 <a 
                   href="https://wa.me/56912345678?text=¡Hola!%20Me%20interesa%20saber%20más%20sobre%20los%20eventos%20especiales%20de%20ARVI%20en%20el%20Estadio%20Nacional.%20¿Podrían%20darme%20más%20información?" 
                   target="_blank"
-                  class="bg-arvi-primary hover:bg-arvi-primary/90 text-arvi-text py-2 px-4 rounded-2xl flex items-center justify-center flex-1 transition-colors duration-300"
+                  class="transition-all duration-300 hover:-translate-y-1 bg-arvi-primary hover:bg-arvi-primary/90 text-arvi-background py-2 px-4 rounded-2xl flex items-center justify-center flex-1 "
                 >
-                  <Icon name="lucide:message-circle" class="w-5 h-5 mr-2" /> ¡Quiero participar!
+                  <Icon name="lucide:message-circle" class="w-9 h-7 mr-5" /> ¡Quiero participar!
                 </a>
                 <a 
                   href="https://www.google.com/maps/place/Estadio+Nacional+Julio+Mart%C3%ADnez+Pr%C3%A1danos/@-33.4644994,-70.6106319,17z/data=!3m1!4b1!4m6!3m5!1s0x9662cfed639ab813:0xb92488060556a1df!8m2!3d-33.4644994!4d-70.6106319!16zL20vMDdkcjFx?hl=es-419&entry=ttu" 
                   target="_blank"
-                  class="border border-arvi-secondary text-arvi-secondary hover:bg-arvi-secondary hover:text-white py-2 px-4 rounded-2xl flex items-center justify-center flex-1 transition-colors duration-300"
+                  class="bg-arvi-secondary text-arvi-background hover:bg-arvi-secondary hover:text-white py-2 px-4 rounded-2xl flex items-center justify-center flex-1 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <Icon name="lucide:map-pin" class="w-5 h-5 mr-2" /> Ver ubicación
+                  <Icon name="lucide:map-pin" class="w-9 h-7 mr-5" /> Ver ubicación
                 </a>
               </div>
             </div>
@@ -98,7 +100,7 @@ import CardContent from '@components/ui/CardContent.astro';
               <img 
                 src="/images/estadio_nacional.jpg" 
                 alt="Estadio Nacional - Evento de Fiestas Patrias" 
-                class="absolute inset-0 w-full h-full object-cover"
+                class="absolute inset-0 w-full h-full object-cover rounded-2xl"
               />
             </div>
           </div>
@@ -108,51 +110,51 @@ import CardContent from '@components/ui/CardContent.astro';
 
     {/* Próximos eventos */}
     <div class="text-center">
-      <h3 class="text-3xl font-heading text-arvi-text mb-8">
+      <h3 class="text-4xl font-heading text-arvi-text mb-10">
         Próximos <span class="text-arvi-primary">Eventos Especiales</span>
       </h3>
       
       <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-shadow bg-arvi-background/50">
+        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-arvi-background/50 group">
           <CardContent customClass="p-6 text-center">
             <div class="text-4xl mb-3">
-              <Icon name="lucide:tree-pine" class="w-16 h-16 mx-auto text-arvi-accent" />
+              <Icon name="lucide:tree-pine" class="w-16 h-16 mx-auto text-arvi-accent transition-transform duration-300 group-hover:scale-110" />
             </div>
             <h4 class="text-xl font-heading text-arvi-text mb-2">Navidad Mágica</h4>
             <p class="text-sm text-arvi-text/70 mb-4">
               Celebra la Navidad con juegos temáticos y shows especiales
             </p>
-            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm">
+            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm hover:bg-arvi-secondary hover:text-white transition-colors duration-300">
               Diciembre 2025
             </div>
           </CardContent>
         </Card>
 
-        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-shadow bg-arvi-background/50">
+        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-arvi-background/50 group">
           <CardContent customClass="p-6 text-center">
             <div class="text-4xl mb-3">
-              <Icon name="lucide:sun" class="w-16 h-16 mx-auto text-arvi-primary" />
+              <Icon name="lucide:sun" class="w-16 h-16 mx-auto text-arvi-primary transition-transform duration-300 group-hover:scale-110" />
             </div>
             <h4 class="text-xl font-heading text-arvi-text mb-2">Verano Divertido</h4>
             <p class="text-sm text-arvi-text/70 mb-4">
               Juegos acuáticos y actividades para combatir el calor
             </p>
-            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm">
+            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm hover:bg-arvi-secondary hover:text-white transition-colors duration-300">
               Enero 2026
             </div>
           </CardContent>
         </Card>
 
-        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-shadow bg-arvi-background/50">
+        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-arvi-background/50 group">
           <CardContent customClass="p-6 text-center">
             <div class="text-4xl mb-3">
-              <Icon name="lucide:heart" class="w-16 h-16 mx-auto text-red-500" />
+              <Icon name="lucide:heart" class="w-16 h-16 mx-auto text-red-500 transition-transform duration-300 group-hover:scale-110" />
             </div>
             <h4 class="text-xl font-heading text-arvi-text mb-2">Festival del Amor</h4>
             <p class="text-sm text-arvi-text/70 mb-4">
               Eventos especiales para celebrar San Valentín en pareja y familia
             </p>
-            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm">
+            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm hover:bg-arvi-secondary hover:text-white transition-colors duration-300">
               Febrero 2026
             </div>
           </CardContent>
