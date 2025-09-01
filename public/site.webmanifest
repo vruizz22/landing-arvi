@@ -1,0 +1,41 @@
+{
+  "name": "ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables",
+  "short_name": "ARVI Chile",
+  "icons": [
+    {
+      "src": "/LOGO_ARVI-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/LOGO_ARVI-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48 64x64 192x192",
+      "type": "image/x-icon"
+    }
+  ],
+  "theme_color": "#C3A93C",
+  "background_color": "#F5F6F7",
+  "display": "standalone",
+  "start_url": "/",
+  "orientation": "any",
+  "description": "Empresa Chilena de Juegos Mecánicos, Inflables y Sustentables para eventos",
+  "lang": "es-CL",
+  "dir": "ltr",
+  "categories": ["entertainment", "events", "business"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "scope": "/",
+  "shortcuts": [],
+  "accent_color": "#049b3d"
+}
