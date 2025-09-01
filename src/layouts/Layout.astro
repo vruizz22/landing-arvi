@@ -9,29 +9,45 @@ import Footer from '@sections/Footer.astro'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>ARVI Chile - Empresa de Juegos mecánicos y sustentables</title>
+    <title>ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables</title>
 
-    <link rel="icon" type="image/x-icon" href="/LOGO_ARVI.png" />
+     <!-- fallback clásico -->
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/LOGO_ARVI.png">
 
-    <!--
-		Etiquetas 'SEO' meta tags, icons, open graph, etc.
-	-->
+    <!-- Apple / iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
+    <!-- Manifest (PWA / Android) -->
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Legacy -->
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Meta Tags SEO -->
+    <meta name="robots" content="index, follow" />
     <meta
       name="description"
-      content="Empresa Chilena de Juegos mecánicos y sustentables. 
-	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
-	  Reserva hoy."
+      content="Empresa Chilena de Juegos Mecánicos, Inflables y Sustentables para eventos. 
+      Atracciones modulares y remolcables, fáciles de instalar y transportar.
+      Servicios para municipios, colegios, empresas y eventos corporativos. Reserva hoy."
     />
 
     <link rel="canonical" href="https://arvi.cl/" />
+    
+    <!-- Etiquetas adicionales SEO -->
+    <meta name="keywords" content="juegos mecánicos, inflables, entretenimiento sustentable, eventos corporativos, fiestas infantiles, atracciones modulares, juegos para eventos, día del niño, ferias temáticas, eventos escolares, celebraciones municipales, entretenimiento ecológico, atracciones para niños, juegos infantiles, eventos sustentables" />
+    <meta name="author" content="ARVI Chile" />
+    <meta name="geo.region" content="CL" />
+    <meta name="geo.position" content="-33.4372;-70.6506" />
+    <meta name="ICBM" content="-33.4372, -70.6506" />
 
-
+    <!-- Open Graph / Facebook -->
     <meta property="og:url" content="https://arvi.cl" />
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
-      content="ARVI Chile - Empresa de Juegos mecánicos y sustentables"
+      content="ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables"
     />
     <meta
       property="og:description"
@@ -40,21 +56,53 @@ import Footer from '@sections/Footer.astro'
 	  Reserva hoy."
     />
     <meta property="og:image" content="https://arvi.cl/og.jpg" />
+    <meta property="og:image:alt" content="ARVI Chile - Juegos Mecánicos, Inflables y Sustentables" />
     <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="ARVI Chile" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@arvi.cl" />
     <meta
       name="twitter:title"
-      content="Reserva juegos mecánicos sustentables en ARVI"
+      content="ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables"
     />
     <meta
-      name="twitter:description"
+      property="og:description"
       content="Empresa Chilena de Juegos mecánicos y sustentables. 
 	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
 	  Reserva hoy."
     />
-	<meta name="twitter:image" content="https://arvi.cl/og.jpg" />
+    <meta name="twitter:image" content="https://arvi.cl/og.jpg" />
+    <meta name="twitter:image:alt" content="ARVI Chile - Juegos Mecánicos, Inflables y Sustentables" />
+    
+    <!-- Datos estructurados Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "ARVI Chile",
+        "image": "https://arvi.cl/og.jpg",
+        "logo": "https://arvi.cl/LOGO_ARVI.png",
+        "url": "https://arvi.cl",
+        "description": "Empresa Chilena especializada en juegos mecánicos, inflables y sustentables para eventos. Ofrecemos entretenimiento para municipios, colegios, empresas y celebraciones.",
+        "priceRange": "$$",
+        "telephone": "+56 9 1234 5678",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "CL",
+          "addressLocality": "Santiago"
+        },
+        "sameAs": [
+          "https://www.instagram.com/arvi.cl/"
+        ],
+        "serviceArea": "Chile",
+        "availableService": {
+          "@type": "Service",
+          "name": "Juegos Mecánicos, Inflables y Atracciones Sustentables para Eventos"
+        }
+      }
+    </script>
   </head>
   <body>
     <slot />
