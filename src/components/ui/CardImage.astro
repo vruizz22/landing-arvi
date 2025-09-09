@@ -1,0 +1,66 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  title: string;
+  description: string;
+  className?: string;
+  width?: string;
+  height?: string;
+  overlayIntensity?: 'light' | 'medium' | 'dark';
+  textPosition?: 'bottom' | 'center' | 'top';
+}
+
+const { 
+  src,
+  alt,
+  title,
+  description,
+  className = "",
+  width = "w-full",
+  height = "h-96",
+  overlayIntensity = "medium",
+  textPosition = "bottom"
+} = Astro.props;
+
+// Configuración del overlay según intensidad
+const overlayClasses = {
+  light: "from-black/50 via-black/20 to-transparent",
+  medium: "from-black/70 via-black/30 to-transparent", 
+  dark: "from-black/80 via-black/50 to-transparent"
+};
+
+// Configuración de posición del texto
+const textPositionClasses = {
+  bottom: "justify-end",
+  center: "justify-center",
+  top: "justify-start"
+};
+---
+
+<div class={`relative ${width} ${height} rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group ${className}`}>
+  <!-- Imagen de fondo que cubre toda la card -->
+  <img 
+    src={src} 
+    alt={alt} 
+    class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+  />
+  
+  <!-- Overlay para mejorar legibilidad del texto -->
+  <div class={`absolute inset-0 bg-gradient-to-t ${overlayClasses[overlayIntensity]} transition-opacity duration-300 group-hover:opacity-80`}></div>
+  
+  <!-- Contenido superpuesto -->
+  <div class={`absolute inset-0 p-6 flex flex-col ${textPositionClasses[textPosition]} text-center text-white`}>
+    <div class="transform transition-transform duration-300 group-hover:translate-y-[-4px]">
+      <h4 class="mb-2 text-3xl font-heading text-arvi-primary font-semibold drop-shadow-md">
+        {title}
+      </h4>
+      <p class="text-lg text-white/90 drop-shadow-sm leading-relaxed">
+        {description}
+      </p>
+    </div>
+  </div>
+  
+  <!-- Efecto de brillo sutil en hover -->
+  <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
+</div>

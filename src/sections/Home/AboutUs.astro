@@ -1,6 +1,7 @@
 ---
 import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
+import CardImage from '@components/ui/CardImage.astro';
 import { Icon } from 'astro-icon/components';
 import InstagramCarousel from '@components/InstagramCarousel.astro';
 import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
@@ -111,7 +112,67 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           </Card>
         </div>
       </div>
-      
+
+      <!-- Sección de Nuestros Productos con Carousel -->
+      <h2 class="text-center text-4xl md:text-5xl mb-12 font-heading text-arvi-text mt-20">Nuestros 
+            <span class="text-arvi-secondary">Productos</span> 
+            <span class="text-arvi-primary">Destacados</span>
+        </h2>
+        
+      <!-- Son 5 cards del componente CARD, cada una contiene 1 juego 
+      1. Barco Pirata
+      2. Globos Samba
+      3. Canopy
+      4. Tagada
+      5. Rueda 
+      -->
+
+      <!-- Primeras 4 cards en matriz 2x2 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 justify-items-center">
+        <CardImage 
+          src="/images/barco_pirata.jpg"
+          alt="Barco Pirata"
+          title="Barco Pirata"
+          description="La atracción estrella que garantiza diversión para todas las edades."
+        />
+
+        <CardImage 
+          src="/images/globos_samba.jpg"
+          alt="Globos Samba"
+          title="Globos Samba"
+          description="Emoción y adrenalina en cada vuelta, ideal para los amantes de la velocidad."
+        />
+
+        <CardImage 
+          src="/images/rueda.jpg"
+          alt="Rueda"
+          title="Rueda"
+          description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
+          width="w-full"
+        />
+
+        <CardImage 
+          src="/images/tagada.jpg"
+          alt="Tagada"
+          title="Tagada"
+          description="Diversión sin fin con giros y vueltas que harán vibrar a todos."
+        />
+
+
+      </div>
+
+      <!-- Quinta card centrada debajo -->
+      <!--<div class="flex justify-center mb-12">
+        <CardImage 
+          src="/images/rueda.jpg"
+          alt="Rueda"
+          title="Rueda"
+          description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
+          width="w-full"
+        />
+      </div>
+      -->
+      <!-- Sección de Nuestro Equipo con Carousel -->
       <h2 class="text-4xl md:text-5xl mb-4 font-heading text-arvi-text mt-20">Nuestro 
             <span class="text-arvi-secondary">Equipo</span> 
             <span class="text-arvi-primary">ARVI</span>
