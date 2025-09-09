@@ -3,6 +3,8 @@ import { Icon } from 'astro-icon/components';
 import Button from '@components/ui/Button.astro';
 import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
+import PopUp from '@components/ui/PopUp.astro';
+import CardImage from '@components/ui/CardImage.astro';
 ---
 
 <section class="py-16 bg-gradient-to-br from-arvi-primary/60 via-arvi-background to-arvi-secondary/60 relative">
@@ -108,57 +110,132 @@ import CardContent from '@components/ui/CardContent.astro';
       </Card>
     </div>
 
-    {/* Próximos eventos */}
+    {/* Eventos Realizados */}
     <div class="text-center">
-      <h3 class="text-4xl font-heading text-arvi-text mb-10">
-        Próximos <span class="text-arvi-primary">Eventos Especiales</span>
+      <h3 class="text-5xl font-heading text-arvi-text mb-12">
+        Eventos <span class="text-arvi-primary">Realizados</span>
       </h3>
       
-      <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-arvi-background/50 group">
-          <CardContent customClass="p-6 text-center">
-            <div class="text-4xl mb-3">
-              <Icon name="lucide:tree-pine" class="w-16 h-16 mx-auto text-arvi-accent transition-transform duration-300 group-hover:scale-110" />
-            </div>
-            <h4 class="text-xl font-heading text-arvi-text mb-2">Navidad Mágica</h4>
-            <p class="text-sm text-arvi-text/70 mb-4">
-              Celebra la Navidad con juegos temáticos y shows especiales
-            </p>
-            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm hover:bg-arvi-secondary hover:text-white transition-colors duration-300">
-              Diciembre 2025
-            </div>
-          </CardContent>
-        </Card>
+      <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <!-- Chile Lindo 2025 - Vitacura -->
+        <PopUp 
+          images={[
+            "/images/eventos/chile-lindo/chile-lindo-1.jpg",
+            "/images/eventos/chile-lindo/chile-lindo-2.jpg",
+            "/images/eventos/chile-lindo/chile-lindo-3.jpg"
+          ]}
+          alt="Festival Chile Lindo 2025 en Vitacura"
+          showArrows={true}
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage
+            images={[
+              "/images/eventos/chile-lindo/chile-lindo-1.jpg",
+              "/images/eventos/chile-lindo/chile-lindo-2.jpg", 
+              "/images/eventos/chile-lindo/chile-lindo-3.jpg"
+            ]}
+            title="Chile Lindo 2025"
+            description="✨ Estuvimos en la fiesta de Chile Lindo en Vitacura llevando nuestros juegos mecánicos para que grandes y chicos disfrutaran con seguridad y alegría"
+            autoplayInterval={3500}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+            height="h-80"
+            overlayIntensity="medium"
+            textPosition="bottom"
+          />
+        </PopUp>
 
-        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-arvi-background/50 group">
-          <CardContent customClass="p-6 text-center">
-            <div class="text-4xl mb-3">
-              <Icon name="lucide:sun" class="w-16 h-16 mx-auto text-arvi-primary transition-transform duration-300 group-hover:scale-110" />
-            </div>
-            <h4 class="text-xl font-heading text-arvi-text mb-2">Verano Divertido</h4>
-            <p class="text-sm text-arvi-text/70 mb-4">
-              Juegos acuáticos y actividades para combatir el calor
-            </p>
-            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm hover:bg-arvi-secondary hover:text-white transition-colors duration-300">
-              Enero 2026
-            </div>
-          </CardContent>
-        </Card>
+        <!-- Municipalidad de Putaendo -->
+        <PopUp 
+          images={[
+            "/images/eventos/putaendo/putaendo-1.jpg",
+            "/images/eventos/putaendo/putaendo-2.jpg",
+            "/images/eventos/putaendo/putaendo-3.jpg"
+          ]}
+          alt="Evento Municipalidad de Putaendo"
+          showArrows={true}
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage
+            images={[
+              "/images/eventos/putaendo/putaendo-1.jpg",
+              "/images/eventos/putaendo/putaendo-2.jpg",
+              "/images/eventos/putaendo/putaendo-3.jpg"
+            ]}
+            title="Muni Putaendo"
+            description="✨ Este fin de semana estuvimos en Putaendo y fue todo un éxito. Llevamos diversión sustentable con nuestros juegos mecánicos"
+            autoplayInterval={3500}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+            height="h-80"
+            overlayIntensity="medium"
+            textPosition="bottom"
+          />
+        </PopUp>
 
-        <Card customClass="border border-arvi-secondary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-arvi-background/50 group">
-          <CardContent customClass="p-6 text-center">
-            <div class="text-4xl mb-3">
-              <Icon name="lucide:heart" class="w-16 h-16 mx-auto text-red-500 transition-transform duration-300 group-hover:scale-110" />
-            </div>
-            <h4 class="text-xl font-heading text-arvi-text mb-2">Festival del Amor</h4>
-            <p class="text-sm text-arvi-text/70 mb-4">
-              Eventos especiales para celebrar San Valentín en pareja y familia
-            </p>
-            <div class="text-arvi-secondary border border-arvi-secondary inline-block px-3 py-1 rounded-2xl text-sm hover:bg-arvi-secondary hover:text-white transition-colors duration-300">
-              Febrero 2026
-            </div>
-          </CardContent>
-        </Card>
+        <!-- Día del Niño - Paseo Los Dominicos -->
+        <PopUp 
+          images={[
+            "/images/eventos/los-dominicos/dominicos-1.jpg",
+            "/images/eventos/los-dominicos/dominicos-2.jpg",
+            "/images/eventos/los-dominicos/dominicos-3.jpg"
+          ]}
+          alt="Día del Niño en Paseo Los Dominicos"
+          showArrows={true}
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage
+            images={[
+              "/images/eventos/los-dominicos/dominicos-1.jpg",
+              "/images/eventos/los-dominicos/dominicos-2.jpg",
+              "/images/eventos/los-dominicos/dominicos-3.jpg"
+            ]}
+            title="Día del Niño"
+            description="Celebramos el Día del Niño en Paseo Los Dominicos con Tagadá, Barco Pirata, reloj derribador y mucho más 🚀"
+            autoplayInterval={3500}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+            height="h-80"
+            overlayIntensity="medium"
+            textPosition="bottom"
+          />
+        </PopUp>
+
+        <!-- Colegio Monte Tabor y Nazaret -->
+        <PopUp 
+          images={[
+            "/images/eventos/monte-tabor/colegio-1.jpg",
+            "/images/eventos/monte-tabor/colegio-2.jpg",
+            "/images/eventos/monte-tabor/colegio-3.jpg"
+          ]}
+          alt="Colegio Monte Tabor y Nazaret de Lo Barnechea"
+          showArrows={true}
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage
+            images={[
+              "/images/eventos/monte-tabor/colegio-1.jpg",
+              "/images/eventos/monte-tabor/colegio-2.jpg",
+              "/images/eventos/monte-tabor/colegio-3.jpg"
+            ]}
+            title="Monte Tabor y Nazaret"
+            description="🎉 Llevamos la adrenalina al colegio con el Barco Pirata, el Tagadá y la mágica Alfombra mágica. Momentos llenos de alegría"
+            autoplayInterval={3500}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+            height="h-80"
+            overlayIntensity="medium"
+            textPosition="bottom"
+          />
+        </PopUp>
       </div>
 
       <div class="mt-12">
