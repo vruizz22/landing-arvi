@@ -1,8 +1,11 @@
 ---
 import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
+import CardImage from '@components/ui/CardImage.astro';
+import PopUp from '@components/ui/PopUp.astro';
 import { Icon } from 'astro-icon/components';
 import InstagramCarousel from '@components/InstagramCarousel.astro';
+import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
 ---
 
 <section class="py-16 bg-arvi-background" id="nosotros">
@@ -14,7 +17,7 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
             <span class="text-arvi-secondary">Entretenciones</span>
         </h2>
         <p class="text-lg text-arvi-text/80 max-w-2xl mx-auto">
-          Desde Algarrobo, llevamos más de 15 años creando experiencias inolvidables 
+          Desde La Florida, llevamos más de 19 años creando experiencias inolvidables 
           con un enfoque sustentable y responsable.
         </p>
       </div>
@@ -27,9 +30,9 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
                 <Icon name="mdi:map-marker" class="w-6 h-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Ubicados en Algarrobo</h4>
+                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Ubicados en La Florida</h4>
                 <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
-                  Nuestra sede en la hermosa costa de Algarrobo nos permite atender toda la región central con facilidad y rapidez.
+                  Estrategicamente situados para ofrecer un servicio rápido y eficiente en toda la región metropolitana.
                 </p>
               </div>
             </div>
@@ -51,7 +54,7 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
                 <Icon name="mdi:trophy" class="w-6 h-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">15+ Años de Experiencia</h4>
+                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">19+ Años de Experiencia</h4>
                 <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
                   Más de 1000 eventos exitosos nos respaldan. Confianza, seguridad y diversión garantizada para cada ocasión.
                 </p>
@@ -110,21 +113,181 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
           </Card>
         </div>
       </div>
-      
+
+      <!-- Sección de Nuestros Productos con Carousel -->
+      <h2 class="text-center text-4xl md:text-5xl mb-12 font-heading text-arvi-text mt-20">Nuestros 
+            <span class="text-arvi-secondary">Productos</span> 
+            <span class="text-arvi-primary">Destacados</span>
+        </h2>
+        
+      <!-- Son 5 cards del componente CARD, cada una contiene 1 juego 
+      1. Barco Pirata
+      2. Globos Samba
+      3. Canopy
+      4. Tagada
+      5. Rueda 
+      -->
+
+      <!-- Primeras 4 cards en matriz 2x2 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 justify-items-center">
+        <PopUp 
+          images={[
+            "/images/juegos/barco_pirata/barco_pirata.jpg", 
+            "/images/juegos/barco_pirata/barco_pirata_2.jpg", 
+            "/images/juegos/barco_pirata/barco_pirata_3.jpg"
+          ]}
+          alt="Barco Pirata"
+          showArrows={true}
+          showDots={true}
+          autoplay={true}
+          autoplayInterval={3000}
+        >
+          <CardImage 
+            images={[
+              "/images/juegos/barco_pirata/barco_pirata.jpg", 
+              "/images/juegos/barco_pirata/barco_pirata_2.jpg", 
+              "/images/juegos/barco_pirata/barco_pirata_3.jpg"
+            ]}
+            title="Barco Pirata"
+            description="La atracción estrella que garantiza diversión para todas las edades."
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
+
+        <PopUp 
+          images={[
+            "/images/juegos/globos_samba/globos_samba.jpg", 
+            "/images/juegos/globos_samba/globos_samba_2.jpg", 
+            "/images/juegos/globos_samba/globos_samba_3.jpg"
+          ]}
+          alt="Globos Samba"
+          showArrows={true}
+          showDots={true}
+          autoplay={true}
+          autoplayInterval={3000}
+        >
+          <CardImage
+            images={[
+              "/images/juegos/globos_samba/globos_samba.jpg", 
+              "/images/juegos/globos_samba/globos_samba_2.jpg", 
+              "/images/juegos/globos_samba/globos_samba_3.jpg"
+            ]}
+            title="Globos Samba"
+            description="Emoción y adrenalina en cada vuelta, ideal para los amantes de la velocidad."
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
+
+        <PopUp 
+          images={[
+            "/images/juegos/rueda/rueda.jpg", 
+            "/images/juegos/rueda/rueda_2.jpg",
+            "/images/juegos/rueda/rueda_3.jpg"
+          ]}
+          alt="Rueda"
+          showArrows={true}
+          showDots={true}
+          autoplay={true}
+          autoplayInterval={3000}
+        >
+          <CardImage 
+            images={[
+              "/images/juegos/rueda/rueda.jpg", 
+              "/images/juegos/rueda/rueda_2.jpg",
+              "/images/juegos/rueda/rueda_3.jpg"
+            ]}
+            title="Rueda"
+            description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
+
+        <PopUp 
+          images={[
+            "/images/juegos/tagada/tagada.jpg", 
+            "/images/juegos/tagada/tagada_2.jpg",
+            "/images/juegos/tagada/tagada_3.jpg",
+            "/images/juegos/tagada/tagada_4.jpg",
+            "/images/juegos/tagada/tagada_5.jpg"
+          ]}
+          alt="Tagada"
+          showArrows={true}
+          showDots={true}
+          autoplay={true}
+          autoplayInterval={3000}
+        >
+          <CardImage 
+            images={[
+              "/images/juegos/tagada/tagada.jpg", 
+              "/images/juegos/tagada/tagada_2.jpg",
+              "/images/juegos/tagada/tagada_3.jpg",
+              "/images/juegos/tagada/tagada_4.jpg",
+              "/images/juegos/tagada/tagada_5.jpg"
+            ]}
+            title="Tagada"
+            description="Diversión sin fin con giros y vueltas que harán vibrar a todos"
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
+
+
+      </div>
+
+      <!-- Quinta card centrada debajo -->
+      <!--<div class="flex justify-center mb-12">
+        <CardImage 
+          src="/images/rueda.jpg"
+          alt="Rueda"
+          title="Rueda"
+          description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
+          width="w-full"
+        />
+      </div>
+      -->
+      <!-- Sección de Nuestro Equipo con Carousel -->
       <h2 class="text-4xl md:text-5xl mb-4 font-heading text-arvi-text mt-20">Nuestro 
             <span class="text-arvi-secondary">Equipo</span> 
             <span class="text-arvi-primary">ARVI</span>
         </h2>
 
-      <!-- Imagen del equipo en formato rectangular abajo -->
-      <div class="mt-16 rounded-lg overflow-hidden shadow-md bg-arvi-background">
-        <img 
-          src="/images/team.jpg" 
-          alt="Equipo ARVI Entretenciones" 
-          width="1200"
-          height="400"
-          class="w-full h-[300px] md:h-[400px] object-cover transform hover:scale-105 transition-transform duration-700 ease-in-out"
-        />
+      <!-- Carousel de imágenes del equipo -->
+      <div class="mt-16">
+        <PopUp 
+          images={[
+            "/images/team.jpg",
+          ]}
+          alt="Equipo ARVI Entretenciones"
+          showArrows={true}
+          showDots={true}
+          autoplay={true}
+          autoplayInterval={2000}
+        >
+          <ImagesCarousel 
+            images={[
+              "/images/team.jpg",
+            ]}
+            width="100%"
+            height="400px"
+            autoplayInterval={2000}
+            animationType="fade"
+            className="shadow-lg"
+            alt="Equipo ARVI Entretenciones"
+            showDots={true}
+            showArrows={true}
+          />
+        </PopUp>
       </div>
 
       <!-- Carrusel de Instagram -->

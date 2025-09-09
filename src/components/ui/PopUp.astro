@@ -1,0 +1,361 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  // Para una sola imagen
+  imageSrc?: string;
+  alt?: string;
+  // Para múltiples imágenes (modo carousel)
+  images?: string[];
+  // Props del popup
+  showArrows?: boolean;
+  showDots?: boolean;
+  autoplay?: boolean;
+  autoplayInterval?: number;
+}
+
+const { 
+  imageSrc,
+  alt = "Imagen del popup",
+  images,
+  showArrows = true,
+  showDots = true,
+  autoplay = false,
+  autoplayInterval = 4000
+} = Astro.props;
+
+// Determinar si es modo carousel o imagen simple
+const isCarousel = images && images.length > 1;
+const finalImages = images && images.length > 0 ? images : (imageSrc ? [imageSrc] : []);
+
+// Generar ID único para el popup
+const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<!-- El slot se renderiza normalmente, sin contenedor que ocupe espacio -->
+<a href="#" class="contents cursor-pointer" data-popup-trigger data-popup-id={popupId}>
+  <slot />
+</a>
+
+<!-- Portal del popup (se renderiza fuera del DOM normal) -->
+<div 
+  id={popupId}
+  class="popup-overlay fixed inset-0 bg-black/90 flex items-center justify-center z-[9999] opacity-0 invisible transition-all duration-300"
+  data-popup-overlay
+>
+  <!-- Botón de cerrar -->
+  <button 
+    class="popup-close absolute top-4 right-4 z-[10000] text-white hover:text-arvi-accent transition-colors duration-200 p-2"
+    aria-label="Cerrar popup"
+    data-popup-close
+  >
+    <Icon name="mdi:close" class="w-8 h-8 transition-all duration-300 hover:-translate-y-1" />
+  </button>
+
+  <!-- Contenedor de la imagen/carousel -->
+  <div class="popup-content relative w-full h-full flex items-center justify-center p-4">
+    {finalImages.length > 0 && (
+      <!-- Siempre usar el formato carousel, pero ocultar controles cuando solo hay una imagen -->
+      <div class="popup-carousel relative w-full h-full max-w-7xl max-h-full">
+        <!-- Contenedor de imágenes del carousel -->
+        <div class="carousel-track relative w-full h-full flex items-center justify-center">
+          {finalImages.map((image, index) => (
+            <div 
+              class={`carousel-slide absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
+              data-slide-index={index}
+            >
+              <img 
+                src={image}
+                alt={finalImages.length > 1 ? `${alt} ${index + 1}` : alt}
+                class="max-w-full max-h-full object-contain"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+
+        <!-- Controles de navegación (flechas) - solo mostrar si hay más de una imagen -->
+        {showArrows && finalImages.length > 1 && (
+          <>
+            <button 
+              class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-200 opacity-70 hover:opacity-100"
+              aria-label="Imagen anterior"
+            >
+              <Icon name="mdi:chevron-left" class="w-6 h-6" />
+            </button>
+            
+            <button 
+              class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-200 opacity-70 hover:opacity-100"
+              aria-label="Siguiente imagen"
+            >
+              <Icon name="mdi:chevron-right" class="w-6 h-6" />
+            </button>
+          </>
+        )}
+
+        <!-- Indicadores de puntos - solo mostrar si hay más de una imagen -->
+        {showDots && finalImages.length > 1 && (
+          <div class="carousel-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+            {finalImages.map((_, index) => (
+              <button 
+                class={`carousel-dot w-3 h-3 rounded-full transition-all duration-200 ${index === 0 ? 'bg-arvi-primary' : 'bg-white/50 hover:bg-white/70'}`}
+                data-dot-index={index}
+                aria-label={`Ir a imagen ${index + 1}`}
+              ></button>
+            ))}
+          </div>
+        )}
+
+        <!-- Contador de imágenes - solo mostrar si hay más de una imagen -->
+        {finalImages.length > 1 && (
+          <div class="image-counter absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm z-20">
+            <span class="current-image">1</span>/<span class="total-images">{finalImages.length}</span>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+  .popup-overlay {
+    backdrop-filter: blur(4px);
+  }
+
+  .popup-overlay.popup-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .popup-content img {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Animaciones suaves para el carousel */
+  .carousel-slide {
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  /* Mejorar la visibilidad de los controles */
+  .carousel-prev:hover,
+  .carousel-next:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .carousel-dot:hover {
+    transform: scale(1.2);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .popup-content {
+      padding: 1rem;
+    }
+    
+    .carousel-prev,
+    .carousel-next {
+      padding: 0.5rem;
+    }
+    
+    .carousel-prev {
+      left: 0.5rem;
+    }
+    
+    .carousel-next {
+      right: 0.5rem;
+    }
+    
+    .image-counter {
+      top: 1rem;
+      left: 1rem;
+    }
+  }
+</style>
+
+<script define:vars={{ popupId, isCarousel, finalImages, autoplay, autoplayInterval }}>
+  class PopupManager {
+    constructor(popupId) {
+      this.popupId = popupId;
+      this.popup = document.getElementById(popupId);
+      this.trigger = document.querySelector(`[data-popup-id="${popupId}"]`);
+      this.overlay = this.popup;
+      this.closeBtn = this.popup.querySelector('[data-popup-close]');
+      this.isCarousel = isCarousel;
+      this.currentIndex = 0;
+      this.totalImages = finalImages.length;
+      this.autoplayTimer = null;
+      this.autoplay = autoplay && this.isCarousel;
+      this.autoplayInterval = autoplayInterval;
+      
+      this.init();
+    }
+
+    init() {
+      // Event listeners para abrir el popup
+      this.trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.openPopup();
+      });
+
+      // Event listeners para cerrar el popup
+      this.closeBtn.addEventListener('click', () => this.closePopup());
+
+      // Cerrar con tecla Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.popup.classList.contains('popup-open')) {
+          this.closePopup();
+        }
+      });
+
+      // Inicializar carousel si hay imágenes (incluso si es solo una)
+      if (this.totalImages > 0) {
+        this.initCarousel();
+      }
+    }
+
+    initCarousel() {
+      const slides = this.popup.querySelectorAll('.carousel-slide');
+      const dots = this.popup.querySelectorAll('.carousel-dot');
+      const prevBtn = this.popup.querySelector('.carousel-prev');
+      const nextBtn = this.popup.querySelector('.carousel-next');
+      const counter = this.popup.querySelector('.current-image');
+
+      // Solo agregar event listeners de navegación si hay más de una imagen
+      if (this.totalImages > 1) {
+        // Event listeners para navegación
+        prevBtn?.addEventListener('click', () => this.prevSlide());
+        nextBtn?.addEventListener('click', () => this.nextSlide());
+
+        // Event listeners para los puntos
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => this.goToSlide(index));
+        });
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+          if (!this.popup.classList.contains('popup-open')) return;
+          
+          if (e.key === 'ArrowRight') this.nextSlide();
+          if (e.key === 'ArrowLeft') this.prevSlide();
+        });
+
+        // Soporte para touch/swipe
+        this.addTouchSupport();
+      }
+
+      // Control del counter
+      this.counter = counter;
+    }
+
+    addTouchSupport() {
+      // Solo agregar soporte touch si hay más de una imagen
+      if (this.totalImages <= 1) return;
+      
+      let startX = 0;
+      let threshold = 50;
+
+      this.popup.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      this.popup.addEventListener('touchend', (e) => {
+        if (!startX) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > threshold) {
+          if (diff > 0) {
+            this.nextSlide(); // Swipe left -> next
+          } else {
+            this.prevSlide(); // Swipe right -> prev
+          }
+        }
+        
+        startX = 0;
+      });
+    }
+
+    openPopup() {
+      this.popup.classList.add('popup-open');
+      document.body.style.overflow = 'hidden';
+      
+      if (this.autoplay) {
+        this.startAutoplay();
+      }
+    }
+
+    closePopup() {
+      this.popup.classList.remove('popup-open');
+      document.body.style.overflow = '';
+      
+      if (this.autoplayTimer) {
+        clearInterval(this.autoplayTimer);
+        this.autoplayTimer = null;
+      }
+    }
+
+    goToSlide(index) {
+      if (index === this.currentIndex || !this.isCarousel) return;
+
+      const slides = this.popup.querySelectorAll('.carousel-slide');
+      const dots = this.popup.querySelectorAll('.carousel-dot');
+
+      // Ocultar slide actual
+      slides[this.currentIndex].classList.remove('opacity-100');
+      slides[this.currentIndex].classList.add('opacity-0');
+      
+      // Mostrar nuevo slide
+      slides[index].classList.remove('opacity-0');
+      slides[index].classList.add('opacity-100');
+
+      // Actualizar dots
+      dots[this.currentIndex].classList.remove('bg-arvi-primary');
+      dots[this.currentIndex].classList.add('bg-white/50');
+      dots[index].classList.remove('bg-white/50');
+      dots[index].classList.add('bg-arvi-primary');
+
+      // Actualizar counter
+      if (this.counter) {
+        this.counter.textContent = index + 1;
+      }
+
+      this.currentIndex = index;
+    }
+
+    nextSlide() {
+      const nextIndex = (this.currentIndex + 1) % this.totalImages;
+      this.goToSlide(nextIndex);
+    }
+
+    prevSlide() {
+      const prevIndex = (this.currentIndex - 1 + this.totalImages) % this.totalImages;
+      this.goToSlide(prevIndex);
+    }
+
+    startAutoplay() {
+      if (this.autoplayTimer) return;
+      
+      this.autoplayTimer = setInterval(() => {
+        this.nextSlide();
+      }, this.autoplayInterval);
+    }
+  }
+
+  // Inicializar el popup cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!document.querySelector(`#${popupId}`)?.hasAttribute('data-initialized')) {
+      new PopupManager(popupId);
+      document.querySelector(`#${popupId}`)?.setAttribute('data-initialized', 'true');
+    }
+  });
+
+  // Manejar las cargas de página de Astro
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector(`#${popupId}`)?.hasAttribute('data-initialized')) {
+      new PopupManager(popupId);
+      document.querySelector(`#${popupId}`)?.setAttribute('data-initialized', 'true');
+    }
+  });
+</script>
