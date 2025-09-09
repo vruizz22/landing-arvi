@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import ArviLogo from '@assets/LOGO_ARVI.png';
+import ArviLogo from '@assets/logo_arvi.svg';
 import { Icon } from 'astro-icon/components';
 ---
 
 <section class="relative flex flex-col overflow-hidden pt-0 md:pt-0 pb-0 md:pb-0 md:min-h-screen" id="heroSection">
   <!-- Imagen de fondo con overlay y efecto parallax -->
   <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-[url('/images/hero.webp')] bg-cover bg-center transform scale-105 origin-center" id="parallaxBg"></div>
+    <div class="absolute inset-0 bg-[url('/images/hero.jpg')] bg-cover bg-center transform scale-105 origin-center" id="parallaxBg"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
   </div>
 
