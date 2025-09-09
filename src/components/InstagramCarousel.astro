@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import ArviLogo from '@assets/logo_arvi.svg';
 import { Icon } from 'astro-icon/components';
 import Button from '@components/ui/Button.astro';
 
@@ -63,11 +65,7 @@ const truncateText = (text: string, maxLength: number): string => {
           {/* Cabecera del post con logo */}
           <div class="flex items-center p-3 border-b border-gray-100">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-arvi-primary to-arvi-secondary flex items-center justify-center flex-shrink-0">
-              <img 
-                src="/LOGO_ARVI.png" 
-                alt="ARVI Entretenciones Logo" 
-                class="w-6 h-6 object-contain"
-              />
+              <Image src={ArviLogo} alt="ARVI Entretenciones Logo" width={24} height={24} class="object-contain" />
             </div>
             <div class="ml-2">
               <p class="text-arvi-text font-medium text-sm">arvi.cl</p>
