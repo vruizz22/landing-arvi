@@ -139,7 +139,8 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           alt="Barco Pirata"
           showArrows={true}
           showDots={true}
-          autoplay={false}
+          autoplay={true}
+          autoplayInterval={3000}
         >
           <CardImage 
             images={[
@@ -165,7 +166,8 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           alt="Globos Samba"
           showArrows={true}
           showDots={true}
-          autoplay={false}
+          autoplay={true}
+          autoplayInterval={3000}
         >
           <CardImage
             images={[
@@ -191,7 +193,8 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           alt="Rueda"
           showArrows={true}
           showDots={true}
-          autoplay={false}
+          autoplay={true}
+          autoplayInterval={3000}
         >
           <CardImage 
             images={[
@@ -219,7 +222,8 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           alt="Tagada"
           showArrows={true}
           showDots={true}
-          autoplay={false}
+          autoplay={true}
+          autoplayInterval={3000}
         >
           <CardImage 
             images={[
@@ -260,19 +264,30 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
 
       <!-- Carousel de imágenes del equipo -->
       <div class="mt-16">
-        <ImagesCarousel 
+        <PopUp 
           images={[
             "/images/team.jpg",
           ]}
-          width="100%"
-          height="400px"
-          autoplayInterval={2000}
-          animationType="fade"
-          className="shadow-lg"
           alt="Equipo ARVI Entretenciones"
-          showDots={true}
           showArrows={true}
-        />
+          showDots={true}
+          autoplay={true}
+          autoplayInterval={2000}
+        >
+          <ImagesCarousel 
+            images={[
+              "/images/team.jpg",
+            ]}
+            width="100%"
+            height="400px"
+            autoplayInterval={2000}
+            animationType="fade"
+            className="shadow-lg"
+            alt="Equipo ARVI Entretenciones"
+            showDots={true}
+            showArrows={true}
+          />
+        </PopUp>
       </div>
 
       <!-- Carrusel de Instagram -->
