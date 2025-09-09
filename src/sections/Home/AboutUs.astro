@@ -3,6 +3,7 @@ import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
 import { Icon } from 'astro-icon/components';
 import InstagramCarousel from '@components/InstagramCarousel.astro';
+import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
 ---
 
 <section class="py-16 bg-arvi-background" id="nosotros">
@@ -14,7 +15,7 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
             <span class="text-arvi-secondary">Entretenciones</span>
         </h2>
         <p class="text-lg text-arvi-text/80 max-w-2xl mx-auto">
-          Desde Algarrobo, llevamos más de 15 años creando experiencias inolvidables 
+          Desde La Florida, llevamos más de 19 años creando experiencias inolvidables 
           con un enfoque sustentable y responsable.
         </p>
       </div>
@@ -27,9 +28,9 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
                 <Icon name="mdi:map-marker" class="w-6 h-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Ubicados en Algarrobo</h4>
+                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Ubicados en La Florida</h4>
                 <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
-                  Nuestra sede en la hermosa costa de Algarrobo nos permite atender toda la región central con facilidad y rapidez.
+                  Estrategicamente situados para ofrecer un servicio rápido y eficiente en toda la región metropolitana.
                 </p>
               </div>
             </div>
@@ -51,7 +52,7 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
                 <Icon name="mdi:trophy" class="w-6 h-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">15+ Años de Experiencia</h4>
+                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">19+ Años de Experiencia</h4>
                 <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
                   Más de 1000 eventos exitosos nos respaldan. Confianza, seguridad y diversión garantizada para cada ocasión.
                 </p>
@@ -116,14 +117,23 @@ import InstagramCarousel from '@components/InstagramCarousel.astro';
             <span class="text-arvi-primary">ARVI</span>
         </h2>
 
-      <!-- Imagen del equipo en formato rectangular abajo -->
-      <div class="mt-16 rounded-lg overflow-hidden shadow-md bg-arvi-background">
-        <img 
-          src="/images/team.jpg" 
-          alt="Equipo ARVI Entretenciones" 
-          width="1200"
-          height="400"
-          class="w-full h-[300px] md:h-[400px] object-cover transform hover:scale-105 transition-transform duration-700 ease-in-out"
+      <!-- Carousel de imágenes del equipo -->
+      <div class="mt-16">
+        <ImagesCarousel 
+          images={[
+            "/images/team.jpg",
+            "/images/conocenos.jpg",
+            "/images/productos.jpg",
+            "/images/servicios.jpg"
+          ]}
+          width="100%"
+          height="400px"
+          autoplayInterval={2000}
+          animationType="fade"
+          className="shadow-lg"
+          alt="Equipo ARVI Entretenciones"
+          showDots={true}
+          showArrows={true}
         />
       </div>
 
