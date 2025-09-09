@@ -39,11 +39,9 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
   <div class="carousel-track relative w-full h-full">
     {images.map((image, index) => (
       <div 
-        class={`carousel-slide absolute inset-0 transition-all duration-700 ease-in-out ${
+        class={`carousel-slide absolute inset-0 ${
           index === 0 ? 'opacity-100 visible' : 'opacity-0 invisible'
-        } ${animationType === 'slide' ? (index === 0 ? 'translate-x-0' : 'translate-x-full') : ''}
-        ${animationType === 'scale' ? (index === 0 ? 'scale-100' : 'scale-110') : ''}
-        ${animationType === 'blur' ? (index === 0 ? 'blur-0' : 'blur-sm') : ''}`}
+        }`}
         data-slide-index={index}
       >
         <img 
@@ -108,128 +106,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     opacity: 1;
   }
 
-  /* Animaciones personalizadas para cada tipo */
-  .carousel-slide.fade-in {
-    animation: fadeInCarousel 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.fade-out {
-    animation: fadeOutCarousel 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.slide-in-right {
-    animation: slideInRight 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.slide-out-left {
-    animation: slideOutLeft 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.scale-in {
-    animation: scaleInCarousel 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.scale-out {
-    animation: scaleOutCarousel 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.blur-in {
-    animation: blurInCarousel 0.7s ease-in-out forwards;
-  }
-
-  .carousel-slide.blur-out {
-    animation: blurOutCarousel 0.7s ease-in-out forwards;
-  }
-
-  /* Definiciones de animaciones */
-  @keyframes fadeInCarousel {
-    from { opacity: 0; visibility: hidden; }
-    to { opacity: 1; visibility: visible; }
-  }
-
-  @keyframes fadeOutCarousel {
-    from { opacity: 1; visibility: visible; }
-    to { opacity: 0; visibility: hidden; }
-  }
-
-  @keyframes slideInRight {
-    from { 
-      opacity: 0; 
-      visibility: hidden; 
-      transform: translateX(100%); 
-    }
-    to { 
-      opacity: 1; 
-      visibility: visible; 
-      transform: translateX(0); 
-    }
-  }
-
-  @keyframes slideOutLeft {
-    from { 
-      opacity: 1; 
-      visibility: visible; 
-      transform: translateX(0); 
-    }
-    to { 
-      opacity: 0; 
-      visibility: hidden; 
-      transform: translateX(-100%); 
-    }
-  }
-
-  @keyframes scaleInCarousel {
-    from { 
-      opacity: 0; 
-      visibility: hidden; 
-      transform: scale(1.1); 
-    }
-    to { 
-      opacity: 1; 
-      visibility: visible; 
-      transform: scale(1); 
-    }
-  }
-
-  @keyframes scaleOutCarousel {
-    from { 
-      opacity: 1; 
-      visibility: visible; 
-      transform: scale(1); 
-    }
-    to { 
-      opacity: 0; 
-      visibility: hidden; 
-      transform: scale(0.9); 
-    }
-  }
-
-  @keyframes blurInCarousel {
-    from { 
-      opacity: 0; 
-      visibility: hidden; 
-      filter: blur(10px); 
-    }
-    to { 
-      opacity: 1; 
-      visibility: visible; 
-      filter: blur(0); 
-    }
-  }
-
-  @keyframes blurOutCarousel {
-    from { 
-      opacity: 1; 
-      visibility: visible; 
-      filter: blur(0); 
-    }
-    to { 
-      opacity: 0; 
-      visibility: hidden; 
-      filter: blur(10px); 
-    }
-  }
-
   /* Efecto hover para los puntos */
   .carousel-dot:hover {
     transform: scale(1.2);
@@ -252,6 +128,21 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 
   .carousel-container:hover .carousel-slide img {
     transform: scale(1.02);
+  }
+
+  /* Personalización para las animaciones de Tailwind CSS en el carousel */
+  .carousel-slide.animate-fade-in,
+  .carousel-slide.animate-fade-out,
+  .carousel-slide.animate-slide-in-right,
+  .carousel-slide.animate-slide-out-left,
+  .carousel-slide.animate-slide-in-left,
+  .carousel-slide.animate-slide-out-right,
+  .carousel-slide.animate-zoom-in,
+  .carousel-slide.animate-zoom-out,
+  .carousel-slide.animate-blurred-fade-in {
+    animation-duration: 0.7s !important;
+    animation-fill-mode: forwards !important;
+    animation-timing-function: ease-in-out !important;
   }
 </style>
 
@@ -411,32 +302,39 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
       const fromSlide = this.slides[fromIndex];
       const toSlide = this.slides[toIndex];
 
-      // Remove all animation classes
+      // Remove all animation classes (Tailwind CSS Animations)
       this.slides.forEach((slide) => {
-        slide.classList.remove('fade-in', 'fade-out', 'slide-in-right', 'slide-out-left', 'scale-in', 'scale-out', 'blur-in', 'blur-out');
+        slide.classList.remove(
+          'animate-fade-in', 'animate-fade-out',
+          'animate-slide-in-right', 'animate-slide-out-left',
+          'animate-slide-in-left', 'animate-slide-out-right',
+          'animate-zoom-in', 'animate-zoom-out',
+          'animate-blurred-fade-in'
+        );
       });
 
+      // Apply Tailwind CSS animations based on type
       switch (this.animationType) {
         case 'fade':
-          fromSlide.classList.add('fade-out');
-          toSlide.classList.add('fade-in');
+          fromSlide.classList.add('animate-fade-out');
+          toSlide.classList.add('animate-fade-in');
           break;
         case 'slide':
           if (direction === 'next') {
-            fromSlide.classList.add('slide-out-left');
-            toSlide.classList.add('slide-in-right');
+            fromSlide.classList.add('animate-slide-out-left');
+            toSlide.classList.add('animate-slide-in-right');
           } else {
-            fromSlide.classList.add('slide-out-left');
-            toSlide.classList.add('slide-in-right');
+            fromSlide.classList.add('animate-slide-out-right');
+            toSlide.classList.add('animate-slide-in-left');
           }
           break;
         case 'scale':
-          fromSlide.classList.add('scale-out');
-          toSlide.classList.add('scale-in');
+          fromSlide.classList.add('animate-zoom-out');
+          toSlide.classList.add('animate-zoom-in');
           break;
         case 'blur':
-          fromSlide.classList.add('blur-out');
-          toSlide.classList.add('blur-in');
+          fromSlide.classList.add('animate-fade-out');
+          toSlide.classList.add('animate-blurred-fade-in');
           break;
       }
 
