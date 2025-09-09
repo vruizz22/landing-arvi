@@ -2,6 +2,7 @@
 import Card from '@components/ui/Card.astro';
 import CardContent from '@components/ui/CardContent.astro';
 import CardImage from '@components/ui/CardImage.astro';
+import PopUp from '@components/ui/PopUp.astro';
 import { Icon } from 'astro-icon/components';
 import InstagramCarousel from '@components/InstagramCarousel.astro';
 import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
@@ -129,49 +130,85 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
 
       <!-- Primeras 4 cards en matriz 2x2 -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 justify-items-center">
-        <CardImage 
+        <PopUp 
           images={[
             "/images/juegos/barco_pirata/barco_pirata.jpg", 
             "/images/juegos/barco_pirata/barco_pirata_2.jpg", 
             "/images/juegos/barco_pirata/barco_pirata_3.jpg"
           ]}
-          title="Barco Pirata"
-          description="La atracción estrella que garantiza diversión para todas las edades."
-          autoplayInterval={3000}
-          animationType="slide"
-          showDots={false}
+          alt="Barco Pirata"
           showArrows={true}
-        />
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage 
+            images={[
+              "/images/juegos/barco_pirata/barco_pirata.jpg", 
+              "/images/juegos/barco_pirata/barco_pirata_2.jpg", 
+              "/images/juegos/barco_pirata/barco_pirata_3.jpg"
+            ]}
+            title="Barco Pirata"
+            description="La atracción estrella que garantiza diversión para todas las edades."
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
 
-        <CardImage
+        <PopUp 
           images={[
             "/images/juegos/globos_samba/globos_samba.jpg", 
             "/images/juegos/globos_samba/globos_samba_2.jpg", 
             "/images/juegos/globos_samba/globos_samba_3.jpg"
           ]}
-          title="Globos Samba"
-          description="Emoción y adrenalina en cada vuelta, ideal para los amantes de la velocidad."
-          autoplayInterval={3000}
-          animationType="slide"
-          showDots={false}
+          alt="Globos Samba"
           showArrows={true}
-        />
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage
+            images={[
+              "/images/juegos/globos_samba/globos_samba.jpg", 
+              "/images/juegos/globos_samba/globos_samba_2.jpg", 
+              "/images/juegos/globos_samba/globos_samba_3.jpg"
+            ]}
+            title="Globos Samba"
+            description="Emoción y adrenalina en cada vuelta, ideal para los amantes de la velocidad."
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
 
-        <CardImage 
+        <PopUp 
           images={[
             "/images/juegos/rueda/rueda.jpg", 
             "/images/juegos/rueda/rueda_2.jpg",
             "/images/juegos/rueda/rueda_3.jpg"
           ]}
-          title="Rueda"
-          description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
-          autoplayInterval={3000}
-          animationType="slide"
-          showDots={false}
+          alt="Rueda"
           showArrows={true}
-        />
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage 
+            images={[
+              "/images/juegos/rueda/rueda.jpg", 
+              "/images/juegos/rueda/rueda_2.jpg",
+              "/images/juegos/rueda/rueda_3.jpg"
+            ]}
+            title="Rueda"
+            description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
 
-        <CardImage 
+        <PopUp 
           images={[
             "/images/juegos/tagada/tagada.jpg", 
             "/images/juegos/tagada/tagada_2.jpg",
@@ -179,13 +216,27 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
             "/images/juegos/tagada/tagada_4.jpg",
             "/images/juegos/tagada/tagada_5.jpg"
           ]}
-          title="Tagada"
-          description="Diversión sin fin con giros y vueltas que harán vibrar a todos"
-          autoplayInterval={3000}
-          animationType="slide"
-          showDots={false}
+          alt="Tagada"
           showArrows={true}
-        />
+          showDots={true}
+          autoplay={false}
+        >
+          <CardImage 
+            images={[
+              "/images/juegos/tagada/tagada.jpg", 
+              "/images/juegos/tagada/tagada_2.jpg",
+              "/images/juegos/tagada/tagada_3.jpg",
+              "/images/juegos/tagada/tagada_4.jpg",
+              "/images/juegos/tagada/tagada_5.jpg"
+            ]}
+            title="Tagada"
+            description="Diversión sin fin con giros y vueltas que harán vibrar a todos"
+            autoplayInterval={3000}
+            animationType="slide"
+            showDots={false}
+            showArrows={true}
+          />
+        </PopUp>
 
 
       </div>
