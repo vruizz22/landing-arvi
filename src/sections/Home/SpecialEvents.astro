@@ -112,8 +112,8 @@ import CardImage from '@components/ui/CardImage.astro';
 
     {/* Eventos Realizados */}
     <div class="text-center">
-      <h3 class="text-5xl font-heading text-arvi-text mb-12">
-        Eventos <span class="text-arvi-primary">Realizados</span>
+      <h3 class="text-5xl font-heading text-arvi-text mb-16">
+        Eventos <span class="text-arvi-secondary">Realizados</span> por <span class="text-arvi-primary">ARVI</span>
       </h3>
       
       <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -122,29 +122,39 @@ import CardImage from '@components/ui/CardImage.astro';
           images={[
             "/images/eventos/chile-lindo/chile-lindo-1.jpg",
             "/images/eventos/chile-lindo/chile-lindo-2.jpg",
-            "/images/eventos/chile-lindo/chile-lindo-3.jpg"
+            "/images/eventos/chile-lindo/chile-lindo-3.jpg",
+            "/images/eventos/chile-lindo/chile-lindo-4.jpg",
+            "/images/eventos/chile-lindo/chile-lindo-5.jpg"
           ]}
           alt="Festival Chile Lindo 2025 en Vitacura"
           showArrows={true}
           showDots={true}
           autoplay={false}
         >
-          <CardImage
-            images={[
-              "/images/eventos/chile-lindo/chile-lindo-1.jpg",
-              "/images/eventos/chile-lindo/chile-lindo-2.jpg", 
-              "/images/eventos/chile-lindo/chile-lindo-3.jpg"
-            ]}
-            title="Chile Lindo 2025"
-            description="✨ Estuvimos en la fiesta de Chile Lindo en Vitacura llevando nuestros juegos mecánicos para que grandes y chicos disfrutaran con seguridad y alegría"
-            autoplayInterval={3500}
-            animationType="slide"
-            showDots={false}
-            showArrows={true}
-            height="h-80"
-            overlayIntensity="medium"
-            textPosition="bottom"
-          />
+          <div class="relative">
+            <CardImage
+              images={[
+                "/images/eventos/chile-lindo/chile-lindo-1.jpg",
+                "/images/eventos/chile-lindo/chile-lindo-2.jpg", 
+                "/images/eventos/chile-lindo/chile-lindo-3.jpg",
+                "/images/eventos/chile-lindo/chile-lindo-4.jpg",
+                "/images/eventos/chile-lindo/chile-lindo-5.jpg"
+              ]}
+              title="Chile Lindo 2025"
+              description="Estuvimos en Vitacura llevando nuestros juegos mecánicos para que grandes y chicos disfrutaran"
+              autoplayInterval={3500}
+              animationType="slide"
+              showDots={false}
+              showArrows={true}
+              height="h-80"
+              overlayIntensity="medium"
+              textPosition="bottom"
+            />
+            <!-- Icono del evento -->
+            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
+              <Icon name="streamline-freehand:circus-tent" class="w-6 h-6 text-arvi-secondary" />
+            </div>
+          </div>
         </PopUp>
 
         <!-- Municipalidad de Putaendo -->
@@ -152,29 +162,37 @@ import CardImage from '@components/ui/CardImage.astro';
           images={[
             "/images/eventos/putaendo/putaendo-1.jpg",
             "/images/eventos/putaendo/putaendo-2.jpg",
-            "/images/eventos/putaendo/putaendo-3.jpg"
+            "/images/eventos/putaendo/putaendo-3.jpg",
+            "/images/eventos/putaendo/putaendo-4.jpg"
           ]}
           alt="Evento Municipalidad de Putaendo"
           showArrows={true}
           showDots={true}
           autoplay={false}
         >
-          <CardImage
-            images={[
-              "/images/eventos/putaendo/putaendo-1.jpg",
-              "/images/eventos/putaendo/putaendo-2.jpg",
-              "/images/eventos/putaendo/putaendo-3.jpg"
-            ]}
-            title="Muni Putaendo"
-            description="✨ Este fin de semana estuvimos en Putaendo y fue todo un éxito. Llevamos diversión sustentable con nuestros juegos mecánicos"
-            autoplayInterval={3500}
-            animationType="slide"
-            showDots={false}
-            showArrows={true}
-            height="h-80"
-            overlayIntensity="medium"
-            textPosition="bottom"
-          />
+          <div class="relative">
+            <CardImage
+              images={[
+                "/images/eventos/putaendo/putaendo-1.jpg",
+                "/images/eventos/putaendo/putaendo-2.jpg",
+                "/images/eventos/putaendo/putaendo-3.jpg",
+                "/images/eventos/putaendo/putaendo-4.jpg"
+              ]}
+              title="Muni Putaendo"
+              description="Este fin de semana estuvimos en Putaendo y fue todo un éxito. Llevamos diversión con nuestros juegos mecánicos"
+              autoplayInterval={3500}
+              animationType="slide"
+              showDots={false}
+              showArrows={true}
+              height="h-80"
+              overlayIntensity="medium"
+              textPosition="bottom"
+            />
+            <!-- Icono del evento -->
+            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
+              <Icon name="mdi:city" class="w-6 h-6 text-arvi-secondary" />
+            </div>
+          </div>
         </PopUp>
 
         <!-- Día del Niño - Paseo Los Dominicos -->
@@ -182,29 +200,41 @@ import CardImage from '@components/ui/CardImage.astro';
           images={[
             "/images/eventos/los-dominicos/dominicos-1.jpg",
             "/images/eventos/los-dominicos/dominicos-2.jpg",
-            "/images/eventos/los-dominicos/dominicos-3.jpg"
+            "/images/eventos/los-dominicos/dominicos-3.jpg",
+            "/images/eventos/los-dominicos/dominicos-4.jpg",
+            "/images/eventos/los-dominicos/dominicos-5.jpg",
+            "/images/eventos/los-dominicos/dominicos-6.jpg"
           ]}
           alt="Día del Niño en Paseo Los Dominicos"
           showArrows={true}
           showDots={true}
           autoplay={false}
         >
-          <CardImage
-            images={[
-              "/images/eventos/los-dominicos/dominicos-1.jpg",
-              "/images/eventos/los-dominicos/dominicos-2.jpg",
-              "/images/eventos/los-dominicos/dominicos-3.jpg"
-            ]}
-            title="Día del Niño"
-            description="Celebramos el Día del Niño en Paseo Los Dominicos con Tagadá, Barco Pirata, reloj derribador y mucho más 🚀"
-            autoplayInterval={3500}
-            animationType="slide"
-            showDots={false}
-            showArrows={true}
-            height="h-80"
-            overlayIntensity="medium"
-            textPosition="bottom"
-          />
+          <div class="relative">
+            <CardImage
+              images={[
+                "/images/eventos/los-dominicos/dominicos-1.jpg",
+                "/images/eventos/los-dominicos/dominicos-2.jpg",
+                "/images/eventos/los-dominicos/dominicos-3.jpg",
+                "/images/eventos/los-dominicos/dominicos-4.jpg",
+                "/images/eventos/los-dominicos/dominicos-5.jpg",
+                "/images/eventos/los-dominicos/dominicos-6.jpg"
+              ]}
+              title="Día del Niño"
+              description="Celebramos el Día del Niño en Paseo Los Dominicos con Tagadá, Barco Pirata, reloj derribador y mucho más"
+              autoplayInterval={3500}
+              animationType="slide"
+              showDots={false}
+              showArrows={true}
+              height="h-80"
+              overlayIntensity="medium"
+              textPosition="bottom"
+            />
+            <!-- Icono del evento -->
+            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
+              <Icon name="mdi:rocket-launch" class="w-6 h-6 text-arvi-secondary" />
+            </div>
+          </div>
         </PopUp>
 
         <!-- Colegio Monte Tabor y Nazaret -->
@@ -219,22 +249,28 @@ import CardImage from '@components/ui/CardImage.astro';
           showDots={true}
           autoplay={false}
         >
-          <CardImage
-            images={[
-              "/images/eventos/monte-tabor/colegio-1.jpg",
-              "/images/eventos/monte-tabor/colegio-2.jpg",
-              "/images/eventos/monte-tabor/colegio-3.jpg"
-            ]}
-            title="Monte Tabor y Nazaret"
-            description="🎉 Llevamos la adrenalina al colegio con el Barco Pirata, el Tagadá y la mágica Alfombra mágica. Momentos llenos de alegría"
-            autoplayInterval={3500}
-            animationType="slide"
-            showDots={false}
-            showArrows={true}
-            height="h-80"
-            overlayIntensity="medium"
-            textPosition="bottom"
-          />
+          <div class="relative">
+            <CardImage
+              images={[
+                "/images/eventos/monte-tabor/colegio-1.jpg",
+                "/images/eventos/monte-tabor/colegio-2.jpg",
+                "/images/eventos/monte-tabor/colegio-3.jpg"
+              ]}
+              title="Monte Tabor y Nazaret"
+              description="Llevamos la adrenalina al colegio con el Barco Pirata, el Tagadá y la mágica Alfombra mágica"
+              autoplayInterval={3500}
+              animationType="slide"
+              showDots={false}
+              showArrows={true}
+              height="h-80"
+              overlayIntensity="medium"
+              textPosition="bottom"
+            />
+            <!-- Icono del evento -->
+            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
+              <Icon name="mdi:school" class="w-6 h-6 text-arvi-secondary" />
+            </div>
+          </div>
         </PopUp>
       </div>
 
