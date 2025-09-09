@@ -26,7 +26,7 @@ const {
 
 // Determinar si es modo carousel o imagen simple
 const isCarousel = images && images.length > 1;
-const finalImages = isCarousel ? images : (imageSrc ? [imageSrc] : []);
+const finalImages = images && images.length > 0 ? images : (imageSrc ? [imageSrc] : []);
 
 // Generar ID único para el popup
 const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
@@ -54,8 +54,8 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
 
   <!-- Contenedor de la imagen/carousel -->
   <div class="popup-content relative w-full h-full flex items-center justify-center p-4">
-    {isCarousel ? (
-      <!-- Modo Carousel -->
+    {finalImages.length > 0 && (
+      <!-- Siempre usar el formato carousel, pero ocultar controles cuando solo hay una imagen -->
       <div class="popup-carousel relative w-full h-full max-w-7xl max-h-full">
         <!-- Contenedor de imágenes del carousel -->
         <div class="carousel-track relative w-full h-full flex items-center justify-center">
@@ -66,7 +66,7 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
             >
               <img 
                 src={image}
-                alt={`${alt} ${index + 1}`}
+                alt={finalImages.length > 1 ? `${alt} ${index + 1}` : alt}
                 class="max-w-full max-h-full object-contain"
                 loading="lazy"
               />
@@ -74,7 +74,7 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
           ))}
         </div>
 
-        <!-- Controles de navegación (flechas) -->
+        <!-- Controles de navegación (flechas) - solo mostrar si hay más de una imagen -->
         {showArrows && finalImages.length > 1 && (
           <>
             <button 
@@ -93,7 +93,7 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
           </>
         )}
 
-        <!-- Indicadores de puntos -->
+        <!-- Indicadores de puntos - solo mostrar si hay más de una imagen -->
         {showDots && finalImages.length > 1 && (
           <div class="carousel-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
             {finalImages.map((_, index) => (
@@ -106,22 +106,12 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
           </div>
         )}
 
-        <!-- Contador de imágenes -->
+        <!-- Contador de imágenes - solo mostrar si hay más de una imagen -->
         {finalImages.length > 1 && (
           <div class="image-counter absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm z-20">
             <span class="current-image">1</span>/<span class="total-images">{finalImages.length}</span>
           </div>
         )}
-      </div>
-    ) : (
-      <!-- Modo Imagen Simple -->
-      <div class="popup-single-image relative flex items-center justify-center w-full h-full">
-        <img 
-          src={finalImages[0]}
-          alt={alt}
-          class="max-w-full max-h-full object-contain"
-          loading="lazy"
-        />
       </div>
     )}
   </div>
@@ -225,8 +215,8 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
         }
       });
 
-      // Inicializar carousel si es necesario
-      if (this.isCarousel) {
+      // Inicializar carousel si hay imágenes (incluso si es solo una)
+      if (this.totalImages > 0) {
         this.initCarousel();
       }
     }
@@ -238,31 +228,37 @@ const popupId = `popup-${Math.random().toString(36).substr(2, 9)}`;
       const nextBtn = this.popup.querySelector('.carousel-next');
       const counter = this.popup.querySelector('.current-image');
 
-      // Event listeners para navegación
-      prevBtn?.addEventListener('click', () => this.prevSlide());
-      nextBtn?.addEventListener('click', () => this.nextSlide());
+      // Solo agregar event listeners de navegación si hay más de una imagen
+      if (this.totalImages > 1) {
+        // Event listeners para navegación
+        prevBtn?.addEventListener('click', () => this.prevSlide());
+        nextBtn?.addEventListener('click', () => this.nextSlide());
 
-      // Event listeners para los puntos
-      dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => this.goToSlide(index));
-      });
+        // Event listeners para los puntos
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => this.goToSlide(index));
+        });
 
-      // Navegación con teclado
-      document.addEventListener('keydown', (e) => {
-        if (!this.popup.classList.contains('popup-open')) return;
-        
-        if (e.key === 'ArrowRight') this.nextSlide();
-        if (e.key === 'ArrowLeft') this.prevSlide();
-      });
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+          if (!this.popup.classList.contains('popup-open')) return;
+          
+          if (e.key === 'ArrowRight') this.nextSlide();
+          if (e.key === 'ArrowLeft') this.prevSlide();
+        });
 
-      // Soporte para touch/swipe
-      this.addTouchSupport();
+        // Soporte para touch/swipe
+        this.addTouchSupport();
+      }
 
       // Control del counter
       this.counter = counter;
     }
 
     addTouchSupport() {
+      // Solo agregar soporte touch si hay más de una imagen
+      if (this.totalImages <= 1) return;
+      
       let startX = 0;
       let threshold = 50;
 
