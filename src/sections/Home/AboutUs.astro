@@ -1,7 +1,6 @@
 ---
-import Card from '@components/ui/Card.astro';
-import CardContent from '@components/ui/CardContent.astro';
 import CardImage from '@components/ui/CardImage.astro';
+import CardDropText from '@components/ui/CardDropText.astro';
 import PopUp from '@components/ui/PopUp.astro';
 import { Icon } from 'astro-icon/components';
 import InstagramCarousel from '@components/InstagramCarousel.astro';
@@ -64,54 +63,42 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Card className="bg-arvi-secondary/10 border-arvi-secondary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-secondary/20">
-            <CardContent className="p-6 text-center">
-              <div class="text-arvi-secondary mb-3 flex justify-center">
-                <Icon name="mdi:security" class="w-8 h-8" />
-              </div>
-              <h4 class="mb-2 text-lg font-heading text-arvi-text">Seguridad</h4>
-              <p class="text-sm text-arvi-text/70">
-                Equipos certificados y personal capacitado
-              </p>
-            </CardContent>
-          </Card>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+          <CardDropText 
+            icon="mdi:security"
+            title="Seguridad"
+            subtitle="Equipos certificados y personal capacitado"
+            dropText="ARVI se ha consolidado como un referente en la fabricación y arriendo de juegos mecánicos y sustentables. Nuestra misión incluye el desarrollo de atracciones sustentables, asegurando que el entretenimiento que proporcionamos sea responsable con el medio ambiente."
+            iconColor="text-arvi-secondary"
+            bgColorHover="bg-arvi-secondary/10 border-arvi-secondary/20 hover:bg-arvi-secondary/20"
+          />
 
-          <Card className="bg-arvi-primary/10 border-arvi-primary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-primary/20">
-            <CardContent className="p-6 text-center">
-              <div class="text-arvi-primary mb-3 flex justify-center">
-                <Icon name="mdi:flash" class="w-8 h-8" />
-              </div>
-              <h4 class="mb-2 text-lg font-heading text-arvi-text">Rapidez</h4>
-              <p class="text-sm text-arvi-text/70">
-                Montaje eficiente en tiempo récord
-              </p>
-            </CardContent>
-          </Card>
+          <CardDropText 
+            icon="mdi:flash"
+            title="Rapidez"
+            subtitle="Montaje eficiente en tiempo récord"
+            dropText="Somos líderes en el mercado. Todos nuestros juegos de fabricación nacional, respaldados y destacados por entidades internacionales y por comunidades chilenas. Proveedores de Gremio internacional EEUU en fabricaciones. Asociación Global de la Industria de las Atracciones - IAAPA América Latina, Caribe. Corfo con proyectos de innovación."
+            iconColor="text-arvi-primary"
+            bgColorHover="bg-arvi-primary/10 border-arvi-primary/20 hover:bg-arvi-primary/20"
+          />
 
-          <Card className="bg-arvi-accent/10 border-arvi-accent/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-accent/20">
-            <CardContent className="p-6 text-center">
-              <div class="text-arvi-accent mb-3 flex justify-center">
-                <Icon name="mdi:handshake" class="w-8 h-8" />
-              </div>
-              <h4 class="mb-2 text-lg font-heading text-arvi-text">Confianza</h4>
-              <p class="text-sm text-arvi-text/70">
-                Respaldo y garantía en cada evento
-              </p>
-            </CardContent>
-          </Card>
+          <CardDropText 
+            icon="mdi:handshake"
+            title="Confianza"
+            subtitle="Respaldo y garantía en cada evento"
+            dropText="Realizamos celebraciones en municipios, colegios, empresas, festivales, eventos corporativos, ferias temáticas, celebraciones del día del niño, fiestas de fin de año, etc. Al ser fabricantes contamos con la estructura necesaria para hacer tu evento de forma rápida y exitosa."
+            iconColor="text-arvi-accent"
+            bgColorHover="bg-arvi-accent/10 border-arvi-accent/20 hover:bg-arvi-accent/20"
+          />
 
-          <Card className="bg-arvi-primary/10 border-arvi-secondary/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-arvi-primary/20">
-            <CardContent className="p-6 text-center">
-              <div class="text-arvi-primary mb-3 flex justify-center">
-                <Icon name="mdi:star" class="w-8 h-8" />
-              </div>
-              <h4 class="mb-2 text-lg font-heading text-arvi-text">Calidad</h4>
-              <p class="text-sm text-arvi-text/70">
-                Equipos premium y servicio excepcional
-              </p>
-            </CardContent>
-          </Card>
+          <CardDropText 
+            icon="mdi:star"
+            title="Calidad"
+            subtitle="Equipos premium y servicio excepcional"
+            dropText="Nuestros juegos sustentables están pensados como nuevos proyectos para la conciencia sobre la necesidad de las actividades humanas interactivas sean respetuosas con el medio ambiente. Estos educan y enseñan a los niños en materia de ecología y energía renovable, ofreciendo además la integración medioambiental y ecológica para contribuir al cuidado del planeta. Todo al alcance también a aquellos espacios de ocio donde disfrutamos tanto niños como adultos."
+            iconColor="text-arvi-primary"
+            bgColorHover="bg-arvi-primary/10 border-arvi-secondary/20 hover:bg-arvi-primary/20"
+          />
         </div>
       </div>
 

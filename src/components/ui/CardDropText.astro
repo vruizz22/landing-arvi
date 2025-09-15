@@ -1,0 +1,46 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  icon: string;
+  title: string;
+  subtitle: string;
+  dropText: string;
+  iconColor?: string;
+  bgColorHover?: string;
+  className?: string;
+}
+
+const { 
+  icon, 
+  title, 
+  subtitle, 
+  dropText, 
+  iconColor = "text-arvi-secondary",
+  bgColorHover = "bg-arvi-secondary/10 border-arvi-secondary/20 hover:bg-arvi-secondary/20",
+  className = "" 
+} = Astro.props;
+---
+
+<!-- Mantenemos exactamente la misma estructura que Card + CardContent -->
+<div class={`group rounded-lg border border-arvi-text/10 bg-arvi-background p-4 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1 ${bgColorHover} cursor-pointer ${className}`}>
+  <!-- Contenido original (Card + CardContent) -->
+  <div class="p-6 text-center">
+    <div class={`mb-3 flex justify-center ${iconColor} group-hover:scale-110 transition-transform duration-300`}>
+      <Icon name={icon} class="w-8 h-8" />
+    </div>
+    <h4 class="mb-2 text-lg font-heading text-arvi-text">{title}</h4>
+    <p class="text-sm text-arvi-text/70">
+      {subtitle}
+    </p>
+  </div>
+
+  <!-- Texto desplegable que empuja hacia abajo naturalmente -->
+  <div class="overflow-hidden transition-all duration-500 ease-out max-h-0 group-hover:max-h-screen">
+    <div class="bg-gradient-to-t from-arvi-primary/95 to-arvi-primary/85 backdrop-blur-sm p-4 border-t border-arvi-primary/20 mx-4 mb-4 rounded-b-lg">
+      <p class="text-sm text-arvi-text leading-relaxed animate-fade-in-up">
+        {dropText}
+      </p>
+    </div>
+  </div>
+</div>
