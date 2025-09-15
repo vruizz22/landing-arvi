@@ -23,9 +23,9 @@ const {
 ---
 
 <!-- Mantenemos exactamente la misma estructura que Card + CardContent -->
-<div class={`group relative rounded-lg border border-arvi-text/10 bg-arvi-background p-4 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1 ${bgColorHover} cursor-pointer ${className}`}>
-  <!-- Contenido original (Card + CardContent) - altura mínima -->
-  <div class="p-6 text-center relative z-10 transition-all duration-500">
+<div class={`group rounded-lg border border-arvi-text/10 bg-arvi-background p-4 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1 ${bgColorHover} cursor-pointer ${className}`}>
+  <!-- Contenido original (Card + CardContent) -->
+  <div class="p-6 text-center">
     <div class={`mb-3 flex justify-center ${iconColor} group-hover:scale-110 transition-transform duration-300`}>
       <Icon name={icon} class="w-8 h-8" />
     </div>
@@ -35,9 +35,9 @@ const {
     </p>
   </div>
 
-  <!-- Texto desplegable con efecto drop y expansión -->
-  <div class="relative overflow-hidden transition-all duration-500 ease-out max-h-0 group-hover:max-h-96 opacity-0 group-hover:opacity-100">
-    <div class="bg-gradient-to-t from-arvi-primary/95 to-arvi-primary/85 backdrop-blur-sm p-4 border-t border-arvi-primary/20">
+  <!-- Texto desplegable que empuja hacia abajo naturalmente -->
+  <div class="overflow-hidden transition-all duration-500 ease-out max-h-0 group-hover:max-h-screen">
+    <div class="bg-gradient-to-t from-arvi-primary/95 to-arvi-primary/85 backdrop-blur-sm p-4 border-t border-arvi-primary/20 mx-4 mb-4 rounded-b-lg">
       <p class="text-sm text-arvi-text leading-relaxed animate-fade-in-up">
         {dropText}
       </p>
