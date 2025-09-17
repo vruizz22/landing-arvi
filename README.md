@@ -2,7 +2,7 @@
 
 Sitio de presentación de ARVI, enfocado en eventos, juegos mecánicos y soluciones eco-sustentables. Construido con Astro 5 y Tailwind CSS 4, con despliegue automatizado a AWS S3 + CloudFront.
 
-- Sitio: https://arvi.cl
+- Sitio: <https://arvi.cl>
 - Rama principal de despliegue: master
 - Rama de desarrollo: develop
 
@@ -78,7 +78,7 @@ npm run build
 
 ## Configuración y contenido
 
-- Configuración del sitio: astro.config.mjs (site: https://arvi.cl, integraciones).
+- Configuración del sitio: astro.config.mjs (site: <https://arvi.cl>, integraciones).
 - Tailwind: tailwind.config.mjs (tema, colores, fuentes y plugin de animaciones).
 - Layout y metadatos: src/layouts/Layout.astro.
 - Home: src/pages/index.astro.
@@ -109,6 +109,7 @@ El despliegue se ejecuta automáticamente al hacer push a la rama master.
 - Autenticación: OIDC asumiendo el role arn:aws:iam::084414214145:role/GitHubActionsDeployRole
 
 Flujo recomendado:
+
 - Trabajo en develop
 - Merge a master para disparar el deploy
 
@@ -161,4 +162,3 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm preview`         | Preview your build locally, before deploying     |
 | `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
