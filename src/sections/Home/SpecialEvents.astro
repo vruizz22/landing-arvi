@@ -1,108 +1,118 @@
 ---
-import { Icon } from 'astro-icon/components';
-import Button from '@components/ui/Button.astro';
-import Card from '@components/ui/Card.astro';
-import CardContent from '@components/ui/CardContent.astro';
-import PopUp from '@components/ui/PopUp.astro';
-import CardImage from '@components/ui/CardImage.astro';
+import { Icon } from 'astro-icon/components'
+import Button from '@components/ui/Button.astro'
+import Card from '@components/ui/Card.astro'
+import CardContent from '@components/ui/CardContent.astro'
+import PopUp from '@components/ui/PopUp.astro'
+import CardImage from '@components/ui/CardImage.astro'
 ---
 
-<section class="py-16 bg-gradient-to-br from-arvi-primary/60 via-arvi-background to-arvi-secondary/60 relative">
+<section
+  class="from-arvi-primary/60 via-arvi-background to-arvi-secondary/60 relative bg-gradient-to-br py-16"
+>
   {/* Elementos decorativos de fondo */}
   <div class="absolute inset-0 opacity-5">
-    <div class="absolute top-10 left-10 w-32 h-32 bg-arvi-primary rounded-2xl blur-3xl"></div>
-    <div class="absolute bottom-10 right-10 w-40 h-40 bg-arvi-secondary rounded-2xl blur-3xl"></div>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-arvi-accent rounded-2xl blur-3xl"></div>
+    <div class="bg-arvi-primary absolute top-10 left-10 h-32 w-32 rounded-2xl blur-3xl"></div>
+    <div class="bg-arvi-secondary absolute right-10 bottom-10 h-40 w-40 rounded-2xl blur-3xl"></div>
+    <div
+      class="bg-arvi-accent absolute top-1/2 left-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 transform rounded-2xl blur-3xl"
+    >
+    </div>
   </div>
 
-  <div class="container mx-auto px-4 relative z-10">
+  <div class="relative z-10 container mx-auto px-4">
     {/* Encabezado con elementos festivos */}
-    <div class="text-center mb-12">
-      <div class="flex justify-center items-center gap-2 mb-4">
-        <Icon name="lucide:sparkles" class="w-8 h-8 text-arvi-primary animate-pulse" />
-        <div class="bg-arvi-primary text-arvi-background border border-arvi-primary px-4 py-2 animate-bounce rounded-2xl">
-          <Icon name="lucide:tent" class="inline-block w-5 h-5 mr-1" /> EVENTO ESPECIAL <Icon name="lucide:tent" class="inline-block w-5 h-5 ml-1" />
+    <div class="mb-12 text-center">
+      <div class="mb-4 flex items-center justify-center gap-2">
+        <Icon name="lucide:sparkles" class="text-arvi-primary h-8 w-8 animate-pulse" />
+        <div
+          class="bg-arvi-primary text-arvi-background border-arvi-primary animate-bounce rounded-2xl border px-4 py-2"
+        >
+          <Icon name="lucide:tent" class="mr-1 inline-block h-5 w-5" /> EVENTO ESPECIAL <Icon
+            name="lucide:tent"
+            class="ml-1 inline-block h-5 w-5"
+          />
         </div>
-        <Icon name="lucide:sparkles" class="w-8 h-8 text-arvi-primary animate-pulse" />
+        <Icon name="lucide:sparkles" class="text-arvi-primary h-8 w-8 animate-pulse" />
       </div>
-      
-      <h2 class="text-5xl md:text-6xl font-heading text-arvi-text mb-6">
-        ¡<span class="text-arvi-background">Vive</span> las
-         <span class="text-red-500">Fiestas</span> <span class="text-blue-800">Patrias</span>
-          con <span class="text-arvi-primary">ARVI</span>!
+
+      <h2 class="font-heading text-arvi-text mb-6 text-5xl md:text-6xl">
+        ¡<span class="text-arvi-primary">ARVI</span> en
+        <span class="text-blue-500">El</span>
+        <span class="text-arvi-secondary">Quisco</span>!
       </h2>
-      
-      <p class="text-xl text-arvi-text/80 max-w-3xl mx-auto">
-        Te invitamos a celebrar las fiestas patrias chilenas con nosotros en el emblemático 
-        <span class="text-arvi-secondary font-bold"> Estadio Nacional</span>
+
+      <p class="text-arvi-text/80 mx-auto max-w-3xl text-xl">
+        Te invitamos a disfrutar este verano con nosotros en la hermosa
+        <span class="text-arvi-secondary font-bold"> Playa El Quisco</span>
       </p>
     </div>
 
     {/* Tarjeta de evento principal */}
-    <div class="max-w-6xl mx-auto mb-16">
-      <Card customClass="overflow-hidden border-2 border-arvi-primary/30 shadow-2xl bg-gradient-to-r from-white via-arvi-background/30 to-white hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <div class="mx-auto mb-16 max-w-6xl">
+      <Card
+        customClass="overflow-hidden border-2 border-arvi-primary/30 shadow-2xl bg-gradient-to-r from-white via-arvi-background/30 to-white hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+      >
         <CardContent customClass="p-0">
-          <div class="grid md:grid-cols-2 gap-0">
+          <div class="grid gap-0 md:grid-cols-2">
             {/* Detalles del evento */}
-            <div class="p-8 space-y-6">
+            <div class="space-y-6 p-8">
               <div class="flex items-center gap-3">
-                <div class="w-3 h-3 bg-red-500 rounded-2xl animate-pulse"></div>
-                <div class="bg-red-500 text-white px-3 py-1 rounded-2xl text-sm">
+                <div class="h-3 w-3 animate-pulse rounded-2xl bg-red-500"></div>
+                <div class="rounded-2xl bg-red-500 px-3 py-1 text-sm text-white">
                   🔴 EN VIVO AHORA
                 </div>
               </div>
 
               <div>
-                <h3 class="text-2xl font-heading text-arvi-text mb-3">
-                  Fiestas Patrias 2025
-                </h3>
+                <h3 class="font-heading text-arvi-text mb-3 text-2xl">ARVI en El Quisco 2026</h3>
                 <p class="text-arvi-text/70 mb-4">
-                  Únete a la celebración más grande del año con juegos mecánicos, 
-                  inflables gigantes y entretenimiento familiar en el corazón de Santiago.
+                  Disfruta el verano con los mejores juegos mecánicos, inflables gigantes y
+                  entretenimiento familiar en la costa.
                 </p>
               </div>
 
               <div class="space-y-4">
-                <div class="flex items-center gap-3 text-arvi-text/80">
-                  <Icon name="lucide:map-pin" class="w-5 h-5 text-arvi-secondary" />
-                  <span>Estadio Nacional, Santiago - Chile</span>
+                <div class="text-arvi-text/80 flex items-center gap-3">
+                  <Icon name="lucide:map-pin" class="text-arvi-secondary h-5 w-5" />
+                  <span>El Quisco, Chile</span>
                 </div>
-                
-                <div class="flex items-center gap-3 text-arvi-text/80">
-                  <Icon name="lucide:calendar" class="w-5 h-5 text-arvi-secondary" />
-                  <span>17 - 21 de Septiembre, 2025</span>
+
+                <div class="text-arvi-text/80 flex items-center gap-3">
+                  <Icon name="lucide:calendar" class="text-arvi-secondary h-5 w-5" />
+                  <span>3 de Enero - 1 de Marzo, 2026</span>
                 </div>
-                
-                <div class="flex items-center gap-3 text-arvi-text/80">
-                  <Icon name="lucide:users" class="w-5 h-5 text-arvi-secondary" />
+
+                <div class="text-arvi-text/80 flex items-center gap-3">
+                  <Icon name="lucide:users" class="text-arvi-secondary h-5 w-5" />
                   <span>Para toda la familia</span>
                 </div>
               </div>
 
-              <div class="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="https://wa.me/56988082320?text=¡Hola!%20Me%20interesa%20saber%20más%20sobre%20los%20eventos%20especiales%20de%20ARVI%20en%20el%20Estadio%20Nacional.%20¿Podrían%20darme%20más%20información?" 
+              <div class="flex flex-col gap-4 sm:flex-row">
+                <a
+                  href="https://wa.me/56988082320?text=¡Hola!%20Me%20interesa%20saber%20más%20sobre%20ARVI%20en%20El%20Quisco.%20¿Podrían%20darme%20más%20información?"
                   target="_blank"
-                  class="transition-all duration-300 hover:-translate-y-1 bg-arvi-primary hover:bg-arvi-primary/90 text-arvi-background py-2 px-4 rounded-2xl flex items-center justify-center flex-1 "
+                  class="bg-arvi-primary hover:bg-arvi-primary/90 text-arvi-background flex flex-1 items-center justify-center rounded-2xl px-4 py-2 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <Icon name="lucide:message-circle" class="w-9 h-7 mr-5" /> ¡Quiero participar!
+                  <Icon name="lucide:message-circle" class="mr-5 h-7 w-9" /> ¡Quiero participar!
                 </a>
-                <a 
-                  href="https://www.google.com/maps/place/Estadio+Nacional+Julio+Mart%C3%ADnez+Pr%C3%A1danos/@-33.4644994,-70.6106319,17z/data=!3m1!4b1!4m6!3m5!1s0x9662cfed639ab813:0xb92488060556a1df!8m2!3d-33.4644994!4d-70.6106319!16zL20vMDdkcjFx?hl=es-419&entry=ttu" 
+                <a
+                  href="https://www.google.com/maps/place/El+Quisco,+Valparaíso/@-33.3963,-71.6924,14z"
                   target="_blank"
-                  class="bg-arvi-secondary text-arvi-background hover:bg-arvi-secondary hover:text-white py-2 px-4 rounded-2xl flex items-center justify-center flex-1 transition-all duration-300 hover:-translate-y-1"
+                  class="bg-arvi-secondary text-arvi-background hover:bg-arvi-secondary flex flex-1 items-center justify-center rounded-2xl px-4 py-2 transition-all duration-300 hover:-translate-y-1 hover:text-white"
                 >
-                  <Icon name="lucide:map-pin" class="w-9 h-7 mr-5" /> Ver ubicación
+                  <Icon name="lucide:map-pin" class="mr-5 h-7 w-9" /> Ver ubicación
                 </a>
               </div>
             </div>
 
-            {/* Sección visual - Reemplazado por imagen del estadio */}
+            {/* Sección visual - Reemplazado por imagen de El Quisco */}
             <div class="relative h-full min-h-[300px]">
-              <img 
-                src="/images/estadio_nacional.jpg" 
-                alt="Estadio Nacional - Evento de Fiestas Patrias" 
-                class="absolute inset-0 w-full h-full object-cover rounded-2xl"
+              <img
+                src="/images/quisco.jpg"
+                alt="ARVI en El Quisco - Verano 2026"
+                class="absolute inset-0 h-full w-full rounded-2xl object-cover"
               />
             </div>
           </div>
@@ -112,19 +122,21 @@ import CardImage from '@components/ui/CardImage.astro';
 
     {/* Eventos Realizados */}
     <div class="text-center">
-      <h3 class="text-5xl font-heading text-arvi-text mb-16">
-        Eventos <span class="text-arvi-secondary">Realizados</span> por <span class="text-arvi-primary">ARVI</span>
+      <h3 class="font-heading text-arvi-text mb-16 text-5xl">
+        Eventos <span class="text-arvi-secondary">Realizados</span> por <span
+          class="text-arvi-primary">ARVI</span
+        >
       </h3>
-      
-      <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+
+      <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-2">
         <!-- Chile Lindo 2025 - Vitacura -->
-        <PopUp 
+        <PopUp
           images={[
-            "/images/eventos/chile-lindo/chile-lindo-1.jpg",
-            "/images/eventos/chile-lindo/chile-lindo-2.jpg",
-            "/images/eventos/chile-lindo/chile-lindo-3.jpg",
-            "/images/eventos/chile-lindo/chile-lindo-4.jpg",
-            "/images/eventos/chile-lindo/chile-lindo-5.jpg"
+            '/images/eventos/chile-lindo/chile-lindo-1.jpg',
+            '/images/eventos/chile-lindo/chile-lindo-2.jpg',
+            '/images/eventos/chile-lindo/chile-lindo-3.jpg',
+            '/images/eventos/chile-lindo/chile-lindo-4.jpg',
+            '/images/eventos/chile-lindo/chile-lindo-5.jpg',
           ]}
           alt="Festival Chile Lindo 2025 en Vitacura"
           showArrows={true}
@@ -134,11 +146,11 @@ import CardImage from '@components/ui/CardImage.astro';
           <div class="relative">
             <CardImage
               images={[
-                "/images/eventos/chile-lindo/chile-lindo-1.jpg",
-                "/images/eventos/chile-lindo/chile-lindo-2.jpg", 
-                "/images/eventos/chile-lindo/chile-lindo-3.jpg",
-                "/images/eventos/chile-lindo/chile-lindo-4.jpg",
-                "/images/eventos/chile-lindo/chile-lindo-5.jpg"
+                '/images/eventos/chile-lindo/chile-lindo-1.jpg',
+                '/images/eventos/chile-lindo/chile-lindo-2.jpg',
+                '/images/eventos/chile-lindo/chile-lindo-3.jpg',
+                '/images/eventos/chile-lindo/chile-lindo-4.jpg',
+                '/images/eventos/chile-lindo/chile-lindo-5.jpg',
               ]}
               title="Chile Lindo 2025"
               description="Estuvimos en Vitacura llevando nuestros juegos mecánicos para que grandes y chicos disfrutaran"
@@ -151,19 +163,19 @@ import CardImage from '@components/ui/CardImage.astro';
               textPosition="bottom"
             />
             <!-- Icono del evento -->
-            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
-              <Icon name="streamline-freehand:circus-tent" class="w-6 h-6 text-arvi-secondary" />
+            <div class="absolute top-4 left-4 z-20 rounded-full bg-white/20 p-2 backdrop-blur-sm">
+              <Icon name="streamline-freehand:circus-tent" class="text-arvi-secondary h-6 w-6" />
             </div>
           </div>
         </PopUp>
 
         <!-- Municipalidad de Putaendo -->
-        <PopUp 
+        <PopUp
           images={[
-            "/images/eventos/putaendo/putaendo-1.jpg",
-            "/images/eventos/putaendo/putaendo-2.jpg",
-            "/images/eventos/putaendo/putaendo-3.jpg",
-            "/images/eventos/putaendo/putaendo-4.jpg"
+            '/images/eventos/putaendo/putaendo-1.jpg',
+            '/images/eventos/putaendo/putaendo-2.jpg',
+            '/images/eventos/putaendo/putaendo-3.jpg',
+            '/images/eventos/putaendo/putaendo-4.jpg',
           ]}
           alt="Evento Municipalidad de Putaendo"
           showArrows={true}
@@ -173,10 +185,10 @@ import CardImage from '@components/ui/CardImage.astro';
           <div class="relative">
             <CardImage
               images={[
-                "/images/eventos/putaendo/putaendo-1.jpg",
-                "/images/eventos/putaendo/putaendo-2.jpg",
-                "/images/eventos/putaendo/putaendo-3.jpg",
-                "/images/eventos/putaendo/putaendo-4.jpg"
+                '/images/eventos/putaendo/putaendo-1.jpg',
+                '/images/eventos/putaendo/putaendo-2.jpg',
+                '/images/eventos/putaendo/putaendo-3.jpg',
+                '/images/eventos/putaendo/putaendo-4.jpg',
               ]}
               title="Muni Putaendo"
               description="Este fin de semana estuvimos en Putaendo y fue todo un éxito. Llevamos diversión con nuestros juegos mecánicos"
@@ -189,21 +201,21 @@ import CardImage from '@components/ui/CardImage.astro';
               textPosition="bottom"
             />
             <!-- Icono del evento -->
-            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
-              <Icon name="mdi:city" class="w-6 h-6 text-arvi-secondary" />
+            <div class="absolute top-4 left-4 z-20 rounded-full bg-white/20 p-2 backdrop-blur-sm">
+              <Icon name="mdi:city" class="text-arvi-secondary h-6 w-6" />
             </div>
           </div>
         </PopUp>
 
         <!-- Día del Niño - Paseo Los Dominicos -->
-        <PopUp 
+        <PopUp
           images={[
-            "/images/eventos/los-dominicos/dominicos-1.jpg",
-            "/images/eventos/los-dominicos/dominicos-2.jpg",
-            "/images/eventos/los-dominicos/dominicos-3.jpg",
-            "/images/eventos/los-dominicos/dominicos-4.jpg",
-            "/images/eventos/los-dominicos/dominicos-5.jpg",
-            "/images/eventos/los-dominicos/dominicos-6.jpg"
+            '/images/eventos/los-dominicos/dominicos-1.jpg',
+            '/images/eventos/los-dominicos/dominicos-2.jpg',
+            '/images/eventos/los-dominicos/dominicos-3.jpg',
+            '/images/eventos/los-dominicos/dominicos-4.jpg',
+            '/images/eventos/los-dominicos/dominicos-5.jpg',
+            '/images/eventos/los-dominicos/dominicos-6.jpg',
           ]}
           alt="Día del Niño en Paseo Los Dominicos"
           showArrows={true}
@@ -213,12 +225,12 @@ import CardImage from '@components/ui/CardImage.astro';
           <div class="relative">
             <CardImage
               images={[
-                "/images/eventos/los-dominicos/dominicos-1.jpg",
-                "/images/eventos/los-dominicos/dominicos-2.jpg",
-                "/images/eventos/los-dominicos/dominicos-3.jpg",
-                "/images/eventos/los-dominicos/dominicos-4.jpg",
-                "/images/eventos/los-dominicos/dominicos-5.jpg",
-                "/images/eventos/los-dominicos/dominicos-6.jpg"
+                '/images/eventos/los-dominicos/dominicos-1.jpg',
+                '/images/eventos/los-dominicos/dominicos-2.jpg',
+                '/images/eventos/los-dominicos/dominicos-3.jpg',
+                '/images/eventos/los-dominicos/dominicos-4.jpg',
+                '/images/eventos/los-dominicos/dominicos-5.jpg',
+                '/images/eventos/los-dominicos/dominicos-6.jpg',
               ]}
               title="Día del Niño"
               description="Celebramos el Día del Niño en Paseo Los Dominicos con Tagadá, Barco Pirata, reloj derribador y mucho más"
@@ -231,18 +243,18 @@ import CardImage from '@components/ui/CardImage.astro';
               textPosition="bottom"
             />
             <!-- Icono del evento -->
-            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
-              <Icon name="mdi:rocket-launch" class="w-6 h-6 text-arvi-secondary" />
+            <div class="absolute top-4 left-4 z-20 rounded-full bg-white/20 p-2 backdrop-blur-sm">
+              <Icon name="mdi:rocket-launch" class="text-arvi-secondary h-6 w-6" />
             </div>
           </div>
         </PopUp>
 
         <!-- Colegio Monte Tabor y Nazaret -->
-        <PopUp 
+        <PopUp
           images={[
-            "/images/eventos/monte-tabor/colegio-1.jpg",
-            "/images/eventos/monte-tabor/colegio-2.jpg",
-            "/images/eventos/monte-tabor/colegio-3.jpg"
+            '/images/eventos/monte-tabor/colegio-1.jpg',
+            '/images/eventos/monte-tabor/colegio-2.jpg',
+            '/images/eventos/monte-tabor/colegio-3.jpg',
           ]}
           alt="Colegio Monte Tabor y Nazaret de Lo Barnechea"
           showArrows={true}
@@ -252,9 +264,9 @@ import CardImage from '@components/ui/CardImage.astro';
           <div class="relative">
             <CardImage
               images={[
-                "/images/eventos/monte-tabor/colegio-1.jpg",
-                "/images/eventos/monte-tabor/colegio-2.jpg",
-                "/images/eventos/monte-tabor/colegio-3.jpg"
+                '/images/eventos/monte-tabor/colegio-1.jpg',
+                '/images/eventos/monte-tabor/colegio-2.jpg',
+                '/images/eventos/monte-tabor/colegio-3.jpg',
               ]}
               title="Monte Tabor y Nazaret"
               description="Llevamos la adrenalina al colegio con el Barco Pirata, el Tagadá y la mágica Alfombra mágica"
@@ -267,21 +279,21 @@ import CardImage from '@components/ui/CardImage.astro';
               textPosition="bottom"
             />
             <!-- Icono del evento -->
-            <div class="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full p-2 z-20">
-              <Icon name="mdi:school" class="w-6 h-6 text-arvi-secondary" />
+            <div class="absolute top-4 left-4 z-20 rounded-full bg-white/20 p-2 backdrop-blur-sm">
+              <Icon name="mdi:school" class="text-arvi-secondary h-6 w-6" />
             </div>
           </div>
         </PopUp>
       </div>
 
       <div class="mt-12">
-        <Button 
+        <Button
           href="https://wa.me/56988082320?text=¡Hola!%20Me%20interesa%20saber%20más%20sobre%20eventos%20personalizados%20con%20ARVI.%20¿Podrían%20darme%20más%20información?"
           variant="secondary"
           size="lg"
           target="_blank"
         >
-          <Icon name="lucide:star" class="w-5 h-5 mr-2" />
+          <Icon name="lucide:star" class="mr-2 h-5 w-5" />
           ¡Contáctanos para eventos personalizados!
         </Button>
       </div>
