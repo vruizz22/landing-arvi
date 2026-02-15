@@ -6,6 +6,23 @@ Sitio de presentación de ARVI, enfocado en eventos, juegos mecánicos y solucio
 - Rama principal de despliegue: master
 - Rama de desarrollo: develop
 
+## Indice
+
+- [Landing ARVI](#landing-arvi)
+  - [Indice](#indice)
+  - [Tecnologías](#tecnologías)
+  - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Scripts](#scripts)
+  - [Estilo de código](#estilo-de-código)
+  - [Configuración y contenido](#configuración-y-contenido)
+  - [Despliegue (CI/CD)](#despliegue-cicd)
+  - [Requisitos](#requisitos)
+  - [Cómo contribuir](#cómo-contribuir)
+  - [Roadmap sugerido](#roadmap-sugerido)
+  - [Licencia](#licencia)
+  - [Créditos](#créditos)
+  - [🧞 Commands](#-commands)
+
 ## Tecnologías
 
 - Astro 5
@@ -142,7 +159,7 @@ Flujo recomendado:
 
 ## Licencia
 
-Define una licencia (por ejemplo, MIT) en un archivo LICENSE.
+Este proyecto está bajo la licencia **GNU General Public License v3.0**. Consulta el archivo `LICENSE` para más detalles.
 
 ## Créditos
 
