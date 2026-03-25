@@ -1,70 +1,106 @@
 ---
-import CardImage from '@components/ui/CardImage.astro';
-import CardDropText from '@components/ui/CardDropText.astro';
-import PopUp from '@components/ui/PopUp.astro';
-import { Icon } from 'astro-icon/components';
-import InstagramCarousel from '@components/InstagramCarousel.astro';
-import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
+import CardImage from '@components/ui/CardImage.astro'
+import CardDropText from '@components/ui/CardDropText.astro'
+import PopUp from '@components/ui/PopUp.astro'
+import { Icon } from 'astro-icon/components'
+import InstagramFeed from '@components/InstagramFeed.astro'
+import ImagesCarousel from '@components/ui/ImagesCarousel.astro'
 ---
 
-<section class="py-16 bg-arvi-background" id="nosotros">
+<section class="bg-arvi-background py-16" id="nosotros">
   <div class="container mx-auto px-4">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl mb-4 font-heading text-arvi-text">Conoce 
-            <span class="text-arvi-primary">ARVI</span> 
-            <span class="text-arvi-secondary">Entretenciones</span>
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-12 text-center">
+        <h2 class="font-heading text-arvi-text mb-4 text-4xl md:text-5xl">
+          Conoce
+          <span class="text-arvi-primary">ARVI</span>
+          <span class="text-arvi-secondary">Entretenciones</span>
         </h2>
-        <p class="text-lg text-arvi-text/80 max-w-2xl mx-auto">
-          Llevamos más de 19 años creando experiencias inolvidables 
-          con un enfoque sustentable y responsable.
+        <p class="text-arvi-text/80 mx-auto max-w-2xl text-lg">
+          Llevamos más de 19 años creando experiencias inolvidables con un enfoque sustentable y
+          responsable.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div class="grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
         <div>
-          <div class="space-y-6">   
-            <div class="flex items-start space-x-4 group hover:bg-arvi-background/80 hover:shadow-md p-2 rounded-lg transition-all duration-300">
-              <div class="w-12 h-12 bg-arvi-secondary text-arvi-background rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
-                <Icon name="mdi:map-marker" class="w-6 h-6" />
+          <div class="space-y-6">
+            <div
+              class="group hover:bg-arvi-background/80 flex items-start space-x-4 rounded-lg p-2 transition-all duration-300 hover:shadow-md"
+            >
+              <div
+                class="bg-arvi-secondary text-arvi-background flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110 group-hover:shadow-md"
+              >
+                <Icon name="mdi:map-marker" class="h-6 w-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Cobertura Nacional</h4>
-                <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
-                  Desde Arica a Punta Arenas, llevamos eventos a municipios, colegios, empresas, festivales, eventos corporativos, ferias temáticas y celebraciones especiales en todo Chile.
+                <h4
+                  class="font-heading text-arvi-text group-hover:text-arvi-secondary mb-2 text-xl transition-colors duration-300"
+                >
+                  Cobertura Nacional
+                </h4>
+                <p
+                  class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300"
+                >
+                  Desde Arica a Punta Arenas, llevamos eventos a municipios, colegios, empresas,
+                  festivales, eventos corporativos, ferias temáticas y celebraciones especiales en
+                  todo Chile.
                 </p>
               </div>
             </div>
 
-            <div class="flex items-start space-x-4 group hover:bg-arvi-background/80 hover:shadow-md p-2 rounded-lg transition-all duration-300">
-              <div class="w-12 h-12 bg-arvi-secondary text-arvi-background rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
-                <Icon name="mdi:leaf" class="w-6 h-6" />
+            <div
+              class="group hover:bg-arvi-background/80 flex items-start space-x-4 rounded-lg p-2 transition-all duration-300 hover:shadow-md"
+            >
+              <div
+                class="bg-arvi-secondary text-arvi-background flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110 group-hover:shadow-md"
+              >
+                <Icon name="mdi:leaf" class="h-6 w-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Enfoque en Juegos Mecánicos y Eco-Sustentables</h4>
-                <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
-                  Nuestros juegos sustentables educan y enseñan a los niños sobre ecología y energía renovable, ofreciendo integración medioambiental para contribuir al cuidado del planeta.
+                <h4
+                  class="font-heading text-arvi-text group-hover:text-arvi-secondary mb-2 text-xl transition-colors duration-300"
+                >
+                  Enfoque en Juegos Mecánicos y Eco-Sustentables
+                </h4>
+                <p
+                  class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300"
+                >
+                  Nuestros juegos sustentables educan y enseñan a los niños sobre ecología y energía
+                  renovable, ofreciendo integración medioambiental para contribuir al cuidado del
+                  planeta.
                 </p>
               </div>
             </div>
 
-            <div class="flex items-start space-x-4 group hover:bg-arvi-background/80 hover:shadow-md p-2 rounded-lg transition-all duration-300">
-              <div class="w-12 h-12 bg-arvi-secondary text-arvi-background rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
-                <Icon name="mdi:factory" class="w-6 h-6" />
+            <div
+              class="group hover:bg-arvi-background/80 flex items-start space-x-4 rounded-lg p-2 transition-all duration-300 hover:shadow-md"
+            >
+              <div
+                class="bg-arvi-secondary text-arvi-background flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110 group-hover:shadow-md"
+              >
+                <Icon name="mdi:factory" class="h-6 w-6" />
               </div>
               <div>
-                <h4 class="mb-2 text-xl font-heading text-arvi-text group-hover:text-arvi-secondary transition-colors duration-300">Fabricación Nacional</h4>
-                <p class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300">
-                  Todos nuestros juegos son de fabricación nacional, respaldados por entidades internacionales y reconocidos por comunidades chilenas. Al ser fabricantes, tenemos la estructura necesaria para eventos rápidos y exitosos.
+                <h4
+                  class="font-heading text-arvi-text group-hover:text-arvi-secondary mb-2 text-xl transition-colors duration-300"
+                >
+                  Fabricación Nacional
+                </h4>
+                <p
+                  class="text-arvi-text/70 group-hover:text-arvi-text/90 transition-colors duration-300"
+                >
+                  Todos nuestros juegos son de fabricación nacional, respaldados por entidades
+                  internacionales y reconocidos por comunidades chilenas. Al ser fabricantes,
+                  tenemos la estructura necesaria para eventos rápidos y exitosos.
                 </p>
               </div>
             </div>
-
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
-          <CardDropText 
+        <div class="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
+          <CardDropText
             icon="mdi:security"
             title="Seguridad"
             subtitle="Equipos certificados y personal capacitado"
@@ -73,7 +109,7 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
             bgColorHover="bg-arvi-secondary/10 border-arvi-secondary/20 hover:bg-arvi-secondary/20"
           />
 
-          <CardDropText 
+          <CardDropText
             icon="mdi:flash"
             title="Rapidez"
             subtitle="Montaje eficiente en tiempo récord"
@@ -82,7 +118,7 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
             bgColorHover="bg-arvi-primary/10 border-arvi-primary/20 hover:bg-arvi-primary/20"
           />
 
-          <CardDropText 
+          <CardDropText
             icon="mdi:handshake"
             title="Confianza"
             subtitle="Respaldo y garantía en cada evento"
@@ -91,7 +127,7 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
             bgColorHover="bg-arvi-accent/10 border-arvi-accent/20 hover:bg-arvi-accent/20"
           />
 
-          <CardDropText 
+          <CardDropText
             icon="mdi:star"
             title="Calidad"
             subtitle="Equipos premium y servicio excepcional"
@@ -103,11 +139,12 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
       </div>
 
       <!-- Sección de Nuestros Productos con Carousel -->
-      <h2 class="text-center text-4xl md:text-5xl mb-12 font-heading text-arvi-text mt-20">Nuestros 
-            <span class="text-arvi-secondary">Productos</span> 
-            <span class="text-arvi-primary">Destacados</span>
-        </h2>
-        
+      <h2 class="font-heading text-arvi-text mt-20 mb-12 text-center text-4xl md:text-5xl">
+        Nuestros
+        <span class="text-arvi-secondary">Productos</span>
+        <span class="text-arvi-primary">Destacados</span>
+      </h2>
+
       <!-- Son 5 cards del componente CARD, cada una contiene 1 juego 
       1. Barco Pirata
       2. Globos Samba
@@ -117,12 +154,12 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
       -->
 
       <!-- Primeras 4 cards en matriz 2x2 -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 justify-items-center">
-        <PopUp 
+      <div class="mb-8 grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2">
+        <PopUp
           images={[
-            "/images/juegos/barco_pirata/barco_pirata.jpg", 
-            "/images/juegos/barco_pirata/barco_pirata_2.jpg", 
-            "/images/juegos/barco_pirata/barco_pirata_3.jpg"
+            '/images/juegos/barco_pirata/barco_pirata.jpg',
+            '/images/juegos/barco_pirata/barco_pirata_2.jpg',
+            '/images/juegos/barco_pirata/barco_pirata_3.jpg',
           ]}
           alt="Barco Pirata"
           showArrows={true}
@@ -130,11 +167,11 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           autoplay={true}
           autoplayInterval={3000}
         >
-          <CardImage 
+          <CardImage
             images={[
-              "/images/juegos/barco_pirata/barco_pirata.jpg", 
-              "/images/juegos/barco_pirata/barco_pirata_2.jpg", 
-              "/images/juegos/barco_pirata/barco_pirata_3.jpg"
+              '/images/juegos/barco_pirata/barco_pirata.jpg',
+              '/images/juegos/barco_pirata/barco_pirata_2.jpg',
+              '/images/juegos/barco_pirata/barco_pirata_3.jpg',
             ]}
             title="Barco Pirata"
             description="La atracción estrella que garantiza diversión para todas las edades."
@@ -145,11 +182,11 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           />
         </PopUp>
 
-        <PopUp 
+        <PopUp
           images={[
-            "/images/juegos/globos_samba/globos_samba.jpg", 
-            "/images/juegos/globos_samba/globos_samba_2.jpg", 
-            "/images/juegos/globos_samba/globos_samba_3.jpg"
+            '/images/juegos/globos_samba/globos_samba.jpg',
+            '/images/juegos/globos_samba/globos_samba_2.jpg',
+            '/images/juegos/globos_samba/globos_samba_3.jpg',
           ]}
           alt="Globos Samba"
           showArrows={true}
@@ -159,9 +196,9 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
         >
           <CardImage
             images={[
-              "/images/juegos/globos_samba/globos_samba.jpg", 
-              "/images/juegos/globos_samba/globos_samba_2.jpg", 
-              "/images/juegos/globos_samba/globos_samba_3.jpg"
+              '/images/juegos/globos_samba/globos_samba.jpg',
+              '/images/juegos/globos_samba/globos_samba_2.jpg',
+              '/images/juegos/globos_samba/globos_samba_3.jpg',
             ]}
             title="Globos Samba"
             description="Emoción y adrenalina en cada vuelta, ideal para los amantes de la velocidad."
@@ -172,11 +209,11 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           />
         </PopUp>
 
-        <PopUp 
+        <PopUp
           images={[
-            "/images/juegos/rueda/rueda.jpg", 
-            "/images/juegos/rueda/rueda_2.jpg",
-            "/images/juegos/rueda/rueda_3.jpg"
+            '/images/juegos/rueda/rueda.jpg',
+            '/images/juegos/rueda/rueda_2.jpg',
+            '/images/juegos/rueda/rueda_3.jpg',
           ]}
           alt="Rueda"
           showArrows={true}
@@ -184,11 +221,11 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           autoplay={true}
           autoplayInterval={3000}
         >
-          <CardImage 
+          <CardImage
             images={[
-              "/images/juegos/rueda/rueda.jpg", 
-              "/images/juegos/rueda/rueda_2.jpg",
-              "/images/juegos/rueda/rueda_3.jpg"
+              '/images/juegos/rueda/rueda.jpg',
+              '/images/juegos/rueda/rueda_2.jpg',
+              '/images/juegos/rueda/rueda_3.jpg',
             ]}
             title="Rueda"
             description="Disfruta de vistas panorámicas mientras te relajas en esta icónica atracción."
@@ -199,13 +236,13 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           />
         </PopUp>
 
-        <PopUp 
+        <PopUp
           images={[
-            "/images/juegos/tagada/tagada.jpg", 
-            "/images/juegos/tagada/tagada_2.jpg",
-            "/images/juegos/tagada/tagada_3.jpg",
-            "/images/juegos/tagada/tagada_4.jpg",
-            "/images/juegos/tagada/tagada_5.jpg"
+            '/images/juegos/tagada/tagada.jpg',
+            '/images/juegos/tagada/tagada_2.jpg',
+            '/images/juegos/tagada/tagada_3.jpg',
+            '/images/juegos/tagada/tagada_4.jpg',
+            '/images/juegos/tagada/tagada_5.jpg',
           ]}
           alt="Tagada"
           showArrows={true}
@@ -213,13 +250,13 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
           autoplay={true}
           autoplayInterval={3000}
         >
-          <CardImage 
+          <CardImage
             images={[
-              "/images/juegos/tagada/tagada.jpg", 
-              "/images/juegos/tagada/tagada_2.jpg",
-              "/images/juegos/tagada/tagada_3.jpg",
-              "/images/juegos/tagada/tagada_4.jpg",
-              "/images/juegos/tagada/tagada_5.jpg"
+              '/images/juegos/tagada/tagada.jpg',
+              '/images/juegos/tagada/tagada_2.jpg',
+              '/images/juegos/tagada/tagada_3.jpg',
+              '/images/juegos/tagada/tagada_4.jpg',
+              '/images/juegos/tagada/tagada_5.jpg',
             ]}
             title="Tagada"
             description="Diversión sin fin con giros y vueltas que harán vibrar a todos"
@@ -229,8 +266,6 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
             showArrows={true}
           />
         </PopUp>
-
-
       </div>
 
       <!-- Quinta card centrada debajo -->
@@ -245,27 +280,24 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
       </div>
       -->
       <!-- Sección de Nuestro Equipo con Carousel -->
-      <h2 class="text-4xl md:text-5xl mb-4 font-heading text-arvi-text mt-20">Nuestro 
-            <span class="text-arvi-secondary">Equipo</span> 
-            <span class="text-arvi-primary">ARVI</span>
-        </h2>
+      <h2 class="font-heading text-arvi-text mt-20 mb-4 text-4xl md:text-5xl">
+        Nuestro
+        <span class="text-arvi-secondary">Equipo</span>
+        <span class="text-arvi-primary">ARVI</span>
+      </h2>
 
       <!-- Carousel de imágenes del equipo -->
       <div class="mt-16">
-        <PopUp 
-          images={[
-            "/images/team.jpg",
-          ]}
+        <PopUp
+          images={['/images/team.jpg']}
           alt="Equipo ARVI Entretenciones"
           showArrows={true}
           showDots={true}
           autoplay={true}
           autoplayInterval={2000}
         >
-          <ImagesCarousel 
-            images={[
-              "/images/team.jpg",
-            ]}
+          <ImagesCarousel
+            images={['/images/team.jpg']}
             width="100%"
             height="400px"
             autoplayInterval={2000}
@@ -279,19 +311,21 @@ import ImagesCarousel from '@components/ui/ImagesCarousel.astro';
       </div>
 
       <!-- Carrusel de Instagram -->
-      <div class="mt-24 mb-12 relative">
+      <div class="relative mt-24 mb-12">
         <!-- Fondo decorativo para la sección de Instagram -->
-        <div class="absolute inset-0 bg-gradient-to-b from-arvi-background to-arvi-primary/5 rounded-3xl -mx-4 -my-8 z-0"></div>
+        <div
+          class="from-arvi-background to-arvi-primary/5 absolute inset-0 z-0 -mx-4 -my-8 rounded-3xl bg-gradient-to-b"
+        >
+        </div>
         <!-- Patrón decorativo -->
-        <div class="absolute top-0 right-0 w-32 h-32 opacity-10">
-          <Icon name="mdi:instagram" class="w-full h-full text-arvi-primary" />
+        <div class="absolute top-0 right-0 h-32 w-32 opacity-10">
+          <Icon name="mdi:instagram" class="text-arvi-primary h-full w-full" />
         </div>
         <!-- Contenido del carrusel -->
         <div class="relative z-10">
-          <InstagramCarousel />
+          <InstagramFeed />
         </div>
       </div>
-
     </div>
   </div>
 </section>
