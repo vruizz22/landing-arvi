@@ -60,7 +60,7 @@ jobs:
           aws s3 sync ./dist s3://${{ secrets.S3_BUCKET }} \
             --delete \
             --exclude "*" --include "*.html" --include "index.html" \
-            --cache-control "max-age=60,public"
+            --cache-control "max-age=86400,public"
 
       - name: Upload sitemaps (XML) and robots (ensure content-type)
         shell: bash
