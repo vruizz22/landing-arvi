@@ -1,21 +1,18 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from 'astro/config'
 
-import tailwindcss from '@tailwindcss/vite';
+import tailwindcss from '@tailwindcss/vite'
 
-import icon from 'astro-icon';
+import icon from 'astro-icon'
 
-import sitemap from '@astrojs/sitemap';
+import sitemap from '@astrojs/sitemap'
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://arvi.cl',
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
   },
 
-  integrations: [
-    icon(),
-    sitemap()
-  ]
-});
+  integrations: [icon(), sitemap()],
+})

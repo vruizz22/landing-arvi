@@ -1,68 +1,71 @@
 ---
-import { Icon } from 'astro-icon/components';
-import Button from '@components/ui/Button.astro';
-import { getInstagramFeed } from '@/utils/instagram';
+import { Icon } from 'astro-icon/components'
+import Button from '@components/ui/Button.astro'
+import { getInstagramFeed } from '@/utils/instagram'
+import InstagramCarousel from '@components/InstagramCarousel.astro'
 
-const instagramPosts = await getInstagramFeed({ limit: 6 });
+const instagramPosts = await getInstagramFeed({ limit: 6 })
 
 const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) {
-    return text;
+    return text
   }
 
-  return `${text.slice(0, maxLength)}...`;
-};
+  return `${text.slice(0, maxLength)}...`
+}
 
 const formatDate = (timestamp: string): string => {
   return new Date(timestamp).toLocaleDateString('es-CL', {
     day: '2-digit',
     month: 'short',
-    year: 'numeric'
-  });
-};
+    year: 'numeric',
+  })
+}
 ---
 
 <div class="instagram-feed">
-  <div class="text-center mb-10">
-    <h2 class="text-3xl md:text-5xl font-heading text-arvi-text mb-3">
+  <div class="mb-10 text-center">
+    <h2 class="font-heading text-arvi-text mb-3 text-3xl md:text-5xl">
       Síguenos en <span class="text-arvi-primary">Instagram</span>
     </h2>
-    <p class="text-xl text-arvi-text/80 max-w-2xl mx-auto">
-      Mantente al día con nuestras últimas aventuras y eventos en <span class="font-medium text-arvi-secondary">@arvi.cl</span>
+    <p class="text-arvi-text/80 mx-auto max-w-2xl text-xl">
+      Mantente al día con nuestras últimas aventuras y eventos en <span
+        class="text-arvi-secondary font-medium">@arvi.cl</span
+      >
     </p>
   </div>
 
   {
     instagramPosts.length > 0 ? (
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {instagramPosts.map((post) => (
-          <article class="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-100">
+          <article class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">
             <a
               href={post.permalink}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Abrir publicación de Instagram del ${formatDate(post.timestamp)}`}
-              class="block group"
+              class="group block"
             >
-              <div class="relative aspect-square overflow-hidden bg-arvi-background/50">
+              <div class="bg-arvi-background/50 relative aspect-square overflow-hidden">
                 <img
                   src={post.mediaUrl}
                   alt={post.altText}
                   loading="lazy"
                   decoding="async"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                <div class="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
               </div>
               <div class="p-4">
-                <div class="flex items-center justify-between text-xs text-arvi-text/70 mb-2">
+                <div class="text-arvi-text/70 mb-2 flex items-center justify-between text-xs">
                   <span class="inline-flex items-center gap-1">
-                    <Icon name="mdi:instagram" class="w-4 h-4 text-arvi-secondary" />
+                    <Icon name="mdi:instagram" class="text-arvi-secondary h-4 w-4" />
                     <span>{post.mediaType}</span>
                   </span>
                   <time datetime={post.timestamp}>{formatDate(post.timestamp)}</time>
                 </div>
-                <p class="text-sm text-arvi-text/90">
+                <p class="text-arvi-text/90 text-sm">
                   {truncateText(post.caption || 'Ver publicación en Instagram', 110)}
                 </p>
               </div>
@@ -71,15 +74,11 @@ const formatDate = (timestamp: string): string => {
         ))}
       </div>
     ) : (
-      <div class="text-center bg-white/70 border border-arvi-primary/10 rounded-2xl p-8">
-        <p class="text-arvi-text/80">
-          No fue posible cargar publicaciones de Instagram en este momento.
-        </p>
-      </div>
+      <InstagramCarousel />
     )
   }
 
-  <div class="text-center mt-10">
+  <div class="mt-10 text-center">
     <Button
       href="https://www.instagram.com/arvi.cl/"
       external={true}
