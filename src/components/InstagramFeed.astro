@@ -1,0 +1,94 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '@components/ui/Button.astro';
+import { getInstagramFeed } from '@/utils/instagram';
+
+const instagramPosts = await getInstagramFeed({ limit: 6 });
+
+const truncateText = (text: string, maxLength: number): string => {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength)}...`;
+};
+
+const formatDate = (timestamp: string): string => {
+  return new Date(timestamp).toLocaleDateString('es-CL', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+---
+
+<div class="instagram-feed">
+  <div class="text-center mb-10">
+    <h2 class="text-3xl md:text-5xl font-heading text-arvi-text mb-3">
+      Síguenos en <span class="text-arvi-primary">Instagram</span>
+    </h2>
+    <p class="text-xl text-arvi-text/80 max-w-2xl mx-auto">
+      Mantente al día con nuestras últimas aventuras y eventos en <span class="font-medium text-arvi-secondary">@arvi.cl</span>
+    </p>
+  </div>
+
+  {
+    instagramPosts.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {instagramPosts.map((post) => (
+          <article class="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-100">
+            <a
+              href={post.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Abrir publicación de Instagram del ${formatDate(post.timestamp)}`}
+              class="block group"
+            >
+              <div class="relative aspect-square overflow-hidden bg-arvi-background/50">
+                <img
+                  src={post.mediaUrl}
+                  alt={post.altText}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              </div>
+              <div class="p-4">
+                <div class="flex items-center justify-between text-xs text-arvi-text/70 mb-2">
+                  <span class="inline-flex items-center gap-1">
+                    <Icon name="mdi:instagram" class="w-4 h-4 text-arvi-secondary" />
+                    <span>{post.mediaType}</span>
+                  </span>
+                  <time datetime={post.timestamp}>{formatDate(post.timestamp)}</time>
+                </div>
+                <p class="text-sm text-arvi-text/90">
+                  {truncateText(post.caption || 'Ver publicación en Instagram', 110)}
+                </p>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center bg-white/70 border border-arvi-primary/10 rounded-2xl p-8">
+        <p class="text-arvi-text/80">
+          No fue posible cargar publicaciones de Instagram en este momento.
+        </p>
+      </div>
+    )
+  }
+
+  <div class="text-center mt-10">
+    <Button
+      href="https://www.instagram.com/arvi.cl/"
+      external={true}
+      variant="gradient"
+      size="lg"
+      icon="mdi:instagram"
+      iconPosition="left"
+    >
+      Ver perfil de ARVI en Instagram
+    </Button>
+  </div>
+</div>

@@ -12,6 +12,7 @@ Sitio de presentación de ARVI, enfocado en eventos, juegos mecánicos y solucio
   - [Indice](#indice)
   - [Tecnologías](#tecnologías)
   - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Variables de entorno (Instagram)](#variables-de-entorno-instagram)
   - [Scripts](#scripts)
   - [Estilo de código](#estilo-de-código)
   - [Configuración y contenido](#configuración-y-contenido)
@@ -42,7 +43,7 @@ Sitio de presentación de ARVI, enfocado en eventos, juegos mecánicos y solucio
 ├─ src/
 │  ├─ assets/                     # Imágenes y estáticos usados por Astro
 │  ├─ components/
-│  │  ├─ InstagramCarousel.astro
+│  │  ├─ InstagramFeed.astro
 │  │  └─ FAQ.astro                # Placeholder
 │  ├─ layouts/
 │  │  └─ Layout.astro             # Layout principal
@@ -57,6 +58,26 @@ Sitio de presentación de ARVI, enfocado en eventos, juegos mecánicos y solucio
 ├─ pnpm-lock.yaml
 └─ tsconfig.json
 ```
+
+## Variables de entorno (Instagram)
+
+Para consumir Instagram Graph API en build-time (SSG), configura estas variables:
+
+```
+INSTAGRAM_USER_ID=TU_INSTAGRAM_BUSINESS_USER_ID
+INSTAGRAM_ACCESS_TOKEN=TU_LONG_LIVED_INSTAGRAM_ACCESS_TOKEN
+```
+
+En local:
+
+- Copia `.env.example` a `.env`
+- Ejecuta `npm run dev` o `npm run build`
+
+En GitHub Actions:
+
+- Agrega en Repository Secrets:
+  - `INSTAGRAM_USER_ID`
+  - `INSTAGRAM_ACCESS_TOKEN`
 
 ## Scripts
 
@@ -100,7 +121,7 @@ npm run build
 - Layout y metadatos: src/layouts/Layout.astro.
 - Home: src/pages/index.astro.
 - Componentes:
-  - InstagramCarousel.astro: carrusel para contenido social.
+  - InstagramFeed.astro: feed dinámico de Instagram en build-time.
   - FAQ.astro: definido como placeholder.
 - Secciones: src/sections/ contiene los bloques de la Home.
 - Imágenes:
@@ -123,6 +144,8 @@ El despliegue se ejecuta automáticamente al hacer push a la rama master.
   - AWS_REGION
   - S3_BUCKET
   - CLOUDFRONT_DISTRIBUTION_ID
+  - INSTAGRAM_USER_ID
+  - INSTAGRAM_ACCESS_TOKEN
 - Autenticación: OIDC asumiendo el role arn:aws:iam::084414214145:role/GitHubActionsDeployRole
 
 Flujo recomendado:
