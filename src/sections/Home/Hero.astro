@@ -1,107 +1,132 @@
 ---
-import { Image } from 'astro:assets';
-import ArviLogo from '@assets/logo_arvi.svg';
-import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets'
+import ArviLogo from '@assets/logo_arvi.svg'
+import { Icon } from 'astro-icon/components'
 ---
 
-<section class="relative flex flex-col overflow-hidden pt-0 md:pt-0 pb-0 md:pb-0 md:min-h-screen" id="heroSection">
+<section
+  class="relative flex flex-col overflow-hidden pt-0 pb-0 md:min-h-screen md:pt-0 md:pb-0"
+  id="heroSection"
+>
   <!-- Imagen de fondo con overlay y efecto parallax -->
   <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-[url('/images/hero.jpg')] bg-cover bg-center transform origin-center" id="parallaxBg"></div>
+    <div
+      class="absolute inset-0 origin-center transform bg-[url('/images/hero.jpg')] bg-cover bg-center"
+      id="parallaxBg"
+    >
+    </div>
     <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/70"></div>
   </div>
 
   <!-- Contenido: usamos estrategias diferentes para móvil vs desktop -->
-  <div class="relative z-10 container mx-auto px-4 py-0 text-center text-white h-full">
+  <div class="relative z-10 container mx-auto h-full px-4 py-0 text-center text-white">
     <!-- Versión móvil con scroll vertical - altura natural con contenido completo -->
     <div class="flex flex-col justify-start py-12 pb-24 md:hidden" id="heroMobileContent">
-      <div class="max-w-4xl w-full mx-auto">
+      <div class="mx-auto w-full max-w-4xl">
         <!-- Logo ARVI para móvil -->
-        <div class="flex justify-center mt-4 mb-10">
-          <Image 
-            src={ArviLogo} 
-            alt="ARVI Entretenciones" 
-            width={300} 
-            class="hover:scale-105 transition-transform duration-500"
+        <div class="mt-4 mb-10 flex justify-center">
+          <Image
+            src={ArviLogo}
+            alt="ARVI Entretenciones"
+            width={300}
+            class="transition-transform duration-500 hover:scale-105"
           />
         </div>
 
-        <h1 class="mb-12 text-6xl font-heading animate-fade-in">
-          ¡<span class="text-arvi-accent">Diversión</span> 
+        <h1 class="font-heading mb-12 animate-fade-in text-6xl">
+          ¡<span class="text-arvi-accent">Diversión</span>
           <span class="text-arvi-primary">Sin Límites</span>
-          para Tus <span class="text-arvi-secondary">Eventos</span>! 
+          para Tus <span class="text-arvi-secondary">Eventos</span>!
         </h1>
-        <p class="mb-10 text-2xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100">
-          Juegos mecánicos, complementarios y sustentables. Alternativas remolque y modular para todo llegar a todo Chile.
-          Innovación en juegos de atracciones infantiles modulares y remolcables.
+        <p class="mx-auto mb-10 max-w-2xl animate-fade-in text-2xl opacity-90 animate-delay-100">
+          Juegos mecánicos, complementarios y sustentables. Alternativas remolque y modular para
+          todo llegar a todo Chile. Innovación en juegos de atracciones infantiles modulares y
+          remolcables.
         </p>
-        
+
         <!-- Iconos para móvil en disposición vertical -->
         <div class="mt-8 mb-8 grid grid-cols-1 gap-8 text-center">
-          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-2">
-            <div class="flex justify-center mb-3">
-              <Icon name="streamline-freehand:circus-tent" class="w-16 h-16 text-arvi-primary" />
+          <div
+            class="transform animate-fade-in py-2 transition-transform duration-300 animate-delay-200 hover:scale-105"
+          >
+            <div class="mb-3 flex justify-center">
+              <Icon name="streamline-freehand:circus-tent" class="text-arvi-primary h-16 w-16" />
             </div>
             <p class="text-2xl opacity-90">+19 años de experiencia</p>
           </div>
-          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-2">
-            <div class="flex justify-center mb-3">
-              <Icon name="mdi:leaf" class="w-16 h-16 text-arvi-secondary" />
+          <div
+            class="transform animate-fade-in py-2 transition-transform duration-300 animate-delay-300 hover:scale-105"
+          >
+            <div class="mb-3 flex justify-center">
+              <Icon name="mdi:leaf" class="text-arvi-secondary h-16 w-16" />
             </div>
             <p class="text-xl opacity-90">Soluciones de Juegos Mecánicos y Eco-Sustentables</p>
           </div>
-          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-2">
-            <div class="flex justify-center mb-3">
-              <Icon name="mdi:trophy" class="w-16 h-16 text-arvi-accent" />
+          <div
+            class="transform animate-fade-in py-2 transition-transform duration-300 animate-delay-400 hover:scale-105"
+          >
+            <div class="mb-3 flex justify-center">
+              <Icon name="mdi:trophy" class="text-arvi-accent h-16 w-16" />
             </div>
             <p class="text-xl opacity-90">+1000 eventos realizados</p>
           </div>
         </div>
       </div>
     </div>
-    
+
     <!-- Versión desktop centrada verticalmente -->
-    <div class="hidden md:flex flex-col justify-center items-center min-h-screen py-12">
-      <div class="max-w-5xl w-full">
+    <div class="hidden min-h-screen flex-col items-center justify-center py-12 md:flex">
+      <div class="w-full max-w-5xl">
         <!-- Logo ARVI para desktop -->
-        <div class="flex justify-center mb-8">
-          <Image 
-            src={ArviLogo} 
-            alt="ARVI Entretenciones" 
-            width={350} 
-            class="hover:scale-105 transition-transform duration-500"
+        <div class="mb-8 flex justify-center">
+          <Image
+            src={ArviLogo}
+            alt="ARVI Entretenciones"
+            width={350}
+            class="transition-transform duration-500 hover:scale-105"
           />
         </div>
 
-        <h1 class="mb-6 text-5xl lg:text-6xl font-heading animate-fade-in">
-          ¡<span class="text-arvi-accent">Diversión</span> 
+        <h1 class="font-heading mb-6 animate-fade-in text-5xl lg:text-6xl">
+          ¡<span class="text-arvi-accent">Diversión</span>
           <span class="text-arvi-primary">Sin Límites</span>
-          para Tus <span class="text-arvi-secondary">Eventos</span>! 
+          para Tus <span class="text-arvi-secondary">Eventos</span>!
         </h1>
-        <p class="mb-8 text-2xl opacity-90 max-w-2xl mx-auto animate-fade-in animate-delay-100 text-shadow-black">
-          Juegos mecánicos, complementarios y sustentables. Alternativas remolque y modular para todo llegar a todo Chile.
-          Innovación en juegos de atracciones infantiles modulares y remolcables.
+        <p
+          class="mx-auto mb-8 max-w-2xl animate-fade-in text-2xl opacity-90 animate-delay-100 text-shadow-black"
+        >
+          Juegos mecánicos, complementarios y sustentables. Alternativas remolque y modular para
+          todo llegar a todo Chile. Innovación en juegos de atracciones infantiles modulares y
+          remolcables.
         </p>
-        
+
         <!-- Iconos para desktop en formato horizontal -->
         <div class="mt-8 mb-8 grid grid-cols-3 gap-6 text-center">
-          <div class="animate-fade-in animate-delay-200 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
-            <div class="flex justify-center mb-3 md:mb-2">
-              <Icon name="streamline-freehand:circus-tent" class="w-14 h-14 text-arvi-primary" />
+          <div
+            class="transform animate-fade-in py-2 transition-transform duration-300 animate-delay-200 hover:scale-105 md:py-0"
+          >
+            <div class="mb-3 flex justify-center md:mb-2">
+              <Icon name="streamline-freehand:circus-tent" class="text-arvi-primary h-14 w-14" />
             </div>
-            <p class="text-base md:text-lg opacity-90">+19 años de experiencia</p>
+            <p class="text-base opacity-90 md:text-lg">+19 años de experiencia</p>
           </div>
-          <div class="animate-fade-in animate-delay-300 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
-            <div class="flex justify-center mb-3 md:mb-2">
-              <Icon name="mdi:leaf" class="w-14 h-14 text-arvi-secondary" />
+          <div
+            class="transform animate-fade-in py-2 transition-transform duration-300 animate-delay-300 hover:scale-105 md:py-0"
+          >
+            <div class="mb-3 flex justify-center md:mb-2">
+              <Icon name="mdi:leaf" class="text-arvi-secondary h-14 w-14" />
             </div>
-            <p class="text-base md:text-lg opacity-90">Soluciones de Juegos Mecánicos y Eco-Sustentables</p>
+            <p class="text-base opacity-90 md:text-lg">
+              Soluciones de Juegos Mecánicos y Eco-Sustentables
+            </p>
           </div>
-          <div class="animate-fade-in animate-delay-400 transform hover:scale-105 transition-transform duration-300 py-2 md:py-0">
-            <div class="flex justify-center mb-3 md:mb-2">
-              <Icon name="mdi:trophy" class="w-14 h-14 text-arvi-accent" />
+          <div
+            class="transform animate-fade-in py-2 transition-transform duration-300 animate-delay-400 hover:scale-105 md:py-0"
+          >
+            <div class="mb-3 flex justify-center md:mb-2">
+              <Icon name="mdi:trophy" class="text-arvi-accent h-14 w-14" />
             </div>
-            <p class="text-base md:text-lg opacity-90">+1000 eventos realizados</p>
+            <p class="text-base opacity-90 md:text-lg">+1000 eventos realizados</p>
           </div>
         </div>
       </div>
@@ -109,91 +134,100 @@ import { Icon } from 'astro-icon/components';
   </div>
 
   <!-- Indicador de scroll - Solo visible en desktop -->
-  <div class=" absolute hidden md:block bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-    <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center bg-black/20 backdrop-blur-sm">
-      <div class="w-1 h-3 bg-white rounded-full mt-2"></div>
+  <div
+    class="animate-bounce absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 transform md:block"
+  >
+    <div
+      class="flex h-10 w-6 justify-center rounded-full border-2 border-white bg-black/20 backdrop-blur-sm"
+    >
+      <div class="mt-2 h-3 w-1 rounded-full bg-white"></div>
     </div>
   </div>
 
-<script>
-  // Efecto parallax PURO - Solo movimiento vertical, SIN zoom/escala
-  document.addEventListener('DOMContentLoaded', () => {
-    const parallaxBg = document.getElementById('parallaxBg');
-    const heroSection = document.getElementById('heroSection');
-    const heroMobileContent = document.getElementById('heroMobileContent');
-    
-    if (parallaxBg && heroSection) {
-      // Función para detectar si estamos en vista móvil
-      const checkMobile = () => window.matchMedia("(max-width: 768px)").matches;
-      
-      // Configuración inicial - SIN transformaciones, imagen en tamaño natural
-      const initializeParallax = () => {
-        // NO aplicamos NINGUNA transformación inicial
-        parallaxBg.style.transform = 'translateY(0px)'; // Solo posición inicial
-        parallaxBg.style.transition = 'none'; // Sin transiciones iniciales
-        parallaxBg.style.willChange = 'transform'; // Optimización de rendimiento
-      };
-      
-      // Ajustar el tamaño del fondo para cobertura completa
-      const adjustBackgroundCoverage = () => {
-        const currentMobile = checkMobile();
-        
-        if (currentMobile) {
-          // En móvil, aseguramos que el fondo cubra todo el contenido
-          if (heroMobileContent) {
-            const contentHeight = heroMobileContent.getBoundingClientRect().height;
-            parallaxBg.style.minHeight = `${contentHeight + 100}px`; // Margen reducido
-            heroSection.style.minHeight = `${contentHeight + 50}px`;
-          }
-        } else {
-          // En desktop, altura estándar
-          parallaxBg.style.minHeight = '100vh';
-          heroSection.style.minHeight = '100vh';
-        }
-      };
-      
-      // Inicialización
-      initializeParallax();
-      setTimeout(adjustBackgroundCoverage, 50);
-      
-      // Ajustar en redimensionamiento
-      window.addEventListener('resize', () => {
-        adjustBackgroundCoverage();
-        // NO re-inicializar parallax para evitar saltos
-      });
-      
-      // Múltiples ajustes durante la carga
-      const adjustIntervals = [100, 300, 500];
-      adjustIntervals.forEach(delay => {
-        setTimeout(adjustBackgroundCoverage, delay);
-      });
-      
-      // Efecto parallax PURO - Solo movimiento vertical
-      let isScrolling = false;
-      
-      window.addEventListener('scroll', () => {
-        if (!isScrolling) {
-          requestAnimationFrame(() => {
-            const scrollY = window.scrollY;
-            const heroHeight = heroSection.offsetHeight;
-            
-            // Aplicar efecto mientras el hero esté visible (tanto móvil como desktop)
-            if (scrollY <= heroHeight * 1.5) {
-              // Intensidad del parallax según dispositivo
-              const intensity = 0.5;
+  <script>
+    // Efecto parallax PURO - Solo movimiento vertical, SIN zoom/escala
+    document.addEventListener('DOMContentLoaded', () => {
+      const parallaxBg = document.getElementById('parallaxBg')
+      const heroSection = document.getElementById('heroSection')
+      const heroMobileContent = document.getElementById('heroMobileContent')
 
-              // Solo traslación vertical - SIN escala
-              const translate = scrollY * intensity;
-              
-              // Aplicar SOLO movimiento vertical
-              parallaxBg.style.transform = `translateY(${translate}px)`;
-            }
-            
-            isScrolling = false;
-          });
+      if (parallaxBg && heroSection) {
+        // Función para detectar si estamos en vista móvil
+        const checkMobile = () => window.matchMedia('(max-width: 768px)').matches
+
+        // Configuración inicial - SIN transformaciones, imagen en tamaño natural
+        const initializeParallax = () => {
+          // NO aplicamos NINGUNA transformación inicial
+          parallaxBg.style.transform = 'translateY(0px)' // Solo posición inicial
+          parallaxBg.style.transition = 'none' // Sin transiciones iniciales
+          parallaxBg.style.willChange = 'transform' // Optimización de rendimiento
         }
-        isScrolling = true;
-      }, { passive: true }); // Scroll pasivo para mejor rendimiento
-    }
-  });
-</script>
+
+        // Ajustar el tamaño del fondo para cobertura completa
+        const adjustBackgroundCoverage = () => {
+          const currentMobile = checkMobile()
+
+          if (currentMobile) {
+            // En móvil, aseguramos que el fondo cubra todo el contenido
+            if (heroMobileContent) {
+              const contentHeight = heroMobileContent.getBoundingClientRect().height
+              parallaxBg.style.minHeight = `${contentHeight + 100}px` // Margen reducido
+              heroSection.style.minHeight = `${contentHeight + 50}px`
+            }
+          } else {
+            // En desktop, altura estándar
+            parallaxBg.style.minHeight = '100vh'
+            heroSection.style.minHeight = '100vh'
+          }
+        }
+
+        // Inicialización
+        initializeParallax()
+        setTimeout(adjustBackgroundCoverage, 50)
+
+        // Ajustar en redimensionamiento
+        window.addEventListener('resize', () => {
+          adjustBackgroundCoverage()
+          // NO re-inicializar parallax para evitar saltos
+        })
+
+        // Múltiples ajustes durante la carga
+        const adjustIntervals = [100, 300, 500]
+        adjustIntervals.forEach((delay) => {
+          setTimeout(adjustBackgroundCoverage, delay)
+        })
+
+        // Efecto parallax PURO - Solo movimiento vertical
+        let isScrolling = false
+
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (!isScrolling) {
+              requestAnimationFrame(() => {
+                const scrollY = window.scrollY
+                const heroHeight = heroSection.offsetHeight
+
+                // Aplicar efecto mientras el hero esté visible (tanto móvil como desktop)
+                if (scrollY <= heroHeight * 1.5) {
+                  // Intensidad del parallax según dispositivo
+                  const intensity = 0.5
+
+                  // Solo traslación vertical - SIN escala
+                  const translate = scrollY * intensity
+
+                  // Aplicar SOLO movimiento vertical
+                  parallaxBg.style.transform = `translateY(${translate}px)`
+                }
+
+                isScrolling = false
+              })
+            }
+            isScrolling = true
+          },
+          { passive: true },
+        ) // Scroll pasivo para mejor rendimiento
+      }
+    })
+  </script>
+</section>

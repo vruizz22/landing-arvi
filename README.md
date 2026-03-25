@@ -134,12 +134,12 @@ El despliegue se ejecuta automáticamente al hacer push a la rama master.
 
 - Pipeline: .github/workflows/deploy.yml
 - Pasos:
-  1) Build del sitio (Node 20)
-  2) Sincronización a S3:
+  1. Build del sitio (Node 20)
+  2. Sincronización a S3:
      - Assets (cache largo, 1 año)
      - HTML (cache corto, 60s)
-  3) Subida de sitemaps y robots.txt con content-type correcto
-  4) Invalidación de CloudFront
+  3. Subida de sitemaps y robots.txt con content-type correcto
+  4. Invalidación de CloudFront
 - Requisitos (Secrets del repositorio):
   - AWS_REGION
   - S3_BUCKET
@@ -194,9 +194,9 @@ Este proyecto está bajo la licencia **GNU General Public License v3.0**. Consul
 
 All commands are run from the root of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
+| Command                | Action                                           |
+| :--------------------- | :----------------------------------------------- |
+| `pnpm install`         | Installs dependencies                            |
 | `pnpm dev`             | Starts local dev server at `localhost:4321`      |
 | `pnpm build`           | Build your production site to `./dist/`          |
 | `pnpm preview`         | Preview your build locally, before deploying     |
