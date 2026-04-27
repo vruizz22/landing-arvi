@@ -4,27 +4,27 @@
 
 :root {
   --font-fallback:
-    system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI',
-    'Noto Sans', helvetica, arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', 'Noto Sans', helvetica, arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-heading: 'Fira Sans';
   --font-body: 'Inter';
 
   /* ARVI Custom Colors */
   --color-text: #333333;
-  --color-background: #F5F6F7;
-  --color-primary: #C3A93C; /* amarillo logo */
+  --color-background: #f5f6f7;
+  --color-primary: #c3a93c; /* amarillo logo */
   --color-secondary: #049b3d; /* verde logo */
   --color-accent: #8ecd20;
-  
+
   /* Aseguramos que las variables CSS estén disponibles para Tailwind */
   --tw-text-opacity: 1;
   --tw-bg-opacity: 1;
-  
+
   /* Colores Tailwind disponibles como variables CSS */
   --arvi-text: #333333;
-  --arvi-background: #F5F6F7;
-  --arvi-background2: #C8CED4;
-  --arvi-primary: #C3A93C;
+  --arvi-background: #f5f6f7;
+  --arvi-background2: #c8ced4;
+  --arvi-primary: #c3a93c;
   --arvi-secondary: #049b3d;
   --arvi-accent: #8ecd20;
 }
@@ -96,19 +96,19 @@
   .text-arvi-accent {
     color: var(--arvi-accent) !important;
   }
-  
+
   .text-arvi-text\/70 {
     color: rgba(51, 51, 51, 0.7) !important;
   }
-  
+
   .text-arvi-text\/80 {
     color: rgba(51, 51, 51, 0.8) !important;
   }
-  
+
   .text-arvi-text\/90 {
     color: rgba(51, 51, 51, 0.9) !important;
   }
-  
+
   .bg-arvi-text {
     background-color: var(--arvi-text) !important;
   }
@@ -127,78 +127,87 @@
   .bg-arvi-accent {
     background-color: var(--arvi-accent) !important;
   }
-  
+
   /* Gradientes personalizados para fondos */
   .bg-gradient-to-br {
     background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
   }
-  
+
   .bg-gradient-to-r {
     background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
   }
   .from-arvi-primary\/60 {
     --tw-gradient-from: rgba(195, 169, 60, 0.6) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
   }
   .from-arvi-primary\/10 {
     --tw-gradient-from: rgba(195, 169, 60, 0.1) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
   }
-  
+
   .from-arvi-primary\/5 {
     --tw-gradient-from: rgba(195, 169, 60, 0.05) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
   }
-  
+
   .via-arvi-background {
     --tw-gradient-via: var(--arvi-background) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
   }
-  
+
   .via-white {
     --tw-gradient-via: white !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
   }
-  
+
   .to-arvi-secondary\/60 {
     --tw-gradient-to: rgba(4, 155, 61, 0.6) !important;
   }
   .to-arvi-secondary\/10 {
     --tw-gradient-to: rgba(4, 155, 61, 0.1) !important;
   }
-  
+
   .to-arvi-secondary\/5 {
     --tw-gradient-to: rgba(4, 155, 61, 0.05) !important;
   }
-  
+
   .from-white {
     --tw-gradient-from: white !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
   }
-  
+
   .via-arvi-background\/30 {
     --tw-gradient-via: rgba(245, 246, 247, 0.3) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 246, 247, 0)) !important;
   }
-  
+
   .via-white {
     --tw-gradient-via: rgba(255, 255, 255, 1) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
   }
-  
+
   .to-white {
     --tw-gradient-to: white !important;
   }
-  
+
   .from-arvi-primary {
     --tw-gradient-from: var(--arvi-primary) !important;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), var(--tw-gradient-to, rgba(195, 169, 60, 0)) !important;
   }
-  
+
   .to-arvi-secondary {
     --tw-gradient-to: var(--arvi-secondary) !important;
   }
-  
+
   /* Efecto resaltado sutil para elementos importantes */
   .eco-highlight {
     color: var(--color-secondary);
@@ -295,7 +304,12 @@
   font-display: swap;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Fira Sans', var(--font-fallback);
   font-weight: 700;
   letter-spacing: -0.025em;
@@ -318,18 +332,36 @@ body {
 
 /* Estilos para animaciones del footer */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0.5; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-  from { transform: translateX(-15px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(-15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .footer-info > div {
@@ -337,10 +369,18 @@ body {
   opacity: 0;
 }
 
-.footer-info > div:nth-child(1) { animation-delay: 0.1s; }
-.footer-info > div:nth-child(2) { animation-delay: 0.2s; }
-.footer-info > div:nth-child(3) { animation-delay: 0.3s; }
-.footer-info > div:nth-child(4) { animation-delay: 0.4s; }
+.footer-info > div:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.footer-info > div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.footer-info > div:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.footer-info > div:nth-child(4) {
+  animation-delay: 0.4s;
+}
 
 .footer-form {
   animation: scaleIn 0.6s ease-out forwards;
@@ -373,277 +413,310 @@ body {
   width: 100%;
 }
 
-  /* Animaciones adicionales para el Hero */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease-out forwards;
-  }
-  
-  .animate-delay-100 {
-    animation-delay: 0.1s;
-  }
-  
-  .animate-delay-200 {
-    animation-delay: 0.2s;
-  }
-  
-  .animate-delay-300 {
-    animation-delay: 0.3s;
-  }
-  
-  .animate-delay-400 {
-    animation-delay: 0.4s;
-  }
-  
-  h1 {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  }
-  
-  h2 {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Estilos para el componente AboutUs */
-  .space-y-6 > div {
-    animation: fadeIn 0.6s ease-out forwards;
+/* Animaciones adicionales para el Hero */
+@keyframes fadeIn {
+  from {
     opacity: 0;
-    cursor: pointer;
+    transform: translateY(20px);
   }
-  
-  .space-y-6 > div:nth-child(1) { animation-delay: 0.1s; }
-  .space-y-6 > div:nth-child(2) { animation-delay: 0.3s; }
-  .space-y-6 > div:nth-child(3) { animation-delay: 0.5s; }
-  
-  /* Sombras adicionales */
-  .shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .shadow-sm {
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  
-  /* Efectos de hover para las cards */
-  .grid-cols-1.sm\:grid-cols-2 .rounded-lg {
-    transition: all 0.3s ease;
-  }
-  
-  .grid-cols-1.sm\:grid-cols-2 .rounded-lg:hover svg {
-    transform: scale(1.2);
-    transition: transform 0.3s ease;
-  }
-  
-  /* Efectos de hover para los features */
-  .space-y-6 > div:hover .w-12 {
-    background-color: var(--arvi-accent);
-  }
+}
 
-  @media (min-width: 1024px) {
-    .grid-cols-1.sm\:grid-cols-2 {
-      gap: 1rem;
-    }
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animate-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-delay-400 {
+  animation-delay: 0.4s;
+}
+
+h1 {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el componente AboutUs */
+.space-y-6 > div {
+  animation: fadeIn 0.6s ease-out forwards;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.space-y-6 > div:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.space-y-6 > div:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.space-y-6 > div:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+/* Sombras adicionales */
+.shadow-md {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Efectos de hover para las cards */
+.grid-cols-1.sm\:grid-cols-2 .rounded-lg {
+  transition: all 0.3s ease;
+}
+
+.grid-cols-1.sm\:grid-cols-2 .rounded-lg:hover svg {
+  transform: scale(1.2);
+  transition: transform 0.3s ease;
+}
+
+/* Efectos de hover para los features */
+.space-y-6 > div:hover .w-12 {
+  background-color: var(--arvi-accent);
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-1.sm\:grid-cols-2 {
+    gap: 1rem;
   }
-  
-  /* Efecto de brillo sutil para el logo */
-  :global(img[alt="ARVI Entretenciones"]) {
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+
+/* Efecto de brillo sutil para el logo */
+:global(img[alt='ARVI Entretenciones']) {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+
+/* Utilidades para efectos de blur */
+.blur-3xl {
+  --tw-blur: blur(64px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale)
+    var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+/* Sombras adicionales para cards */
+.shadow-2xl {
+  --tw-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+/* Animaciones para secciones especiales */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
-  
-  /* Utilidades para efectos de blur */
-  .blur-3xl {
-    --tw-blur: blur(64px);
-    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
-  
-  /* Sombras adicionales para cards */
-  .shadow-2xl {
-    --tw-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  }
-  
-  /* Animaciones para secciones especiales */
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(-5%);
-      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-    }
-    50% {
-      transform: translateY(0);
-      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-    }
-  }
-  
-  .animate-bounce {
-    animation: bounce 1s infinite;
-  }
-  
-  /* Bordes redondeados para UI */
-  .rounded-2xl {
-    border-radius: 1rem;
-  }
-  
-  .rounded-xl {
-    border-radius: 0.75rem;
-  }
-  
-  /* Opacidades adicionales para fondos y bordes */
-  .bg-arvi-primary\/5 {
-    background-color: rgba(195, 169, 60, 0.05);
-  }
-  
-  .bg-arvi-secondary\/5 {
-    background-color: rgba(4, 155, 61, 0.05);
-  }
-  
-  .bg-arvi-primary\/10 {
-    background-color: rgba(195, 169, 60, 0.1);
-  }
-  
-  .bg-arvi-secondary\/10 {
-    background-color: rgba(4, 155, 61, 0.1);
-  }
-  
-  .bg-arvi-accent\/10 {
-    background-color: rgba(142, 205, 32, 0.1);
-  }
-  
-  .bg-arvi-primary\/20 {
-    background-color: rgba(195, 169, 60, 0.2);
-  }
-  
-  .bg-arvi-secondary\/20 {
-    background-color: rgba(4, 155, 61, 0.2);
-  }
-  
-  .bg-arvi-accent\/20 {
-    background-color: rgba(142, 205, 32, 0.2);
-  }
-  
-  .border-arvi-primary\/10 {
-    border-color: rgba(195, 169, 60, 0.1);
-  }
-  
-  .border-arvi-secondary\/10 {
-    border-color: rgba(4, 155, 61, 0.1);
-  }
-  
-  .border-arvi-primary\/20 {
-    border-color: rgba(195, 169, 60, 0.2);
-  }
-  
-  .border-arvi-secondary\/20 {
-    border-color: rgba(4, 155, 61, 0.2);
-  }
-  
-  .border-arvi-secondary\/30 {
-    border-color: rgba(4, 155, 61, 0.3);
-  }
-  
-  .border-arvi-accent\/20 {
-    border-color: rgba(142, 205, 32, 0.2);
-  }
-  
-  .border-arvi-accent\/10 {
-    border-color: rgba(142, 205, 32, 0.1);
-  }
-  
-  .border-transparent {
-    border-color: transparent;
-  }
-  
-  .hover\:border-arvi-primary\/10:hover {
-    border-color: rgba(195, 169, 60, 0.1);
-  }
-  
-  .hover\:border-arvi-secondary\/10:hover {
-    border-color: rgba(4, 155, 61, 0.1);
-  }
-  
-  .hover\:border-arvi-accent\/10:hover {
-    border-color: rgba(142, 205, 32, 0.1);
-  }
-  
-  /* Transformaciones para efectos hover */
-  .hover\:-translate-y-1:hover {
-    --tw-translate-y: -0.25rem;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-  
-  /* Transiciones y sombras para efectos hover */
-  .transition-all {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .duration-300 {
-    transition-duration: 300ms;
-  }
-  
-  .hover\:shadow-lg:hover {
-    --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  }
-  
-  .hover\:shadow-md:hover {
-    --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -1px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  }
-  
-  .hover\:shadow-xl:hover {
-    --tw-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-    --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  }
-  
-  .group-hover\:scale-110:group-hover {
-    --tw-scale-x: 1.1;
-    --tw-scale-y: 1.1;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-  
-  .group-hover\:text-arvi-primary {
-    color: var(--arvi-primary) !important;
-  }
-  
-  .group-hover\:text-arvi-secondary {
-    color: var(--arvi-secondary) !important;
-  }
-  
-  .group-hover\:text-arvi-accent {
-    color: var(--arvi-accent) !important;
-  }
-  
-  .group-hover\:text-arvi-text {
-    color: var(--arvi-text) !important;
-  }
-  
-  .group-hover\:text-arvi-text\/90 {
-    color: rgba(51, 51, 51, 0.9) !important;
-  }
-  
-  .group-hover\:bg-arvi-primary {
-    background-color: var(--arvi-primary) !important;
-  }
-  
-  .transition-colors {
-    transition-property: color, background-color, border-color, fill, stroke, -webkit-text-decoration-color, text-decoration-color;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-  }
-  
-  .transition-transform {
-    transition-property: transform;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-  }
-  
-  .duration-500 {
-    transition-duration: 500ms;
-  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Bordes redondeados para UI */
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+/* Opacidades adicionales para fondos y bordes */
+.bg-arvi-primary\/5 {
+  background-color: rgba(195, 169, 60, 0.05);
+}
+
+.bg-arvi-secondary\/5 {
+  background-color: rgba(4, 155, 61, 0.05);
+}
+
+.bg-arvi-primary\/10 {
+  background-color: rgba(195, 169, 60, 0.1);
+}
+
+.bg-arvi-secondary\/10 {
+  background-color: rgba(4, 155, 61, 0.1);
+}
+
+.bg-arvi-accent\/10 {
+  background-color: rgba(142, 205, 32, 0.1);
+}
+
+.bg-arvi-primary\/20 {
+  background-color: rgba(195, 169, 60, 0.2);
+}
+
+.bg-arvi-secondary\/20 {
+  background-color: rgba(4, 155, 61, 0.2);
+}
+
+.bg-arvi-accent\/20 {
+  background-color: rgba(142, 205, 32, 0.2);
+}
+
+.border-arvi-primary\/10 {
+  border-color: rgba(195, 169, 60, 0.1);
+}
+
+.border-arvi-secondary\/10 {
+  border-color: rgba(4, 155, 61, 0.1);
+}
+
+.border-arvi-primary\/20 {
+  border-color: rgba(195, 169, 60, 0.2);
+}
+
+.border-arvi-secondary\/20 {
+  border-color: rgba(4, 155, 61, 0.2);
+}
+
+.border-arvi-secondary\/30 {
+  border-color: rgba(4, 155, 61, 0.3);
+}
+
+.border-arvi-accent\/20 {
+  border-color: rgba(142, 205, 32, 0.2);
+}
+
+.border-arvi-accent\/10 {
+  border-color: rgba(142, 205, 32, 0.1);
+}
+
+.border-transparent {
+  border-color: transparent;
+}
+
+.hover\:border-arvi-primary\/10:hover {
+  border-color: rgba(195, 169, 60, 0.1);
+}
+
+.hover\:border-arvi-secondary\/10:hover {
+  border-color: rgba(4, 155, 61, 0.1);
+}
+
+.hover\:border-arvi-accent\/10:hover {
+  border-color: rgba(142, 205, 32, 0.1);
+}
+
+/* Transformaciones para efectos hover */
+.hover\:-translate-y-1:hover {
+  --tw-translate-y: -0.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
+    skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
+    scaleY(var(--tw-scale-y));
+}
+
+/* Transiciones y sombras para efectos hover */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+.hover\:shadow-lg:hover {
+  --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --tw-shadow-colored:
+    0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.hover\:shadow-md:hover {
+  --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -1px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.hover\:shadow-xl:hover {
+  --tw-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --tw-shadow-colored:
+    0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.group-hover\:scale-110:group-hover {
+  --tw-scale-x: 1.1;
+  --tw-scale-y: 1.1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
+    skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
+    scaleY(var(--tw-scale-y));
+}
+
+.group-hover\:text-arvi-primary {
+  color: var(--arvi-primary) !important;
+}
+
+.group-hover\:text-arvi-secondary {
+  color: var(--arvi-secondary) !important;
+}
+
+.group-hover\:text-arvi-accent {
+  color: var(--arvi-accent) !important;
+}
+
+.group-hover\:text-arvi-text {
+  color: var(--arvi-text) !important;
+}
+
+.group-hover\:text-arvi-text\/90 {
+  color: rgba(51, 51, 51, 0.9) !important;
+}
+
+.group-hover\:bg-arvi-primary {
+  background-color: var(--arvi-primary) !important;
+}
+
+.transition-colors {
+  transition-property:
+    color,
+    background-color,
+    border-color,
+    fill,
+    stroke,
+    -webkit-text-decoration-color,
+    text-decoration-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-500 {
+  transition-duration: 500ms;
+}
