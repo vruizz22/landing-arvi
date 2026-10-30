@@ -1,7 +1,7 @@
 # Rediseño ARVI 2026
 
 - Página: `src/pages/index.astro` (usa `src/layouts/LayoutArvi.astro`).
-- Secciones editables: `src/sections/arvi/*.astro` (una por bloque: Hero, Juegos, Sustentable, ArviHappy, ArviSeguro, etc.).
+- Contenido: `src/sections/arvi/Home.astro` (cada bloque marcado con su id: juegos, sustentable, arvi-happy, arvi-seguro, eventos, contacto). Video del inicio: `public/media/hero.mp4`.
 - Estilos: `src/styles/arvi.css` (CSS propio, no depende de Tailwind).
 - Imágenes optimizadas (WebP): `public/img/`.
 - Descargables (PDF): `public/descargas/`.
