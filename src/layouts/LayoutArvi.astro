@@ -1,0 +1,137 @@
+---
+// Layout del rediseño ARVI 2026. Mantiene el SEO del layout original y usa src/styles/arvi.css
+import '@styles/arvi.css'
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ARVI Chile · Juegos mecánicos, sustentables e inclusivos para eventos</title>
+
+    <!-- fallback clásico -->
+    <!-- <link rel="icon" href="/favicon.ico"> -->
+    <!-- <link rel="icon" type="image/png" href="/LOGO_ARVI.png"> -->
+    <link rel="icon" type="image/svg+xml" href="/logo_arvi.svg" />
+
+    <!-- Apple / iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Manifest (PWA / Android) -->
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Meta Tags SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta
+      name="description"
+      content="Empresa Chilena de Juegos Mecánicos, Inflables y Sustentables para eventos. 
+      Atracciones modulares y remolcables, fáciles de instalar y transportar.
+      Servicios para municipios, colegios, empresas y eventos corporativos. Reserva hoy."
+    />
+
+    <link rel="canonical" href="https://arvi.cl/" />
+
+    <!-- Etiquetas adicionales SEO -->
+    <meta
+      name="keywords"
+      content="juegos mecánicos, inflables, entretenimiento sustentable, eventos corporativos, fiestas infantiles, atracciones modulares, juegos para eventos, día del niño, ferias temáticas, eventos escolares, celebraciones municipales, entretenimiento ecológico, atracciones para niños, juegos infantiles, eventos sustentables"
+    />
+    <meta name="author" content="ARVI Chile" />
+    <meta name="geo.region" content="CL" />
+    <meta name="geo.position" content="-33.4372;-70.6506" />
+    <meta name="ICBM" content="-33.4372, -70.6506" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:url" content="https://arvi.cl" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables"
+    />
+    <meta
+      property="og:description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+    <meta property="og:image" content="https://arvi.cl/og.jpg" />
+    <meta
+      property="og:image:alt"
+      content="ARVI Chile - Juegos Mecánicos, Inflables y Sustentables"
+    />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="ARVI Chile" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@arvi.cl" />
+    <meta
+      name="twitter:title"
+      content="ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables"
+    />
+    <meta
+      property="og:description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+    <meta name="twitter:image" content="https://arvi.cl/og.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="ARVI Chile - Juegos Mecánicos, Inflables y Sustentables"
+    />
+
+    <!-- Datos estructurados Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "ARVI Chile",
+        "image": "https://arvi.cl/og.jpg",
+        "logo": "https://arvi.cl/LOGO_ARVI.png",
+        "url": "https://arvi.cl",
+        "description": "Empresa Chilena especializada en juegos mecánicos, inflables y sustentables para eventos. Ofrecemos entretenimiento para municipios, colegios, empresas y celebraciones.",
+        "priceRange": "$$",
+        "telephone": "+56 9 8808 2320",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "CL",
+          "addressLocality": "La Florida",
+          "addressRegion": "Región Metropolitana",
+          "postalCode": "8240000",
+          "streetAddress": "Av. Vicuña Mackenna Ote. 7110"
+        },
+        "sameAs": ["https://www.instagram.com/arvi.cl/"],
+        "serviceArea": "Chile",
+        "availableService": {
+          "@type": "Service",
+          "name": "Juegos Mecánicos, Inflables y Atracciones Sustentables para Eventos"
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&display=swap" />
+  </head>
+  <body>
+    <slot />
+    <script is:inline>
+(function(){
+  var btn=document.getElementById('menuBtn'),nav=document.getElementById('nav');
+  btn.addEventListener('click',function(){var o=nav.classList.toggle('open');btn.setAttribute('aria-expanded',o)});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A'){nav.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  var chips=document.querySelectorAll('.chip'),cards=document.querySelectorAll('#games .game');
+  chips.forEach(function(c){c.addEventListener('click',function(){chips.forEach(function(x){x.setAttribute('aria-pressed',x===c)});var f=c.dataset.f;cards.forEach(function(g){g.hidden=!(f==='all'||g.dataset.k===f)})})});
+  document.querySelectorAll('.copy-btn').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.copy;navigator.clipboard.writeText(t).then(function(){b.textContent='Copiado'}).catch(function(){var r=document.createRange();r.selectNodeContents(b.previousElementSibling);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Seleccionado'})})});
+  document.getElementById('quote').addEventListener('submit',function(e){
+    e.preventDefault();var v=function(id){return(document.getElementById(id).value||'').trim()};var note=document.getElementById('q-note');
+    if(!v('q-name')){note.textContent='Escribe tu nombre para armar el mensaje.';document.getElementById('q-name').focus();return}
+    var L=['Hola ARVI, quiero cotizar.','Nombre: '+v('q-name')];if(v('q-org'))L.push('Institución: '+v('q-org'));L.push('Me interesa: '+v('q-type'));if(v('q-date'))L.push('Fecha: '+v('q-date'));if(v('q-place'))L.push('Comuna: '+v('q-place'));if(v('q-msg'))L.push('Detalle: '+v('q-msg'));
+    var a=document.createElement('a');a.href='https://wa.me/56988082320?text='+encodeURIComponent(L.join('\n'));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+    note.textContent='Listo. Si WhatsApp no se abrió, escríbenos al +569 8808 2320.';
+  });
+})();
+</script>
+  </body>
+</html>
