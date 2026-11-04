@@ -12,5 +12,5 @@ jobs:
           echo "HEAD-ORDER"; grep -o -n '<meta[^>]*\(og:\|twitter:\)[^>]*>' /tmp/b | head -20
           echo "BYTES-BEFORE-OG $(grep -b -o 'og:image' /tmp/b | head -1)"
           echo "STYLE-IN-HEAD $(grep -c '<style' /tmp/b)"; grep -b -o '</head>' /tmp/b
-          curl -s -A "$UA" -D - -o /tmp/og.jpg https://arvi.cl/og.jpg | head -12; echo "OGSIZE $(wc -c < /tmp/og.jpg)"
+          curl -s -A "$UA" -D - -o /tmp/og.jpg https://arvi.cl/og-arvi-2026.jpg | head -12; echo "OGSIZE $(wc -c < /tmp/og.jpg)"
           python3 -c "import struct;d=open('/tmp/og.jpg','rb').read();print(d[:4])"
