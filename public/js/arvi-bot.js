@@ -18,7 +18,7 @@
   };
   var PDF = {
     muni: '/descargas/arvi-sustentable-convenio-municipalidades.pdf',
-    happy: '/descargas/arvi-happy-informacion.pdf',
+    happy: '/descargas/arvi-happy-informacion-2026.pdf',
     conv: '/descargas/arvi-happy-convenio-funcionarios-municipales.pdf',
     seguro: '/descargas/arvi-seguro-propuesta.pdf'
   };
