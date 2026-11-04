@@ -62,7 +62,7 @@ jobs:
           aws s3 sync ./dist s3://${{ secrets.S3_BUCKET }} \
             --delete \
             --exclude "*" --include "*.html" --include "index.html" \
-            --cache-control "max-age=86400,public"
+            --cache-control "public,max-age=0,must-revalidate"
 
       - name: URLs limpias para subpáginas (/catalogo y /catalogo/)
         shell: bash
@@ -71,8 +71,8 @@ jobs:
           cd dist
           find . -mindepth 2 -name index.html | while read -r f; do
             d="${f#./}"; d="${d%/index.html}"
-            aws s3 cp "$d/index.html" "s3://${{ secrets.S3_BUCKET }}/$d" --content-type "text/html; charset=utf-8" --cache-control "max-age=86400,public"
-            aws s3api put-object --bucket "${{ secrets.S3_BUCKET }}" --key "$d/" --body "$d/index.html" --content-type "text/html; charset=utf-8" --cache-control "max-age=86400,public" > /dev/null
+            aws s3 cp "$d/index.html" "s3://${{ secrets.S3_BUCKET }}/$d" --content-type "text/html; charset=utf-8" --cache-control "public,max-age=0,must-revalidate"
+            aws s3api put-object --bucket "${{ secrets.S3_BUCKET }}" --key "$d/" --body "$d/index.html" --content-type "text/html; charset=utf-8" --cache-control "public,max-age=0,must-revalidate" > /dev/null
             echo "URL limpia: /$d y /$d/"
           done
 
