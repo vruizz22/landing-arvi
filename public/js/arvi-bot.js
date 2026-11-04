@@ -193,7 +193,7 @@
     li.push('Medidas: ' + r.med);
     li.push('Energía: ' + r.en);
     if (r.pub && r.pub !== '—') li.push('Público: ' + r.pub + (r.est && r.est !== r.pub && r.est !== '—' && r.est !== 'Juego familiar' ? ' · ' + r.est : ''));
-    return { p: [r.n + ' (' + CAT_ONE[r.cat] + (r.nuevo ? ', nuevo' : '') + '). ' + r.d], li: li, acts: [['wa', 'Cotizar ' + r.n, 'Hola ARVI, quiero cotizar ' + r.n + ' para mi evento'], ['#juegos', 'Ver juegos']], ride: r.id };
+    return { p: [r.n + ' (' + CAT_ONE[r.cat] + (r.nuevo ? ', nuevo' : '') + '). ' + r.d], li: li, acts: [['wa', 'Cotizar ' + r.n, 'Hola ARVI, quiero cotizar ' + r.n + ' para mi evento'], ['/catalogo/', 'Ver catálogo']], ride: r.id };
   }
   function listRides(filter, intro, max) {
     var rs = RIDES.filter(function (r) { return !r.noride && filter(r); });
@@ -233,7 +233,7 @@
       r: function () {
         var by = {}; RIDES.forEach(function (r) { if (r.noride) return; (by[r.cat] = by[r.cat] || []).push(r.n); });
         var li = []; ['mec', 'sus', 'inc', 'acu', 'comp'].forEach(function (c) { if (by[c]) li.push(CAT_NAME[c] + ': ' + by[c].join(', ')); });
-        return A('Tenemos más de 30 atracciones:', li, [['#juegos', 'Ver juegos'], ['wa', 'Pedir catálogo', 'Hola ARVI, ¿me pueden enviar el catálogo de juegos?']], { after: 'Pregúntame por cualquiera y te doy su ficha (capacidad, montaje, medidas y energía).' });
+        return A('Tenemos más de 30 atracciones:', li, [['/catalogo/', 'Ver catálogo completo'], ['#juegos', 'Ver juegos']], { after: 'Pregúntame por cualquiera y te doy su ficha (capacidad, montaje, medidas y energía).' });
       } },
     { id: 'rec_peques', q: 'Juegos para niños pequeños', k: ['ninos chicos', 'ninos pequenos', 'preescolar', 'pre escolar', 'jardin infantil', 'parvulos', 'bebes', 'para los mas chicos', 'menores de 5', 'de 3 anos', 'de 2 anos', 'de 4 anos', 'primera infancia', 'para ninos de'],
       r: function () { return listRides(function (r) { return ['aviones', 'tren_riel', 'lanchitas', 'carrusel', 'globos', 'inflables', 'reloj', 'sillitas_sus', 'carrusel_sus', 'gokart', 'feria'].indexOf(r.id) > -1; }, 'Para los más pequeños te recomendamos:'); } },
@@ -315,7 +315,7 @@
     { id: 'redes', q: 'Redes sociales', k: ['instagram', 'redes', 'redes sociales', 'reels', 'tiktok', 'facebook', 'pagina', 'seguirlos', 'ig'],
       r: A('Síguenos en Instagram: @arvi.cl para juegos, eventos y el Verano 2027, y @arvihappy para cumpleaños.', null, [['https://www.instagram.com/arvi.cl/', '@arvi.cl'], ['https://www.instagram.com/arvihappy/', '@arvihappy'], ['#redes', 'Ver publicaciones']]) },
     { id: 'descargas', q: 'Catálogos y descargas', k: ['catalogo', 'pdf', 'descargar', 'descarga', 'brochure', 'ficha tecnica', 'fichas tecnicas', 'folleto', 'presentacion', 'informacion completa', 'documento'],
-      r: A('Puedes descargar:', ['Convenio y proyectos sustentables para municipalidades', 'Información de ARVI Happy', 'Convenio ARVI Happy para funcionarios municipales', 'Propuesta ARVI Seguro'], [[PDF.muni, 'Municipalidades'], [PDF.happy, 'ARVI Happy'], [PDF.conv, 'Convenio funcionarios'], [PDF.seguro, 'ARVI Seguro'], ['wa', 'Pedir catálogo de juegos', 'Hola ARVI, ¿me pueden enviar el catálogo completo de juegos 2026?']]) },
+      r: A('Revisa el catálogo completo de juegos en arvi.cl/catalogo, y puedes descargar:', ['Convenio y proyectos sustentables para municipalidades', 'Información de ARVI Happy', 'Convenio ARVI Happy para funcionarios municipales', 'Propuesta ARVI Seguro'], [[PDF.muni, 'Municipalidades'], [PDF.happy, 'ARVI Happy'], [PDF.conv, 'Convenio funcionarios'], [PDF.seguro, 'ARVI Seguro'], ['/catalogo/', 'Catálogo de juegos (web)']]) },
     /* ---------- conversación ---------- */
     { id: 'humano', q: 'Hablar con una persona', k: [['hablar con una persona', 3], ['con una persona', 2.5], 'humano', 'ejecutivo', 'ejecutiva', 'alguien', 'atencion personal', 'hablar con alguien', 'operadora', 'vendedor', 'ventas', 'asesor', 'no me sirve', 'no entiendes', 'no me ayudas'],
       r: A('¡Claro! Te dejo con el equipo por WhatsApp; te responden en horario de atención (' + C.horario + ').', null, [['wa', 'Hablar con una persona', 'Hola ARVI, quiero hablar con una persona']]) },
