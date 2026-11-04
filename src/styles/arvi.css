@@ -35,6 +35,7 @@ p{margin:0}
 .sub{font-size:19px;color:var(--muted);max-width:38em}
 .dark .sub{color:#D3E5CF}
 .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:48px;flex-wrap:wrap}
+.cat-link{align-self:flex-start;margin-top:6px}
 .sec-head .l{display:flex;flex-direction:column;gap:16px;max-width:760px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:800 16px var(--f-body);border-radius:999px;padding:16px 28px;text-decoration:none;border:0;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s,background .2s,color .2s;white-space:nowrap}
 .btn svg{width:20px;height:20px;flex:none}
@@ -60,7 +61,8 @@ p{margin:0}
 .top .logo{display:flex;align-items:center}
 .top .logo img{height:54px;width:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
 .nav{display:flex;gap:2px;margin-left:auto}
-.nav a{text-decoration:none;font-weight:800;font-size:15px;padding:10px 13px;border-radius:999px}
+.nav a{text-decoration:none;font-weight:800;font-size:15px;padding:10px 13px;border-radius:999px;white-space:nowrap}
+@media (min-width:1101px) and (max-width:1320px){.nav a{font-size:14px;padding:10px 9px}.top .wrap{gap:14px}}
 .nav a:hover{background:rgba(255,255,255,.16)}
 .top.solid{background:rgba(255,255,255,.96);color:var(--g900);box-shadow:0 10px 30px -18px rgba(0,0,0,.35);backdrop-filter:blur(12px)}
 .top.solid .nav a:hover{background:var(--lime-soft);color:var(--g500)}
