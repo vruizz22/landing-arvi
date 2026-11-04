@@ -7,6 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          for u in https://arvi.cl/ https://arvi.cl/catalogo https://arvi.cl/happy https://arvi.cl/happy/ https://arvi.cl/happy/assets/logo.webp https://www.arvi.cl/happy/; do
-            echo "$u -> $(curl -s -o /tmp/b -w '%{http_code} %{redirect_url} %{size_download}' -L --max-redirs 0 "$u") $(grep -o '<title>[^<]*' /tmp/b | head -1)"
-          done
+          UA="WhatsApp/2.23.20.0 A"
+          curl -s -A "$UA" -D /tmp/h https://arvi.cl/ -o /tmp/b; echo "STATUS"; head -20 /tmp/h; echo "SIZE $(wc -c < /tmp/b)"
+          echo "HEAD-ORDER"; grep -o -n '<meta[^>]*\(og:\|twitter:\)[^>]*>' /tmp/b | head -20
+          echo "BYTES-BEFORE-OG $(grep -b -o 'og:image' /tmp/b | head -1)"
+          echo "STYLE-IN-HEAD $(grep -c '<style' /tmp/b)"; grep -b -o '</head>' /tmp/b
+          curl -s -A "$UA" -D - -o /tmp/og.jpg https://arvi.cl/og.jpg | head -12; echo "OGSIZE $(wc -c < /tmp/og.jpg)"
+          python3 -c "import struct;d=open('/tmp/og.jpg','rb').read();print(d[:4])"
