@@ -68,6 +68,7 @@ const T = [
  ['puedo llevar comida al cumpleaños','h_comida'],['se puede llevar carrito de completos al salon','h_comida'],['puedo decorar el salon','h_deco'],['se puede tomar alcohol en el cumpleaños','h_reglas'],
  ['tiene cocina el salon','h_cocina'],['hay mudador en el salon','h_cocina'],['hay monitoras en el cumpleaños','h_monitor'],['convenio funcionarios municipales','convenio'],['soy funcionaria municipal hay descuento','convenio'],
  ['telefono de arvi happy','h_contacto'],
+ ['convenio para jardines en el salon de cumpleaños','h_jardin'],['cuanto cuesta el cumpleaños un sabado en la mañana','h_precio'],['cuantas horas dura el cumpleaños en arvi happy','h_horario'],
  // contacto / redes / descargas
  ['cual es su telefono','contacto'],['horario de atencion','contacto'],['donde estan ubicados','contacto'],['correo','contacto'],['tienen instagram','redes'],['descargar catalogo pdf','descargas'],
  // conversación

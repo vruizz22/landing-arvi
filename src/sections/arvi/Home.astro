@@ -221,7 +221,7 @@ import Redes from './Redes.astro'
           <img class="hp-logo" src="/img/happy-logo.webp" alt="ARVI Happy, salón de cumpleaños">
           <h2 class="title" style="font-size:clamp(32px,3.4vw,48px)">Los niños se divierten, <em>los papás disfrutan tranquilos</em></h2>
           <p class="sub">Un espacio seguro, colorido y pensado para niños y niñas de 1 a 10 años. Nuestro equipo cuida cada detalle para que tú solo disfrutes el momento.</p>
-          <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-g" href="https://wa.me/56988082320?text=Hola%20ARVI%20Happy%2C%20quiero%20reservar%20una%20fecha%20de%20cumplea%C3%B1os" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Reserva tu fecha</a><a class="btn btn-y" href="/happy/"><svg><use href="#i-arrow"/></svg>Valores y detalles del salón</a><a class="btn btn-o" href="/descargas/arvi-happy-informacion.pdf" target="_blank" rel="noopener"><svg><use href="#i-dl"/></svg>Descargar información</a></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-g" href="https://wa.me/56962031726?text=Hola%20ARVI%20Happy%2C%20quiero%20reservar%20una%20fecha%20de%20cumplea%C3%B1os" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Reserva tu fecha</a><a class="btn btn-y" href="/happy/"><svg><use href="#i-arrow"/></svg>Valores y detalles del salón</a><a class="btn btn-o" href="/descargas/arvi-happy-informacion.pdf" target="_blank" rel="noopener"><svg><use href="#i-dl"/></svg>Descargar información</a></div>
         </div>
         <div class="hp-collage rv">
           <span class="kid"><img src="/img/happy-nino.webp" alt=""></span>
@@ -241,7 +241,7 @@ import Redes from './Redes.astro'
           <h3>Convenio especial para funcionarios municipales</h3>
           <p style="margin-top:12px;opacity:.95">Condiciones preferentes para que celebren el cumpleaños de sus hijos de forma fácil, segura y accesible.</p>
           <ul class="check" style="margin-top:18px"><li>Precio preferente y condiciones especiales</li><li>Horarios exclusivos para el convenio</li><li>Atención preferente y coordinación ágil</li></ul>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px"><a class="btn btn-g" href="/descargas/arvi-happy-convenio-funcionarios-municipales.pdf" target="_blank" rel="noopener"><svg><use href="#i-dl"/></svg>Descargar convenio</a><a class="btn btn-o" href="https://wa.me/56988082320?text=Hola%20ARVI%20Happy%2C%20soy%20funcionario%20municipal%20y%20quiero%20usar%20el%20convenio" target="_blank" rel="noopener">Reservar con convenio</a></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px"><a class="btn btn-g" href="/descargas/arvi-happy-convenio-funcionarios-municipales.pdf" target="_blank" rel="noopener"><svg><use href="#i-dl"/></svg>Descargar convenio</a><a class="btn btn-o" href="https://wa.me/56962031726?text=Hola%20ARVI%20Happy%2C%20soy%20funcionario%20municipal%20y%20quiero%20usar%20el%20convenio" target="_blank" rel="noopener">Reservar con convenio</a></div>
         </div>
         <img src="/img/happy-nina.webp" alt="">
       </div>
@@ -397,7 +397,7 @@ import Redes from './Redes.astro'
   var chips=document.querySelectorAll('.chip'),rides=document.querySelectorAll('#rail .ride');
   chips.forEach(function(c){c.addEventListener('click',function(){chips.forEach(function(x){x.setAttribute('aria-pressed',x===c)});var f=c.dataset.f;rides.forEach(function(g){g.hidden=!(f==='all'||g.dataset.k===f)});document.getElementById('rail').scrollTo({left:0})})});
   document.querySelectorAll('.copy-btn').forEach(function(b){b.addEventListener('click',function(){navigator.clipboard.writeText(b.dataset.copy).then(function(){b.textContent='Copiado'}).catch(function(){var r=document.createRange();r.selectNodeContents(b.previousElementSibling);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Seleccionado'})})});
-  function wa(lines){var a=document.createElement('a');a.href='https://wa.me/56988082320?text='+encodeURIComponent(lines.join('\n'));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
+  function wa(lines){var a=document.createElement('a');var num=/ARVI Happy/i.test(lines.join(' '))?'56962031726':'56988082320';a.href='https://wa.me/'+num+'?text='+encodeURIComponent(lines.join('\n'));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
   document.getElementById('finder').addEventListener('submit',function(e){e.preventDefault();var g=function(id){return(document.getElementById(id).value||'').trim()};var L=['Hola ARVI, quiero cotizar.','Tipo de evento: '+g('f-tipo')];if(g('f-comuna'))L.push('Comuna: '+g('f-comuna'));if(g('f-fecha'))L.push('Fecha: '+g('f-fecha'));wa(L)});
   document.getElementById('quote').addEventListener('submit',function(e){e.preventDefault();var g=function(id){return(document.getElementById(id).value||'').trim()};var note=document.getElementById('q-note');
     if(!g('q-name')){note.textContent='Escribe tu nombre para armar el mensaje.';document.getElementById('q-name').focus();return}
