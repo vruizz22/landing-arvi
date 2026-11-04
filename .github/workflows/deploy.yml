@@ -64,6 +64,18 @@ jobs:
             --exclude "*" --include "*.html" --include "index.html" \
             --cache-control "max-age=86400,public"
 
+      - name: URLs limpias para subpáginas (/catalogo y /catalogo/)
+        shell: bash
+        run: |
+          # S3 no resuelve carpeta -> index.html; se sube cada subpágina también con la clave de la carpeta
+          cd dist
+          find . -mindepth 2 -name index.html | while read -r f; do
+            d="${f#./}"; d="${d%/index.html}"
+            aws s3 cp "$d/index.html" "s3://${{ secrets.S3_BUCKET }}/$d" --content-type "text/html; charset=utf-8" --cache-control "max-age=86400,public"
+            aws s3api put-object --bucket "${{ secrets.S3_BUCKET }}" --key "$d/" --body "$d/index.html" --content-type "text/html; charset=utf-8" --cache-control "max-age=86400,public" > /dev/null
+            echo "URL limpia: /$d y /$d/"
+          done
+
       - name: Upload sitemaps (XML) and robots (ensure content-type)
         shell: bash
         run: |
