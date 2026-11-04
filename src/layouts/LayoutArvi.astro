@@ -1,0 +1,120 @@
+---
+// Layout del rediseño ARVI 2026. Mantiene el SEO del layout original y usa src/styles/arvi.css
+import '@styles/arvi.css'
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ARVI Chile · Juegos mecánicos, sustentables e inclusivos para eventos</title>
+
+    <!-- fallback clásico -->
+    <!-- <link rel="icon" href="/favicon.ico"> -->
+    <!-- <link rel="icon" type="image/png" href="/LOGO_ARVI.png"> -->
+    <link rel="icon" type="image/svg+xml" href="/logo_arvi.svg" />
+
+    <!-- Apple / iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Manifest (PWA / Android) -->
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Meta Tags SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta
+      name="description"
+      content="Empresa Chilena de Juegos Mecánicos, Inflables y Sustentables para eventos. 
+      Atracciones modulares y remolcables, fáciles de instalar y transportar.
+      Servicios para municipios, colegios, empresas y eventos corporativos. Reserva hoy."
+    />
+
+    <link rel="canonical" href="https://arvi.cl/" />
+
+    <!-- Etiquetas adicionales SEO -->
+    <meta
+      name="keywords"
+      content="juegos mecánicos, inflables, entretenimiento sustentable, eventos corporativos, fiestas infantiles, atracciones modulares, juegos para eventos, día del niño, ferias temáticas, eventos escolares, celebraciones municipales, entretenimiento ecológico, atracciones para niños, juegos infantiles, eventos sustentables"
+    />
+    <meta name="author" content="ARVI Chile" />
+    <meta name="geo.region" content="CL" />
+    <meta name="geo.position" content="-33.4372;-70.6506" />
+    <meta name="ICBM" content="-33.4372, -70.6506" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:url" content="https://arvi.cl" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables"
+    />
+    <meta
+      property="og:description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+    <meta property="og:image" content="https://arvi.cl/og.jpg" />
+    <meta
+      property="og:image:alt"
+      content="ARVI Chile - Juegos Mecánicos, Inflables y Sustentables"
+    />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="ARVI Chile" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@arvi.cl" />
+    <meta
+      name="twitter:title"
+      content="ARVI Chile - Empresa de Juegos Mecánicos, Inflables y Sustentables"
+    />
+    <meta
+      property="og:description"
+      content="Empresa Chilena de Juegos mecánicos y sustentables. 
+	  Atracciones modulares y remolcable, fáciles de instalar y transportar.
+	  Reserva hoy."
+    />
+    <meta name="twitter:image" content="https://arvi.cl/og.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="ARVI Chile - Juegos Mecánicos, Inflables y Sustentables"
+    />
+
+    <!-- Datos estructurados Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "ARVI Chile",
+        "image": "https://arvi.cl/og.jpg",
+        "logo": "https://arvi.cl/LOGO_ARVI.png",
+        "url": "https://arvi.cl",
+        "description": "Empresa Chilena especializada en juegos mecánicos, inflables y sustentables para eventos. Ofrecemos entretenimiento para municipios, colegios, empresas y celebraciones.",
+        "priceRange": "$$",
+        "telephone": "+56 9 8808 2320",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "CL",
+          "addressLocality": "La Florida",
+          "addressRegion": "Región Metropolitana",
+          "postalCode": "8240000",
+          "streetAddress": "Av. Vicuña Mackenna Ote. 7110"
+        },
+        "sameAs": ["https://www.instagram.com/arvi.cl/"],
+        "serviceArea": "Chile",
+        "availableService": {
+          "@type": "Service",
+          "name": "Juegos Mecánicos, Inflables y Atracciones Sustentables para Eventos"
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Figtree:wght@400;500;600;700;800;900&display=swap" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
