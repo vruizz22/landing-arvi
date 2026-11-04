@@ -1,0 +1,12 @@
+name: URL check (temporal)
+on:
+  push:
+    branches: [tmp-url-check]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for u in https://arvi.cl/ https://arvi.cl/catalogo/ https://arvi.cl/catalogo https://arvi.cl/catalogo/index.html https://www.arvi.cl/catalogo/; do
+            echo "$u -> $(curl -s -o /tmp/b -w '%{http_code} %{redirect_url} %{size_download}' -L --max-redirs 0 "$u") $(grep -o '<title>[^<]*' /tmp/b | head -1)"
+          done
