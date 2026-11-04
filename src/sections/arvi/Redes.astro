@@ -1,0 +1,114 @@
+---
+// Sección "Lo último en nuestros reels": trae los reels de @arvi.cl y @arvihappy
+// desde la API de Instagram al compilar (el deploy se recompila a diario).
+// Si una cuenta no tiene credenciales o la API falla, muestra tarjetas de respaldo
+// con fotos propias que llevan al perfil, para que la sección nunca quede vacía.
+import { getInstagramFeed, type InstagramPost } from '@/utils/instagram'
+
+interface Card {
+  href: string
+  img: string
+  alt: string
+  caption: string
+  meta: string
+}
+
+const fmt = (iso: string) =>
+  new Date(iso).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })
+
+const clean = (text: string, max = 110) => {
+  const t = text.replace(/#[\p{L}\p{N}_]+/gu, '').replace(/\s+/g, ' ').trim()
+  return t.length > max ? t.slice(0, max - 1).trimEnd() + '…' : t
+}
+
+const toCards = (posts: InstagramPost[], fallbackCaption: string): Card[] => {
+  const reels = posts.filter((p) => p.mediaType === 'VIDEO')
+  const list = (reels.length >= 4 ? reels : posts).slice(0, 8)
+  return list.map((p) => ({
+    href: p.permalink,
+    img: p.mediaUrl,
+    alt: p.altText,
+    caption: clean(p.caption) || fallbackCaption,
+    meta: fmt(p.timestamp),
+  }))
+}
+
+const fallback = (handle: string, items: [string, string][]): Card[] =>
+  items.map(([img, caption]) => ({
+    href: `https://www.instagram.com/${handle}/reels/`,
+    img: `/img/${img}.webp`,
+    alt: caption,
+    caption,
+    meta: 'Ver en Instagram',
+  }))
+
+const [arviPosts, happyPosts] = await Promise.all([
+  getInstagramFeed({ account: 'arvi', limit: 8, fetchLimit: 25 }),
+  getInstagramFeed({ account: 'happy', limit: 8, fetchLimit: 25 }),
+])
+
+const arvi = arviPosts.length
+  ? toCards(arviPosts, 'Ver reel de ARVI')
+  : fallback('arvi.cl', [
+      ['tagada-publico', 'Tagadá a full en el Día del Niño'],
+      ['eco-carrusel-2', 'Carrusel sustentable: diversión a pedal'],
+      ['rueda-1', 'La Rueda iluminando la tarde'],
+      ['barco-2', 'Barco Pirata, el favorito de todos'],
+      ['dragon', 'Montaña Rusa Dragón en acción'],
+      ['globos-evento', 'Globos Samba en feria municipal'],
+    ])
+
+const happy = happyPosts.length
+  ? toCards(happyPosts, 'Ver reel de ARVI Happy')
+  : fallback('arvihappy', [
+      ['happy-1', 'Así se vive un cumple en ARVI Happy'],
+      ['happy-2', 'Zona de juegos lista para la fiesta'],
+      ['happy-4', 'Piscina de pelotas y tobogán'],
+      ['happy-5', 'Inflables para los más peques'],
+      ['happy-6', 'La zona de padres, con vista a todo'],
+      ['happy-3', 'Decoración temática para tu cumple'],
+    ])
+---
+
+<section class="sec social" id="redes">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="l">
+        <span class="eyebrow">En redes</span>
+        <h2 class="title">Lo último en <em>nuestros reels</em></h2>
+        <p class="sub">Míralo en movimiento: eventos, juegos y cumpleaños de esta temporada.</p>
+      </div>
+      <div class="controls">
+        <button class="arrow" type="button" data-rail="reelsArvi" data-dir="-1" aria-label="Anterior"><svg><use href="#i-left"></use></svg></button>
+        <button class="arrow" type="button" data-rail="reelsArvi" data-dir="1" aria-label="Siguiente"><svg><use href="#i-arrow"></use></svg></button>
+      </div>
+    </div>
+    <div class="soc-tabs rv" role="tablist" aria-label="Cuentas de Instagram">
+      <button class="soc-tab" role="tab" id="tab-arvi" aria-selected="true" aria-controls="panel-arvi" data-rail="reelsArvi"><img src="/img/zorro.webp" alt="" />@arvi.cl</button>
+      <button class="soc-tab hp" role="tab" id="tab-happy" aria-selected="false" aria-controls="panel-happy" data-rail="reelsHappy" tabindex="-1"><img src="/img/happy-nina.webp" alt="" />@arvihappy</button>
+    </div>
+    {
+      [
+        { id: 'arvi', rail: 'reelsArvi', hp: false, name: 'ARVI', desc: 'Juegos mecánicos, sustentables e inclusivos', handle: 'arvi.cl', cards: arvi },
+        { id: 'happy', rail: 'reelsHappy', hp: true, name: 'ARVI Happy', desc: 'Salón de cumpleaños para niños de 1 a 10 años', handle: 'arvihappy', cards: happy },
+      ].map((acc) => (
+        <div class={acc.hp ? 'soc-panel hp' : 'soc-panel'} role="tabpanel" id={`panel-${acc.id}`} aria-labelledby={`tab-${acc.id}`} hidden={acc.hp}>
+          <div class="soc-profile">
+            <div><b>{acc.name}</b><span>{acc.desc}</span></div>
+            <a class="btn btn-g" href={`https://www.instagram.com/${acc.handle}/`} target="_blank" rel="noopener"><svg><use href="#i-ig"></use></svg>Seguir @{acc.handle}</a>
+          </div>
+          <div class="rail reels" id={acc.rail}>
+            {acc.cards.map((c) => (
+              <a class="reel" href={c.href} target="_blank" rel="noopener">
+                <img src={c.img} alt={c.alt} loading="lazy" referrerpolicy="no-referrer" />
+                <span class="badge"><svg><use href="#i-reel"></use></svg>Reel</span>
+                <span class="play"><svg><use href="#i-play"></use></svg></span>
+                <span class="in"><span class="cap">{c.caption}</span><small>{c.meta}</small></span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
