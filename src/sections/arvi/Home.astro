@@ -1,5 +1,5 @@
 ---
-// Página completa del rediseño ARVI (secciones marcadas con id)
+// Página completa del rediseño ARVI 2026 (secciones marcadas con id)
 ---
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -24,6 +24,7 @@
   <symbol id="i-isa" viewBox="0 0 100 100"><circle cx="45" cy="13" r="8" fill="#fff"/><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M44 27 43 57" stroke-width="10"/><path d="M44 38h20" stroke-width="7"/><path d="M43 57h25l10 24 9-5" stroke-width="8"/><path d="M57.5 67.6A22 22 0 1 1 30 44" stroke-width="7.5"/></g></symbol>
 </svg>
 
+<div class="progress" id="progress" aria-hidden="true"></div>
 <header class="top" id="top">
   <div class="wrap">
     <a class="logo" href="#inicio" aria-label="ARVI inicio"><img src="/img/logo.webp" alt="ARVI Entretenciones Infantiles" width="180" height="54"></a>
@@ -54,6 +55,7 @@
         <a class="btn btn-w" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20cotizar%20juegos%20para%20mi%20evento" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Hablar por WhatsApp</a>
       </div>
     </div>
+    <img class="hero-mascot" src="/img/mascota-2.webp" alt="">
     <button class="sound" id="vidToggle" type="button" aria-label="Pausar video"><svg><use href="#i-pause"/></svg></button>
   </section>
 
@@ -65,21 +67,22 @@
       <button class="btn btn-g" type="submit"><svg><use href="#i-wa"/></svg>Cotizar ahora</button>
     </form>
     <div class="stats">
-      <div class="stat"><b>+20</b><span>años de experiencia</span></div>
-      <div class="stat"><b>+1.000</b><span>eventos realizados</span></div>
-      <div class="stat"><b>100%</b><span>fabricación nacional</span></div>
+      <div class="stat" data-count="20"><b>+20</b><span>años de experiencia</span></div>
+      <div class="stat" data-count="1000"><b>+1.000</b><span>eventos realizados</span></div>
+      <div class="stat" data-count="100"><b>100%</b><span>fabricación nacional</span></div>
       <div class="stat"><b>Arica</b><span>a Punta Arenas</span></div>
     </div>
   </div>
+  <div class="mq-clip"><div class="marquee" aria-label="Con quiénes trabajamos"><div class="track"><span>Municipios</span><span>Productoras</span><span>Colegios</span><span>Empresas</span><span>Festivales</span><span>Aniversarios comunales</span><span>Día del Niño</span><span>Navidad</span><span aria-hidden="true">Municipios</span><span aria-hidden="true">Productoras</span><span aria-hidden="true">Colegios</span><span aria-hidden="true">Empresas</span><span aria-hidden="true">Festivales</span><span aria-hidden="true">Aniversarios comunales</span><span aria-hidden="true">Día del Niño</span><span aria-hidden="true">Navidad</span></div></div></div>
 
   <section class="sec" id="mundos">
     <div class="wrap">
       <div class="sec-head rv"><div class="l"><span class="eyebrow">Mundos ARVI</span><h2 class="title">Un universo de <em>entretención</em></h2></div><p class="sub" style="max-width:26em">Elige lo que tu evento necesita: atracciones mecánicas, juegos que se mueven con energía limpia o un salón para celebrar.</p></div>
       <div class="worlds rv" id="worlds">
-        <a class="world is-open" href="#juegos" style="--wc:var(--g500)"><img class="bg" src="/img/tagada-publico.webp" alt=""><img class="mascot" src="/img/zorro-dragon.webp" alt=""><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">Juegos mecánicos</span><h3>Atracciones</h3><p>Tagadá, Barco Pirata, Montaña Rusa Dragón, Rueda y más para eventos masivos.</p></div></a>
-        <a class="world" href="#sustentable" style="--wc:#5E9E1E"><img class="bg" src="/img/eco-carrusel-3.webp" alt=""><img class="mascot" src="/img/eco-tierra.webp" alt=""><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">ARVI Sustentable</span><h3>Energía limpia</h3><p>Juegos que funcionan con pedales y manivelas. Sin electricidad.</p></div></a>
-        <a class="world" href="#arvi-happy" style="--wc:#FF4F9A"><img class="bg" src="/img/happy-5.webp" alt=""><img class="mascot" src="/img/happy-nina.webp" alt=""><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">ARVI Happy</span><h3>Cumpleaños</h3><p>Salón para niños de 1 a 10 años, con zona de padres.</p></div></a>
-        <a class="world" href="#arvi-seguro" style="--wc:#1E9BFF"><img class="bg" src="/img/inclusivo-3.webp" alt=""><img class="mascot" src="/img/seguro-nino.webp" alt=""><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">Inclusivo · ARVI Seguro</span><h3>Para todos</h3><p>Carrusel inclusivo y espacios seguros para niños con NEE.</p></div></a>
+        <a class="world is-open" href="#juegos" style="--wc:var(--g500)"><img class="bg" src="/img/tagada-publico.webp" alt=""><span class="mascot sticker"><img src="/img/zorro.webp" alt=""></span><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">Juegos mecánicos</span><h3>Atracciones</h3><p>Tagadá, Barco Pirata, Montaña Rusa Dragón, Rueda y más para eventos masivos.</p></div></a>
+        <a class="world" href="#sustentable" style="--wc:#5E9E1E"><img class="bg" src="/img/eco-carrusel-3.webp" alt=""><span class="mascot sticker"><img src="/img/eco-tierra.webp" alt=""></span><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">ARVI Sustentable</span><h3>Energía limpia</h3><p>Juegos que funcionan con pedales y manivelas. Sin electricidad.</p></div></a>
+        <a class="world" href="#arvi-happy" style="--wc:#FF4F9A"><img class="bg" src="/img/happy-5.webp" alt=""><span class="mascot sticker"><img src="/img/happy-nina.webp" alt=""></span><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">ARVI Happy</span><h3>Cumpleaños</h3><p>Salón para niños de 1 a 10 años, con zona de padres.</p></div></a>
+        <a class="world" href="#arvi-seguro" style="--wc:#1E9BFF"><img class="bg" src="/img/inclusivo-3.webp" alt=""><span class="mascot sticker"><img src="/img/seguro-nino.webp" alt=""></span><span class="go"><svg><use href="#i-arrow"/></svg></span><div class="in"><span class="tag">Inclusivo · ARVI Seguro</span><h3>Para todos</h3><p>Carrusel inclusivo y espacios seguros para niños con NEE.</p></div></a>
       </div>
     </div>
   </section>
@@ -112,9 +115,10 @@
   </section>
 
   <section class="sec process" id="como-trabajamos">
+    <img class="peek top" src="/img/mascota-3.webp" alt="">
     <div class="wrap dark">
       <div class="sec-head rv"><div class="l"><span class="eyebrow">Cómo trabajamos</span><h2 class="title">Nos encargamos <em>de principio a fin</em></h2></div><p class="sub" style="max-width:24em">Organizar un evento es coordinar mil detalles. La entretención la dejas en nuestras manos.</p></div>
-      <div class="steps rv">
+      <div class="steps rv stag">
         <div class="step"><div class="n">01</div><svg><use href="#i-factory"/></svg><h3>Fabricación propia</h3><p>Diseñamos y fabricamos en Chile, con repuestos y soporte propio.</p></div>
         <div class="step"><div class="n">02</div><svg><use href="#i-truck"/></svg><h3>Traslado</h3><p>Formatos remolque y modular para llegar a todo Chile.</p></div>
         <div class="step"><div class="n">03</div><svg><use href="#i-wrench"/></svg><h3>Montaje</h3><p>Instalación en 2 a 4 horas promedio, lista antes de abrir.</p></div>
@@ -139,7 +143,7 @@
       <div class="mascots"><img src="/img/eco-luz.webp" alt=""><img src="/img/eco-tierra.webp" alt=""></div>
     </div>
     <div class="wrap eco-body dark" id="juegos-eco">
-      <div class="eco-grid rv">
+      <div class="eco-grid rv stag">
         <article class="eco-card"><div class="pic"><img src="/img/eco-carrusel-2.webp" alt="Carrusel Sustentable con bicicletas"></div><div class="b"><h3>Carrusel Sustentable</h3><dl><dt>Temática</dt><dd>Animales en peligro de extinción en Chile</dd><dt>Energía</dt><dd>Pedales con bicicletas</dd><dt>Público</dt><dd>Niños y adultos</dd></dl></div></article>
         <article class="eco-card"><div class="pic"><img src="/img/eco-sillitas-3.webp" alt="Sillitas Voladoras Sustentables"></div><div class="b"><h3>Sillitas Voladoras</h3><dl><dt>Temática</dt><dd>Animales marinos en peligro</dd><dt>Energía</dt><dd>Manivela</dd><dt>Público</dt><dd>Niños hasta 10 años</dd></dl></div></article>
         <article class="eco-card"><div class="pic"><img src="/img/eco-noria.webp" alt="Rueda Noria Africana" style="object-fit:contain"></div><div class="b"><h3>Rueda Noria Africana</h3><dl><dt>Temática</dt><dd>Fauna exótica africana</dd><dt>Energía</dt><dd>Manivela</dd><dt>Público</dt><dd>Niños y adultos</dd></dl></div></article>
@@ -180,14 +184,14 @@
           <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-g" href="https://wa.me/56988082320?text=Hola%20ARVI%20Happy%2C%20quiero%20reservar%20una%20fecha%20de%20cumplea%C3%B1os" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Reserva tu fecha</a><a class="btn btn-o" href="/descargas/arvi-happy-informacion.pdf" target="_blank" rel="noopener"><svg><use href="#i-dl"/></svg>Descargar información</a></div>
         </div>
         <div class="hp-collage rv">
+          <span class="kid"><img src="/img/happy-nino.webp" alt=""></span>
           <div class="c c1"><img src="/img/happy-1.webp" alt="Mesa de cumpleaños decorada en ARVI Happy"></div>
           <div class="c c2"><img src="/img/happy-2.webp" alt="Piscina de pelotas con tobogán"></div>
           <div class="c c3"><img src="/img/happy-5.webp" alt="Niños felices en el inflable"></div>
-          <img class="kid" src="/img/happy-nino.webp" alt="">
           <span class="balloon" style="background:#FF4F9A;left:52%;top:-6%"></span><span class="balloon" style="background:#1E9BFF;right:-2%;top:56%;width:46px;height:58px;animation-delay:-1.6s"></span><span class="balloon" style="background:#FFC83D;left:-3%;top:62%;width:44px;height:56px;animation-delay:-3s"></span>
         </div>
       </div>
-      <div class="zones rv">
+      <div class="zones rv stag">
         <div class="zone"><img src="/img/happy-4.webp" alt="Laberinto modular de ARVI Happy"><div class="in"><span class="age">1 a 10 años</span><h3>Zona de niños</h3><p>Laberinto modular, piscina de pelotas, inflables y juegos adaptados.</p></div></div>
         <div class="zone"><img src="/img/happy-6.webp" alt="Zona de padres de ARVI Happy"><div class="in"><span class="age">Adultos</span><h3>Zona de padres</h3><p>Espacio cómodo con vista directa a las atracciones, terraza y sector cocina.</p></div></div>
       </div>
@@ -228,6 +232,7 @@
   </section>
 
   <section class="sec events" id="eventos">
+    <img class="peek top" src="/img/zorro-pirata.webp" alt="">
     <div class="wrap dark">
       <div class="sec-head rv"><div class="l"><span class="eyebrow">Eventos realizados</span><h2 class="title">Donde ya llevamos <em>la entretención</em></h2></div><div class="controls"><button class="arrow" type="button" data-rail="evRail" data-dir="-1" aria-label="Anterior"><svg><use href="#i-left"/></svg></button><button class="arrow" type="button" data-rail="evRail" data-dir="1" aria-label="Siguiente"><svg><use href="#i-arrow"/></svg></button></div></div>
       <div class="ev-rail" id="evRail">
@@ -257,7 +262,7 @@
   <section class="sec" style="padding-top:0">
     <div class="wrap">
       <div class="sec-head rv"><div class="l"><span class="eyebrow">Clientes</span><h2 class="title">Lo que dicen <em>de nosotros</em></h2></div></div>
-      <div class="testi rv">
+      <div class="testi rv stag">
         <figure class="quote"><div class="stars" aria-label="5 de 5">★★★★★</div><p>“La instalación fue rápida y el personal muy amable. Los niños estuvieron entretenidos toda la tarde.”</p><figcaption><span class="av">PD</span><div><b>Pamela D.</b><small>Cumpleaños infantil</small></div></figcaption></figure>
         <figure class="quote"><div class="stars" aria-label="4,5 de 5">★★★★½</div><p>“El equipo de ARVI se encargó de todo, desde la instalación hasta la supervisión. Volveremos a contar con ellos.”</p><figcaption><span class="av">JD</span><div><b>Javier D.</b><small>Evento empresarial</small></div></figcaption></figure>
         <figure class="quote"><div class="stars" aria-label="5 de 5">★★★★★</div><p>“Lo que más valoramos fue su compromiso con el medio ambiente y las energías renovables.”</p><figcaption><span class="av">MP</span><div><b>Marcela P.</b><small>Centro de Padres</small></div></figcaption></figure>
@@ -267,7 +272,7 @@
 
   <section class="sec" id="preguntas" style="padding-top:0">
     <div class="wrap faq">
-      <div class="rv" style="display:grid;gap:16px;align-content:start"><span class="eyebrow">Preguntas frecuentes</span><h2 class="title">Antes de <em>cotizar</em></h2><p class="sub">¿Otra duda? Escríbenos por WhatsApp.</p></div>
+      <div class="rv" style="display:grid;gap:16px;align-content:start"><span class="eyebrow">Preguntas frecuentes</span><h2 class="title">Antes de <em>cotizar</em></h2><p class="sub">¿Otra duda? Escríbenos por WhatsApp.</p><img class="mascot-side" src="/img/mascota-4.webp" alt=""></div>
       <div class="rv">
         <details open><summary>¿Qué incluye el arriendo?</summary><p>Traslado, montaje, operación durante el evento y desmontaje. Tú solo nos indicas el lugar, la fecha y el horario.</p></details>
         <details><summary>¿Cuánto demora el montaje?</summary><p>Entre 2 y 4 horas en promedio, según los juegos. Coordinamos la llegada para que todo esté listo antes de abrir.</p></details>
@@ -317,4 +322,62 @@
   </div>
 </footer>
 
-<a class="wa-float" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20cotizar%20juegos%20para%20mi%20evento" target="_blank" rel="noopener" aria-label="Escribir a ARVI por WhatsApp"><svg><use href="#i-wa"/></svg><span>Cotiza por WhatsApp</span></a>
+<div class="guide off" id="guide">
+  <div class="bubble" id="bubble" hidden><button class="x" id="bubbleX" type="button" aria-label="Cerrar">×</button>¡Hola! Soy el Zorro ARVI. ¿Te ayudo a cotizar tu evento?<br><a href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20cotizar%20juegos%20para%20mi%20evento" target="_blank" rel="noopener">Escribir por WhatsApp →</a></div>
+  <a class="fox" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20cotizar%20juegos%20para%20mi%20evento" target="_blank" rel="noopener" aria-label="Cotizar con ARVI por WhatsApp"><span class="clip"><img src="/img/mascota-5.webp" alt=""></span><span class="wa"><svg><use href="#i-wa"/></svg></span></a>
+</div>
+
+<script is:inline>
+(function(){
+  var top=document.getElementById('top');
+  function onScroll(){top.classList.toggle('solid',window.scrollY>40)}
+  onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+  var btn=document.getElementById('menuBtn'),nav=document.getElementById('nav');
+  btn.addEventListener('click',function(){var o=nav.classList.toggle('open');btn.setAttribute('aria-expanded',o);top.classList.add('solid')});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A'){nav.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  var v=document.getElementById('heroVideo'),vt=document.getElementById('vidToggle');
+  vt.addEventListener('click',function(){if(v.paused){v.play();vt.innerHTML='<svg><use href="#i-pause"/></svg>';vt.setAttribute('aria-label','Pausar video')}else{v.pause();vt.innerHTML='<svg><use href="#i-play"/></svg>';vt.setAttribute('aria-label','Reproducir video')}});
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.pause();v.removeAttribute('autoplay')}
+  var worlds=document.querySelectorAll('.world');
+  worlds.forEach(function(w){w.addEventListener('mouseenter',function(){worlds.forEach(function(x){x.classList.toggle('is-open',x===w)})})});
+  document.querySelectorAll('.arrow').forEach(function(a){a.addEventListener('click',function(){var r=document.getElementById(a.dataset.rail);var card=r.firstElementChild;var step=(card?card.getBoundingClientRect().width:320)+22;r.scrollBy({left:step*+a.dataset.dir,behavior:'smooth'})})});
+  var chips=document.querySelectorAll('.chip'),rides=document.querySelectorAll('#rail .ride');
+  chips.forEach(function(c){c.addEventListener('click',function(){chips.forEach(function(x){x.setAttribute('aria-pressed',x===c)});var f=c.dataset.f;rides.forEach(function(g){g.hidden=!(f==='all'||g.dataset.k===f)});document.getElementById('rail').scrollTo({left:0})})});
+  document.querySelectorAll('.copy-btn').forEach(function(b){b.addEventListener('click',function(){navigator.clipboard.writeText(b.dataset.copy).then(function(){b.textContent='Copiado'}).catch(function(){var r=document.createRange();r.selectNodeContents(b.previousElementSibling);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Seleccionado'})})});
+  function wa(lines){var a=document.createElement('a');a.href='https://wa.me/56988082320?text='+encodeURIComponent(lines.join('\n'));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
+  document.getElementById('finder').addEventListener('submit',function(e){e.preventDefault();var g=function(id){return(document.getElementById(id).value||'').trim()};var L=['Hola ARVI, quiero cotizar.','Tipo de evento: '+g('f-tipo')];if(g('f-comuna'))L.push('Comuna: '+g('f-comuna'));if(g('f-fecha'))L.push('Fecha: '+g('f-fecha'));wa(L)});
+  document.getElementById('quote').addEventListener('submit',function(e){e.preventDefault();var g=function(id){return(document.getElementById(id).value||'').trim()};var note=document.getElementById('q-note');
+    if(!g('q-name')){note.textContent='Escribe tu nombre para armar el mensaje.';document.getElementById('q-name').focus();return}
+    var L=['Hola ARVI, quiero cotizar.','Nombre: '+g('q-name')];if(g('q-org'))L.push('Institución: '+g('q-org'));L.push('Me interesa: '+g('q-type'));if(g('q-date'))L.push('Fecha: '+g('q-date'));if(g('q-place'))L.push('Comuna: '+g('q-place'));if(g('q-msg'))L.push('Detalle: '+g('q-msg'));
+    wa(L);note.textContent='Listo. Si WhatsApp no se abrió, escríbenos al +569 8808 2320.'});
+
+  var pr=document.getElementById('progress');
+  var gd=document.getElementById('guide');function gshow(){gd.classList.toggle('off',scrollY<innerHeight*0.7)}addEventListener('scroll',gshow,{passive:true});gshow();
+  function prog(){var h=document.documentElement.scrollHeight-innerHeight;pr.style.transform='scaleX('+(h>0?scrollY/h:0)+')'}
+  prog();window.addEventListener('scroll',prog,{passive:true});
+  var bub=document.getElementById('bubble'),closed=false;
+  try{closed=sessionStorage.getItem('arviBubble')==='0'}catch(e){}
+  function maybeBubble(){if(closed||!bub.hidden)return;if(scrollY>innerHeight*0.9){bub.hidden=false;removeEventListener('scroll',maybeBubble)}}
+  addEventListener('scroll',maybeBubble,{passive:true});
+  document.getElementById('bubbleX').addEventListener('click',function(){bub.hidden=true;closed=true;try{sessionStorage.setItem('arviBubble','0')}catch(e){}});
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if('IntersectionObserver' in window && !reduce){
+    var stats=document.querySelectorAll('[data-count]');
+    var so=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;so.unobserve(en.target);var b=en.target.querySelector('b'),n=+en.target.dataset.count,txt=b.textContent,pre=txt.indexOf('+')===0?'+':'',suf=txt.indexOf('%')>-1?'%':'',t0=null;
+      function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/1400),e=1-Math.pow(1-p,3),v=Math.round(n*e);b.textContent=pre+v.toLocaleString('es-CL')+suf;if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)})},{threshold:.6});
+    stats.forEach(function(s){so.observe(s)});
+    var par=document.querySelectorAll('.eco-hero > img,.cta > img');
+    function px(){par.forEach(function(im){var r=im.parentElement.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;var o=(r.top+r.height/2-innerHeight/2)*-0.12;im.style.transform='translateY('+o+'px) scale(1.15)'})}
+    px();window.addEventListener('scroll',px,{passive:true});
+    document.querySelectorAll('.ride,.eco-card').forEach(function(c){
+      c.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse')return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform='perspective(900px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg) translateY(-4px)'});
+      c.addEventListener('pointerleave',function(){c.style.transform=''})});
+  }
+  if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var els=[].slice.call(document.querySelectorAll('.rv')).filter(function(el){return el.getBoundingClientRect().top>window.innerHeight});
+    els.forEach(function(el){el.classList.add('pre')});
+    var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.remove('pre');io.unobserve(en.target)}})},{rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el){io.observe(el)});
+  }
+})();
+</script>

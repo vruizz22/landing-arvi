@@ -112,40 +112,9 @@ import '@styles/arvi.css'
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Figtree:wght@400;500;600;700;800;900&display=swap" />
   </head>
   <body>
     <slot />
-    <script is:inline>
-(function(){
-  var top=document.getElementById('top');
-  function onScroll(){top.classList.toggle('solid',window.scrollY>40)}
-  onScroll();window.addEventListener('scroll',onScroll,{passive:true});
-  var btn=document.getElementById('menuBtn'),nav=document.getElementById('nav');
-  btn.addEventListener('click',function(){var o=nav.classList.toggle('open');btn.setAttribute('aria-expanded',o);top.classList.add('solid')});
-  nav.addEventListener('click',function(e){if(e.target.tagName==='A'){nav.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
-  var v=document.getElementById('heroVideo'),vt=document.getElementById('vidToggle');
-  vt.addEventListener('click',function(){if(v.paused){v.play();vt.innerHTML='<svg><use href="#i-pause"/></svg>';vt.setAttribute('aria-label','Pausar video')}else{v.pause();vt.innerHTML='<svg><use href="#i-play"/></svg>';vt.setAttribute('aria-label','Reproducir video')}});
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.pause();v.removeAttribute('autoplay')}
-  var worlds=document.querySelectorAll('.world');
-  worlds.forEach(function(w){w.addEventListener('mouseenter',function(){worlds.forEach(function(x){x.classList.toggle('is-open',x===w)})})});
-  document.querySelectorAll('.arrow').forEach(function(a){a.addEventListener('click',function(){var r=document.getElementById(a.dataset.rail);var card=r.firstElementChild;var step=(card?card.getBoundingClientRect().width:320)+22;r.scrollBy({left:step*+a.dataset.dir,behavior:'smooth'})})});
-  var chips=document.querySelectorAll('.chip'),rides=document.querySelectorAll('#rail .ride');
-  chips.forEach(function(c){c.addEventListener('click',function(){chips.forEach(function(x){x.setAttribute('aria-pressed',x===c)});var f=c.dataset.f;rides.forEach(function(g){g.hidden=!(f==='all'||g.dataset.k===f)});document.getElementById('rail').scrollTo({left:0})})});
-  document.querySelectorAll('.copy-btn').forEach(function(b){b.addEventListener('click',function(){navigator.clipboard.writeText(b.dataset.copy).then(function(){b.textContent='Copiado'}).catch(function(){var r=document.createRange();r.selectNodeContents(b.previousElementSibling);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Seleccionado'})})});
-  function wa(lines){var a=document.createElement('a');a.href='https://wa.me/56988082320?text='+encodeURIComponent(lines.join('\n'));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
-  document.getElementById('finder').addEventListener('submit',function(e){e.preventDefault();var g=function(id){return(document.getElementById(id).value||'').trim()};var L=['Hola ARVI, quiero cotizar.','Tipo de evento: '+g('f-tipo')];if(g('f-comuna'))L.push('Comuna: '+g('f-comuna'));if(g('f-fecha'))L.push('Fecha: '+g('f-fecha'));wa(L)});
-  document.getElementById('quote').addEventListener('submit',function(e){e.preventDefault();var g=function(id){return(document.getElementById(id).value||'').trim()};var note=document.getElementById('q-note');
-    if(!g('q-name')){note.textContent='Escribe tu nombre para armar el mensaje.';document.getElementById('q-name').focus();return}
-    var L=['Hola ARVI, quiero cotizar.','Nombre: '+g('q-name')];if(g('q-org'))L.push('Institución: '+g('q-org'));L.push('Me interesa: '+g('q-type'));if(g('q-date'))L.push('Fecha: '+g('q-date'));if(g('q-place'))L.push('Comuna: '+g('q-place'));if(g('q-msg'))L.push('Detalle: '+g('q-msg'));
-    wa(L);note.textContent='Listo. Si WhatsApp no se abrió, escríbenos al +569 8808 2320.'});
-  if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    var els=[].slice.call(document.querySelectorAll('.rv')).filter(function(el){return el.getBoundingClientRect().top>window.innerHeight});
-    els.forEach(function(el){el.classList.add('pre')});
-    var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.remove('pre');io.unobserve(en.target)}})},{rootMargin:'0px 0px -8% 0px'});
-    els.forEach(function(el){io.observe(el)});
-  }
-})();
-</script>
   </body>
 </html>
