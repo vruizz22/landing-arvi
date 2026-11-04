@@ -9,6 +9,9 @@ import Redes from './Redes.astro'
   <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5m5-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-reel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 8.5h18M8 3l3 5.5M14 3l3 5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 12v5l4.5-2.5Z" fill="currentColor"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" fill="currentColor"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4Z" fill="currentColor"/><circle cx="9" cy="10.5" r="1.3" fill="#fff"/><circle cx="12.5" cy="10.5" r="1.3" fill="#fff"/><circle cx="16" cy="10.5" r="1.3" fill="#fff"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M3 11.5 21 3l-6.5 18-3-7.5Z" fill="currentColor"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7Z" fill="currentColor"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/></symbol>
   <symbol id="i-factory" viewBox="0 0 24 24"><path d="M3 21V10l6 4V10l6 4V5h4v16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
@@ -31,6 +34,7 @@ import Redes from './Redes.astro'
   <div class="wrap">
     <a class="logo" href="#inicio" aria-label="ARVI inicio"><img src="/img/logo.webp" alt="ARVI Entretenciones Infantiles" width="180" height="54"></a>
     <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#verano">Verano 2027</a>
       <a href="#mundos">Mundos ARVI</a>
       <a href="#juegos">Juegos</a>
       <a href="#sustentable">Sustentable</a>
@@ -77,6 +81,40 @@ import Redes from './Redes.astro'
     </div>
   </div>
   <div class="mq-clip"><div class="marquee" aria-label="Con quiénes trabajamos"><div class="track"><span>Municipios</span><span>Productoras</span><span>Colegios</span><span>Empresas</span><span>Festivales</span><span>Aniversarios comunales</span><span>Día del Niño</span><span>Navidad</span><span aria-hidden="true">Municipios</span><span aria-hidden="true">Productoras</span><span aria-hidden="true">Colegios</span><span aria-hidden="true">Empresas</span><span aria-hidden="true">Festivales</span><span aria-hidden="true">Aniversarios comunales</span><span aria-hidden="true">Día del Niño</span><span aria-hidden="true">Navidad</span></div></div></div>
+
+  <section class="summer" id="verano">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="sum-head rv">
+        <span class="sum-tag">Verano 2027</span>
+        <h2 class="sum-title">¡Volvemos a <em>Algarrobo!</em></h2>
+        <p class="sub">La entretención ARVI regresa a la costa este verano. Y por primer año llegamos a Papudo, un balneario familiar.</p>
+        <div class="price" aria-label="Boletos para juegos solo a 2.000 pesos"><span class="p-top">Boletos para juegos</span><span class="p-mid"><small>solo a</small>$2.000</span></div>
+      </div>
+      <div class="sum-grid">
+        <article class="spot hero-spot rv">
+          <span class="stamp" aria-hidden="true">Volvemos</span>
+          <span class="pin"><svg><use href="#i-pin"/></svg></span>
+          <span class="when">Verano 2027 · Litoral central</span>
+          <h3>Algarrobo</h3>
+          <p>Vuelven los juegos ARVI para disfrutar las vacaciones en familia. Prepárate para otra temporada de diversión junto al mar.</p>
+          <a class="btn btn-y" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20informaci%C3%B3n%20del%20verano%202027%20en%20Algarrobo" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Avísame las fechas</a>
+          <img class="sum-mascot" src="/img/zorro-pirata.webp" alt="Zorro ARVI pirata listo para el verano">
+        </article>
+        <article class="spot new-spot rv">
+          <span class="stamp" aria-hidden="true">Primer año</span>
+          <span class="pin"><svg><use href="#i-pin"/></svg></span>
+          <span class="when">Verano 2027 · Región de Valparaíso</span>
+          <h3>Papudo</h3>
+          <p class="lead">Por primer año en un balneario familiar</p>
+          <p>Parque ARVI llega con juegos pensados para niños y familias: un nuevo punto de encuentro para residentes y turistas.</p>
+          <a class="btn btn-g" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20informaci%C3%B3n%20del%20verano%202027%20en%20Papudo" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Quiero saber más</a>
+        </article>
+      </div>
+      <p class="sum-note rv">Fechas y horarios muy pronto en nuestras redes.</p>
+    </div>
+    <svg class="waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path class="w1" d="M0 60c120 30 240 30 360 0s240-30 360 0 240 30 360 0 240-30 360 0v60H0Z"/><path class="w2" d="M0 80c120-24 240-24 360 0s240 24 360 0 240-24 360 0 240 24 360 0v40H0Z"/></svg>
+  </section>
 
   <section class="sec" id="mundos">
     <div class="wrap">
@@ -328,9 +366,16 @@ import Redes from './Redes.astro'
 </footer>
 
 <div class="guide off" id="guide">
-  <div class="bubble" id="bubble" hidden><button class="x" id="bubbleX" type="button" aria-label="Cerrar">×</button>¡Hola! Soy el Zorro ARVI. ¿Te ayudo a cotizar tu evento?<br><a href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20cotizar%20juegos%20para%20mi%20evento" target="_blank" rel="noopener">Escribir por WhatsApp →</a></div>
-  <a class="fox" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20quiero%20cotizar%20juegos%20para%20mi%20evento" target="_blank" rel="noopener" aria-label="Cotizar con ARVI por WhatsApp"><span class="clip"><img src="/img/mascota-5.webp" alt=""></span><span class="wa"><svg><use href="#i-wa"/></svg></span></a>
+  <div class="bubble" id="bubble" hidden><button class="x" id="bubbleX" type="button" aria-label="Cerrar">×</button>¡Hola! Soy el Zorro ARVI. ¿Tienes dudas sobre tu evento? Pregúntame.<br><button class="ask" type="button" id="bubbleAsk">Hacer una pregunta →</button></div>
+  <button class="fox" type="button" id="foxBtn" aria-controls="chat" aria-expanded="false" aria-label="Abrir asistente de ARVI"><span class="clip"><img src="/img/mascota-5.webp" alt=""></span><span class="wa chat-ic"><svg><use href="#i-chat"/></svg></span></button>
 </div>
+<section class="chat" id="chat" role="dialog" aria-label="Asistente ARVI" hidden>
+  <div class="chat-head"><span class="av"><img src="/img/mascota-5.webp" alt=""></span><div><b>Zorro ARVI</b><small>Asistente · responde al instante</small></div><button class="cx" type="button" id="chatClose" aria-label="Cerrar asistente">×</button></div>
+  <div class="chat-log" id="chatLog" aria-live="polite"></div>
+  <div class="chat-quick" id="chatQuick"></div>
+  <form class="chat-form" id="chatForm" autocomplete="off"><input id="chatIn" placeholder="Escribe tu pregunta…" aria-label="Escribe tu pregunta" maxlength="300"><button type="submit" aria-label="Enviar"><svg><use href="#i-send"/></svg></button></form>
+  <div class="chat-foot"><a id="chatWa" href="https://wa.me/56988082320?text=Hola%20ARVI%2C%20tengo%20una%20consulta" target="_blank" rel="noopener">Hablar con una persona por WhatsApp →</a></div>
+</section>
 
 <script is:inline>
 (function(){
@@ -346,6 +391,59 @@ import Redes from './Redes.astro'
   var worlds=document.querySelectorAll('.world');
   worlds.forEach(function(w){w.addEventListener('mouseenter',function(){worlds.forEach(function(x){x.classList.toggle('is-open',x===w)})})});
   document.querySelectorAll('.arrow').forEach(function(a){a.addEventListener('click',function(){var r=document.getElementById(a.dataset.rail);var card=r.firstElementChild;var step=(card?card.getBoundingClientRect().width:320)+22;r.scrollBy({left:step*+a.dataset.dir,behavior:'smooth'})})});
+  /* ---------- Asistente Zorro ARVI (preguntas frecuentes) ---------- */
+  (function(){
+    var WA='https://wa.me/56988082320?text=';
+    var chat=document.getElementById('chat'),log=document.getElementById('chatLog'),quick=document.getElementById('chatQuick'),form=document.getElementById('chatForm'),inp=document.getElementById('chatIn'),fox=document.getElementById('foxBtn'),waFoot=document.getElementById('chatWa');
+    var I_WA='<svg><use href="#i-wa"/></svg>';
+    var KB=[
+      {id:'precio',q:'¿Cuánto cuesta?',k:['precio','cuesta','valor','cuanto','cobran','tarifa','presupuesto','cotiz','costo'],a:'Cada evento es distinto: el valor depende de los juegos, la duración, la comuna y la fecha. Cuéntanos qué necesitas y te enviamos una cotización sin compromiso.',acts:[['wa','Cotizar por WhatsApp','Hola ARVI, quiero cotizar juegos para mi evento'],['#contacto','Ir al formulario']]},
+      {id:'incluye',q:'¿Qué incluye el arriendo?',k:['incluye','arriendo','arrienda','servicio','operador','personal','traslado'],a:'El arriendo incluye traslado, montaje, operación durante el evento con nuestro personal y desmontaje. Tú solo nos indicas el lugar, la fecha y el horario.'},
+      {id:'montaje',q:'¿Cuánto demora el montaje?',k:['montaje','demora','instal','arman','tiempo','horas','llegan antes'],a:'Entre 2 y 4 horas en promedio, según los juegos. Coordinamos la llegada para que todo esté listo antes de abrir.'},
+      {id:'regiones',q:'¿Llegan a regiones?',k:['region','regiones','llegan','viajan','arica','punta arenas','norte','sur','concepcion','valparaiso','vina','temuco','antofagasta','santiago','comuna'],a:'Sí. Trabajamos de Arica a Punta Arenas, con juegos en formato remolque y modular.'},
+      {id:'verano',q:'Verano 2027',k:['verano','algarrobo','papudo','playa','vacaciones','2027','costa','temporada','boleto','entrada','ticket','ficha'],a:'¡Volvemos a Algarrobo! Este verano 2027 regresamos a Algarrobo y, por primer año, llegamos a Papudo, un balneario familiar. Los boletos para juegos cuestan solo $2.000. Pronto publicaremos fechas y horarios.',acts:[['#verano','Ver Verano 2027'],['wa','Avísame las fechas','Hola ARVI, quiero información del verano 2027 en Algarrobo y Papudo']]},
+      {id:'juegos',q:'¿Qué juegos tienen?',k:['juego','juegos','atraccion','catalogo','tagada','barco','rueda','montana','dragon','sillitas','globos','tren','noria','mecanico'],a:'Tenemos Tagadá, Barco Pirata, Montaña Rusa Dragón, Rueda, Rueda Noria Africana, Sillitas Voladoras, Globos Samba y Tren de Fantasía, además de juegos sustentables y nuestro carrusel inclusivo.',acts:[['#juegos','Ver juegos']]},
+      {id:'eco',q:'Juegos sustentables',k:['sustentable','pedal','electricidad','energia','ecolog','eco','medio ambiente','reciclad','manivela','balancin'],a:'Nuestros juegos sustentables funcionan con energía generada por las personas: pedales, balancines, manivelas y palancas. No necesitan electricidad.',acts:[['#sustentable','Ver ARVI Sustentable'],['/descargas/arvi-sustentable-convenio-municipalidades.pdf','Descargar convenio']]},
+      {id:'inclusivo',q:'Carrusel inclusivo',k:['inclusiv','silla de ruedas','discapacidad','accesib','rampa','movilidad reducida'],a:'Nuestro carrusel inclusivo tiene rampa de acceso a la plataforma, espacio para silla de ruedas junto a las figuras, señalética y un operador acompañando.',acts:[['#inclusivo','Ver carrusel inclusivo']]},
+      {id:'happy',q:'ARVI Happy (cumpleaños)',k:['happy','cumple','cumpleanos','salon','fiesta infantil','celebrar','festejo'],a:'ARVI Happy es nuestro salón de cumpleaños para niños y niñas de 1 a 10 años, con zona de juegos y una zona cómoda para los papás.',acts:[['#arvi-happy','Ver ARVI Happy'],['wa','Reservar fecha','Hola ARVI Happy, quiero reservar un cumpleaños'],['/descargas/arvi-happy-informacion.pdf','Descargar información']]},
+      {id:'convenio',q:'Convenio funcionarios',k:['convenio','funcionari','municipal','descuento','beneficio'],a:'Tenemos un convenio especial para funcionarios municipales en ARVI Happy: condiciones preferentes, horarios exclusivos y atención prioritaria. Y para municipios, un convenio de juegos sustentables.',acts:[['/descargas/arvi-happy-convenio-funcionarios-municipales.pdf','Convenio funcionarios'],['/descargas/arvi-sustentable-convenio-municipalidades.pdf','Convenio municipios']]},
+      {id:'seguro',q:'ARVI Seguro (NEE)',k:['seguro','nee','necesidades','autis','tea','educativas','especial'],a:'ARVI Seguro son espacios diseñados para niños con Necesidades Educativas Especiales, para jugar y desarrollarse con seguridad, con diseño inclusivo y juego adaptado.',acts:[['#arvi-seguro','Ver ARVI Seguro'],['/descargas/arvi-seguro-propuesta.pdf','Descargar propuesta']]},
+      {id:'b2b',q:'Municipios y empresas',k:['municipio','municipalidad','licitacion','mercado publico','colegio','empresa','productora','corporativo','jardin','organizacion','fundacion'],a:'Sí, trabajamos con municipios, colegios, empresas, productoras y organizaciones. Preparamos fichas técnicas, propuestas y la documentación que piden las bases.',acts:[['wa','Hablar con ventas','Hola ARVI, escribo de una institución y quiero una propuesta']]},
+      {id:'segur',q:'Seguridad',k:['segur','certific','sec','iaapa','achs','mutual','riesgo','accidente','norma'],a:'Estamos normados por IAAPA, cumplimos los instructivos de seguridad ACHS y la normativa chilena, y nuestras mantenciones y tableros eléctricos están certificados por la SEC. Además contamos con seguros vigentes.'},
+      {id:'contacto',q:'Horarios y contacto',k:['horario','atencion','contacto','telefono','fono','correo','mail','email','llamar','direccion','donde estan','oficina'],a:'Atendemos de lunes a viernes de 9:30 a 18:30, y sábado y domingo de 9:30 a 16:00. Teléfono y WhatsApp: +569 8808 2320 · Correo: info@arvi.cl',acts:[['wa','Escribir por WhatsApp','Hola ARVI, tengo una consulta'],['tel:+56988082320','Llamar']]},
+      {id:'redes',q:'Redes sociales',k:['instagram','redes','reels','tiktok','facebook','post'],a:'Síguenos en Instagram: @arvi.cl para juegos y eventos, y @arvihappy para cumpleaños.',acts:[['https://www.instagram.com/arvi.cl/','@arvi.cl'],['https://www.instagram.com/arvihappy/','@arvihappy']]}
+    ];
+    var SMALL=[[['hola','buenas','buen dia','buenos dias','buenas tardes','hey','alo'],'¡Hola! 🦊 ¿En qué te puedo ayudar? Elige una pregunta o escríbeme.'],[['gracias','genial','perfecto','buenisimo','excelente'],'¡De nada! Si quieres, el equipo te atiende directo por WhatsApp.']];
+    function norm(t){return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim()}
+    function waLink(text){return WA+encodeURIComponent(text)}
+    function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+    function add(html,who){var m=document.createElement('div');m.className='msg '+who;m.innerHTML=html;log.appendChild(m);log.scrollTop=log.scrollHeight;return m}
+    function acts(list,userQ){if(!list||!list.length)return'';return'<div class="acts">'+list.map(function(x){if(x[0]==='wa')return'<a class="wa" href="'+waLink(x[2]||('Hola ARVI, '+userQ))+'" target="_blank" rel="noopener">'+I_WA+esc(x[1])+'</a>';var ext=/^(https?:|\/descargas)/.test(x[0]);var tel=x[0].indexOf('tel:')===0;return'<a href="'+x[0]+'"'+(ext?' target="_blank" rel="noopener"':'')+(!ext&&!tel?' data-close="1"':'')+'>'+esc(x[1])+'</a>'}).join('')+'</div>'}
+    function reply(html){var ty=add('<i></i><i></i><i></i>','bot typing');setTimeout(function(){ty.remove();add(html,'bot')},reduce?0:550)}
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function answer(text){
+      var n=' '+norm(text)+' ';
+      waFoot.href=waLink('Hola ARVI, tengo una consulta: '+text);
+      var best=null,bs=0;
+      KB.forEach(function(e){var sc=0;e.k.forEach(function(k){if(n.indexOf(k)>-1)sc+=k.length>5?2:1});if(sc>bs){bs=sc;best=e}});
+      if(best){reply(esc(best.a)+acts(best.acts,text));return}
+      for(var i=0;i<SMALL.length;i++){for(var j=0;j<SMALL[i][0].length;j++){if(n.indexOf(' '+SMALL[i][0][j])>-1){reply(esc(SMALL[i][1]));return}}}
+      reply('Esa pregunta es mejor que te la responda el equipo. Te dejo tu consulta lista para enviarla por WhatsApp.'+acts([['wa','Enviar mi pregunta','Hola ARVI, tengo una consulta: '+text]],text));
+    }
+    function ask(text){text=(text||'').trim();if(!text)return;add(esc(text),'me');answer(text)}
+    KB.forEach(function(e){var b=document.createElement('button');b.type='button';b.textContent=e.q;b.addEventListener('click',function(){ask(e.q)});quick.appendChild(b)});
+    var started=false;
+    function openChat(){chat.hidden=false;fox.setAttribute('aria-expanded','true');document.getElementById('bubble').hidden=true;gd.classList.remove('off');
+      if(!started){started=true;add('¡Hola! Soy el Zorro ARVI 🦊 Respondo las preguntas más frecuentes al instante. Si necesitas algo más, te paso con el equipo por WhatsApp.','bot')}
+      setTimeout(function(){if(matchMedia('(hover:hover)').matches)inp.focus()},300)}
+    function closeChat(){chat.hidden=true;fox.setAttribute('aria-expanded','false');fox.focus();gshow()}
+    fox.addEventListener('click',function(){chat.hidden?openChat():closeChat()});
+    document.getElementById('chatClose').addEventListener('click',closeChat);
+    document.getElementById('bubbleAsk').addEventListener('click',openChat);
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!chat.hidden)closeChat()});
+    log.addEventListener('click',function(e){var a=e.target.closest('a[data-close]');if(a&&matchMedia('(max-width:600px)').matches)closeChat()});
+    form.addEventListener('submit',function(e){e.preventDefault();ask(inp.value);inp.value=''});
+  })();
   var tabs=document.querySelectorAll('.soc-tab');
   tabs.forEach(function(tb){tb.addEventListener('click',function(){tabs.forEach(function(x){var on=x===tb;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on});document.querySelectorAll('#redes .arrow').forEach(function(a){a.dataset.rail=tb.dataset.rail})});
     tb.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var l=[].slice.call(tabs),i=l.indexOf(tb),n=l[(i+(e.key==='ArrowRight'?1:l.length-1))%l.length];n.focus();n.click()}})});
@@ -360,7 +458,7 @@ import Redes from './Redes.astro'
     wa(L);note.textContent='Listo. Si WhatsApp no se abrió, escríbenos al +569 8808 2320.'});
 
   var pr=document.getElementById('progress');
-  var gd=document.getElementById('guide');function gshow(){gd.classList.toggle('off',scrollY<innerHeight*0.7)}addEventListener('scroll',gshow,{passive:true});gshow();
+  var gd=document.getElementById('guide');function gshow(){gd.classList.toggle('off',scrollY<innerHeight*0.7&&document.getElementById('chat').hidden)}addEventListener('scroll',gshow,{passive:true});gshow();
   function prog(){var h=document.documentElement.scrollHeight-innerHeight;pr.style.transform='scaleX('+(h>0?scrollY/h:0)+')'}
   prog();window.addEventListener('scroll',prog,{passive:true});
   var bub=document.getElementById('bubble'),closed=false;
