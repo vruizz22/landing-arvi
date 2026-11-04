@@ -19,6 +19,8 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install
+      - name: Pruebas del asistente Zorro ARVI
+        run: node scripts/bot-tests.cjs
       - name: Build site
         run: npm run build
       - name: Upload dist (vista previa descargable)
