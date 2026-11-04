@@ -33,9 +33,26 @@ export interface InstagramPost {
   altText: string
 }
 
+export type InstagramAccount = 'arvi' | 'happy'
+
 interface GetInstagramFeedOptions {
   limit?: number
+  /** Cuenta a consultar: 'arvi' (@arvi.cl, por defecto) o 'happy' (@arvihappy) */
+  account?: InstagramAccount
+  /** Cuántas publicaciones pedir a la API antes de filtrar */
+  fetchLimit?: number
 }
+
+const getCredentials = (account: InstagramAccount) =>
+  account === 'happy'
+    ? {
+        userId: import.meta.env.INSTAGRAM_HAPPY_USER_ID,
+        accessToken: import.meta.env.INSTAGRAM_HAPPY_ACCESS_TOKEN,
+      }
+    : {
+        userId: import.meta.env.INSTAGRAM_USER_ID,
+        accessToken: import.meta.env.INSTAGRAM_ACCESS_TOKEN,
+      }
 
 const isAllowedMediaType = (mediaType: InstagramMediaType): boolean => {
   return mediaType === 'IMAGE' || mediaType === 'CAROUSEL_ALBUM' || mediaType === 'VIDEO'
@@ -67,19 +84,19 @@ export const getInstagramFeed = async (
   options: GetInstagramFeedOptions = {},
 ): Promise<InstagramPost[]> => {
   const limit = options.limit ?? INSTAGRAM_DEFAULT_LIMIT
-  const userId = import.meta.env.INSTAGRAM_USER_ID
-  const accessToken = import.meta.env.INSTAGRAM_ACCESS_TOKEN
+  const account = options.account ?? 'arvi'
+  const { userId, accessToken } = getCredentials(account)
 
   if (!userId || !accessToken) {
     console.warn(
-      '[instagram] Faltan INSTAGRAM_USER_ID o INSTAGRAM_ACCESS_TOKEN. Se renderiza feed vacío.',
+      `[instagram:${account}] Faltan credenciales (USER_ID / ACCESS_TOKEN). Se renderiza feed vacío.`,
     )
     return []
   }
 
   const params = new URLSearchParams({
     fields: 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp',
-    limit: String(limit),
+    limit: String(options.fetchLimit ?? limit),
     access_token: accessToken,
   })
 
@@ -131,7 +148,7 @@ export const getInstagramFeed = async (
 
     return posts
   } catch (error) {
-    console.error('[instagram] Error obteniendo feed:', error)
+    console.error(`[instagram:${account}] Error obteniendo feed:`, error)
     return []
   }
 }
