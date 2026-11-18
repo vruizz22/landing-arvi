@@ -1,4 +1,4 @@
-import { firebaseConfig, USERS } from './config.js'
+import { firebaseConfig, USERS } from './config.js?v=3'
 
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/'
 const DEMO = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PEGAR_AQUI'
@@ -132,12 +132,22 @@ const normUser = (s) => s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]
 function showLogin() { $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); $('#lgUser').focus() }
 $('#loginForm').addEventListener('submit', async (e) => {
   e.preventDefault()
-  const key = normUser($('#lgUser').value), pass = $('#lgPass').value
+  const raw = $('#lgUser').value.trim(), pass = $('#lgPass').value
   const err = $('#lgErr'); err.textContent = ''
-  if (!USERS[key]) { err.textContent = 'Usuario no encontrado'; return }
+  // Se puede entrar con el usuario (ArviAdmin…) o directamente con el correo.
+  let key = normUser(raw)
+  if (raw.includes('@')) key = Object.keys(USERS).find((k) => USERS[k] === raw.toLowerCase()) || ''
+  const email = raw.includes('@') ? raw.toLowerCase() : USERS[key]
+  if (!email) { err.textContent = 'Usuario no encontrado. Escribe ArviAdmin, ConiAdmin o BastiánAdmin.'; return }
   if (DEMO) { sessionStorage.setItem('ah-demo-user', prettyUser(key)); return enter(prettyUser(key)) }
-  try { await authMod.signInWithEmailAndPassword(auth, USERS[key], pass) }
-  catch (ex) { err.textContent = ex.code === 'auth/too-many-requests' ? 'Demasiados intentos, espera un momento.' : 'Usuario o contraseña incorrectos' }
+  try { await authMod.signInWithEmailAndPassword(auth, email, pass) }
+  catch (ex) {
+    console.warn(ex.code)
+    err.textContent = ex.code === 'auth/too-many-requests' ? 'Demasiados intentos, espera un momento.'
+      : ex.code === 'auth/network-request-failed' ? 'Sin conexión a internet.'
+      : ex.code === 'auth/operation-not-allowed' ? 'El ingreso con correo no está habilitado en Firebase.'
+      : 'Contraseña incorrecta o usuario no creado en Firebase (' + ex.code + ')'
+  }
 })
 $('#btnLogout').addEventListener('click', async () => {
   if (DEMO) { sessionStorage.removeItem('ah-demo-user'); location.reload(); return }
