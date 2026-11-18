@@ -46,7 +46,7 @@ let queue = [], qTimer = null;
 function enqueue(op) { queue.push(op); clearTimeout(qTimer); qTimer = setTimeout(flush, 40); setSync('busy', 'Guardando…'); }
 async function flush() {
   const ops = queue; queue = [];
-  if (DEMO) { try { localStorage.setItem(LS_DEMO, JSON.stringify(DB)); } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
+  if (DEMO) { try { localStorage.setItem(LS_DEMO, JSON.stringify({ ...DB, trash: TRASH })); } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
   try {
     for (let i = 0; i < ops.length; i += 400) {
       const bt = FS.writeBatch(db);
@@ -61,14 +61,19 @@ function upsert(col, rec) {
   const i = DB[col].findIndex(x => x.id === rec.id); if (i >= 0) DB[col][i] = rec; else DB[col].push(rec);
   enqueue({ col, id: rec.id, rec: clean(rec) }); return rec;
 }
-function removeRec(col, id) { DB[col] = DB[col].filter(x => x.id !== id); enqueue({ col, id, del: true }); }
+// Nunca se borra nada de verdad: lo eliminado va a la papelera (Ajustes) y se puede recuperar.
+let TRASH = [];
+function removeRec(col, id) { const r = byId(col, id); if (!r) return; DB[col] = DB[col].filter(x => x.id !== id); const t = { ...r, borrado: true, borradoEl: Date.now(), borradoPor: USER, u: Date.now() }; TRASH.push({ col, rec: t }); enqueue({ col, id, rec: clean(t) }); }
+function restoreRec(col, id) { const t = TRASH.find(x => x.col === col && x.rec.id === id); if (!t) return; TRASH = TRASH.filter(x => x !== t); const r = { ...t.rec }; delete r.borrado; delete r.borradoEl; delete r.borradoPor; upsert(col, r); }
+window.restoreRec = (c, i) => { restoreRec(c, i); render(); toast('Recuperado'); };
 let rTimer = null; const scheduleRender = () => { clearTimeout(rTimer); rTimer = setTimeout(() => { if (!$('#app').classList.contains('hidden')) render(); }, 250); };
 function subscribe() {
-  if (DEMO) { try { DB = Object.assign(blank(), JSON.parse(localStorage.getItem(LS_DEMO) || '{}')); } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
+  if (DEMO) { try { const d = JSON.parse(localStorage.getItem(LS_DEMO) || '{}'); DB = Object.assign(blank(), d); TRASH = d.trash || []; delete DB.trash; } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
   let first = 0;
   for (const col of COLS) {
     FS.onSnapshot(FS.collection(db, PREFIX + col), { includeMetadataChanges: true }, snap => {
-      DB[col] = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      const all = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      DB[col] = all.filter(x => !x.borrado); TRASH = TRASH.filter(x => x.col !== col).concat(all.filter(x => x.borrado).map(rec => ({ col, rec })));
       if (!queue.length) setSync(snap.metadata.fromCache ? 'busy' : 'ok', snap.metadata.fromCache ? 'Conectando…' : 'En vivo · ' + USER);
       if (++first <= COLS.length || !snap.metadata.hasPendingWrites) scheduleRender();
     }, err => { console.warn(err); setSync('bad', err.code === 'permission-denied' ? 'Sin permisos: actualiza las reglas de Firebase' : 'Sin conexión'); });
@@ -104,7 +109,6 @@ function enter(user) {
   go(location.hash.replace('#', '').split('?')[0] || 'inicio'); subscribe();
 }
 $('#logout').onclick = async () => { if (DEMO) sessionStorage.removeItem('arviGestion.demoUser'); else await authMod.signOut(auth); location.reload(); };
-boot().catch(e => { console.warn(e); $('#loginErr').textContent = 'No se pudo cargar el acceso. Revisa tu conexión.'; });
 
 /* ---------- navegación ---------- */
 let VIEW = 'inicio', ST = { month: today().slice(0, 7), evMode: 'lista', evQ: '', evEst: '', invQ: '', invEst: '', invCli: '', invYear: '', eqTab: 'personas' };
@@ -453,7 +457,9 @@ VIEWS.ajustes = () => {
     <div class="card"><h3>Conexión y respaldo</h3><p class="muted">${DEMO ? 'Modo demo: los datos quedan solo en este navegador.' : 'Datos en vivo en Firebase (mismo proyecto y usuarios que la agenda ARVI HAPPY). Sesión: <b>' + esc(USER) + '</b>.'}</p>
       <div class="row"><button class="btn ghost" id="bx">${I.xls}Excel completo</button><button class="btn ghost" id="bj">Respaldo (.json)</button><label class="btn ghost">Restaurar respaldo<input type="file" id="br" accept=".json" hidden></label></div>
       <p class="muted" style="margin-top:12px">${DB.events.length} eventos · ${DB.shifts.length} turnos · ${DB.workers.length} personas · ${DB.clients.length} clientes · ${DB.invoices.length} facturas</p></div>
-  </div>`;
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Papelera</h3><p class="muted">Nada se borra de forma definitiva. Lo que eliminas queda aquí y puedes recuperarlo cuando quieras.</p>
+  ${TRASH.length ? `<table class="tbl"><thead><tr><th>Tipo</th><th>Registro</th><th>Eliminado</th><th></th></tr></thead><tbody>${TRASH.slice().sort((a, b) => b.rec.borradoEl - a.rec.borradoEl).map(t => `<tr><td>${({ workers: 'Persona', vehicles: 'Vehículo', clients: 'Cliente', events: 'Evento', shifts: 'Turno', invoices: 'Factura' })[t.col]}</td><td>${esc(t.rec.nombre || t.rec.name || t.rec.patente || (t.rec.numero ? 'Factura N° ' + t.rec.numero : '') || t.rec.fecha || t.rec.id)}</td><td class="muted">${new Date(t.rec.borradoEl).toLocaleString('es-CL')} · ${esc(t.rec.borradoPor || '')}</td><td><button class="btn ghost" onclick="restoreRec('${t.col}','${t.rec.id}')">Recuperar</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">La papelera está vacía.</p>'}</div>`;
   $('#fEv').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellStyles: true, cellDates: true }); $('#imR').innerHTML = importEventos(wb, +$('#imY').value, +$('#imM').value + 1); e.target.value = ''; };
   $('#fCo').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true }); $('#imR').innerHTML = importCobranza(wb); e.target.value = ''; };
   $('#bx').onclick = exportAllXlsx;
@@ -652,3 +658,5 @@ function jpgStatement(c) {
     sections: [{ title: 'Facturas pendientes', cols: [{ h: 'N°', w: 1.3 }, { h: 'Emisión', w: 2 }, { h: 'Vencimiento', w: 2.2 }, { h: 'Total', w: 2.2, a: 'r' }, { h: 'Abonado', w: 2.1, a: 'r' }, { h: 'Saldo', w: 2.2, a: 'r' }, { h: 'Estado', w: 2.2 }], rows: open.map(([f, k]) => [f.numero, fdate(f.emision), fdate(k.venc), money(k.bruto), money(k.pagado), money(k.saldo), { pill: k.estado, bg: k.estado === 'Vencida' ? '#fde0de' : k.estado === 'Por vencer' ? '#ffe7c7' : '#fff3c4' }]), total: ['Total pendiente', money(saldo)] }],
     note: 'Para pagos o consultas escríbenos a info@arvi.cl. Si ya realizaste el pago, por favor envíanos el comprobante.' }, 'Estado de cuenta · ' + c.nombre);
 }
+
+boot().catch(e => { console.warn(e); $('#loginErr').textContent = 'No se pudo cargar el acceso. Revisa tu conexión.'; });

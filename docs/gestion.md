@@ -12,3 +12,9 @@ Eventos, programación del equipo, cobranza y clientes conectados, con exportaci
 En Firebase → Firestore Database → **Reglas**, pega el contenido actualizado de [`agenda-happy-firestore.rules`](./agenda-happy-firestore.rules) y publica. Sin ese paso la web muestra "Sin permisos".
 
 Después entra con tu usuario → **Ajustes → Importar desde Excel** y sube `eventos_arvi_juegos.xlsx` (elige mes/año) y `COBRANZA_2026_ARVI.xlsx`.
+
+## Los datos no se borran
+
+- Quedan guardados en Firestore (Google), no en el navegador: cambiar de computador, borrar el historial o cerrar sesión no los afecta.
+- "Eliminar" en la web solo los manda a la **Papelera** (Ajustes), desde donde se recuperan. Las reglas de Firestore prohíben el borrado definitivo.
+- Respaldo extra: Ajustes → *Excel completo* o *Respaldo (.json)*.
