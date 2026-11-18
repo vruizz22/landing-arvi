@@ -52,6 +52,8 @@ const fshort = s => { const d = pd(s); return d.getDate() + ' ' + MESES[d.getMon
 const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/\s+/g, ' ').trim();
 const rutKey = s => String(s ?? '').replace(/[^0-9kK]/g, '').toUpperCase();
 function lev(a, b) { const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+// ARVI Happy es externo: aparece en turnos y pagos, pero no cuenta como evento ni ocupa fechas
+const isExt = e => !!(e && (e.externo || /arvi\s*happy/i.test(e.nombre || '')));
 function daysBetween(a, b) { const out = []; if (!a) return out; let d = a; const end = b && b >= a ? b : a; let guard = 0; while (d <= end && guard++ < 120) { out.push(d); d = addDays(d, 1); } return out; }
 function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.append(msg); t.style.bottom = (22 + 62 * document.querySelectorAll('.toast:not(.out)').length) + 'px'; document.body.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 2600); }
 const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
@@ -235,8 +237,8 @@ const KI = {
   team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.6.1 4.6 1.7 5.4 4.4"/></svg>' };
 VIEWS.inicio = () => {
   const t = today(), ym = t.slice(0, 7), in7 = addDays(t, 7);
-  const prox = DB.events.filter(e => e.estado !== 'Cancelado' && (e.fin || e.inicio) >= t).sort((a, b) => a.inicio.localeCompare(b.inicio));
-  const mes = DB.events.filter(e => e.estado !== 'Cancelado' && (e.inicio || '').slice(0, 7) === ym);
+  const prox = DB.events.filter(e => e.estado !== 'Cancelado' && !isExt(e) && (e.fin || e.inicio) >= t).sort((a, b) => a.inicio.localeCompare(b.inicio));
+  const mes = DB.events.filter(e => e.estado !== 'Cancelado' && !isExt(e) && (e.inicio || '').slice(0, 7) === ym);
   const calcs = DB.invoices.map(f => [f, invCalc(f)]); const abiertas = calcs.filter(([, c]) => c.open);
   const porCobrar = abiertas.reduce((s, [, c]) => s + c.saldo, 0), vencido = abiertas.filter(([, c]) => c.estado === 'Vencida').reduce((s, [, c]) => s + c.saldo, 0);
   const pagoMes = DB.shifts.filter(s => (s.fecha || '').slice(0, 7) === ym).reduce((s, x) => s + num(x.pago), 0);
@@ -246,7 +248,7 @@ VIEWS.inicio = () => {
   const hora = new Date().getHours(), saludo = hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
   v.innerHTML = `<div class="hero"><div class="bunting"></div><img class="hz" src="zorro-hola.webp" alt="">
       <h2>${saludo}, <em>${esc(nombre)}</em></h2><div class="sub">${(d => d[0].toUpperCase() + d.slice(1))(new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</div>
-      <div class="chipsH"><span><b>${DB.events.length}</b> eventos</span><span><b>${DB.workers.length}</b> personas</span><span><b>${DB.clients.length}</b> clientes</span><span><b>${DB.invoices.length}</b> facturas</span></div>
+      <div class="chipsH"><span><b>${DB.events.filter(e => !isExt(e)).length}</b> eventos</span><span><b>${DB.workers.length}</b> personas</span><span><b>${DB.clients.length}</b> clientes</span><span><b>${DB.invoices.length}</b> facturas</span></div>
       <div class="row"><button class="btn y" id="nEv">${I.plus}Nuevo evento</button><button class="btn ghost" id="nInv">${I.plus}Nueva factura</button></div></div>` +
     `<div class="grid kpis">
       <div class="card kpi"><span class="ico">${KI.cal}</span><div class="lab">Eventos este mes</div><div class="val" data-n="${mes.length}">${mes.length}</div><div class="foot">${prox.filter(e => e.inicio <= in7).length} en los próximos 7 días</div></div>
@@ -277,7 +279,7 @@ VIEWS.eventos = () => {
     const q = norm(ST.evQ); const list = DB.events.filter(e => (!ST.evEst || e.estado === ST.evEst) && (!q || norm(e.nombre + ' ' + cliName(e.clienteId) + ' ' + (e.ubicacion || '')).includes(q))).sort((a, b) => b.inicio.localeCompare(a.inicio));
     const b = $('#evBody');
     if (ST.evMode === 'cal') return calView(b, list);
-    b.innerHTML = `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Evento</th><th class="hide-m">Cliente</th><th class="hide-m">Lugar</th><th>Equipo</th><th class="num hide-m">Costo equipo</th><th class="hide-m">Cobranza</th><th>Estado</th></tr></thead><tbody>${list.map(e => { const s = evStats(e); const cob = s.inv.length ? (s.saldo > 0 ? `<span class="pill p-pend">Saldo ${money(s.saldo)}</span>` : '<span class="pill p-pagada">Cobrado</span>') : '<span class="muted">Sin factura</span>'; return `<tr class="click" data-ev="${e.id}"><td>${fshort(e.inicio)}${e.fin && e.fin !== e.inicio ? ' → ' + fshort(e.fin) : ''}</td><td><b>${esc(e.nombre)}</b></td><td class="hide-m">${esc(cliName(e.clienteId))}</td><td class="hide-m">${esc(e.ubicacion || '')}</td><td>${new Set(s.sh.map(x => x.workerId)).size}</td><td class="num hide-m">${money(s.costo)}</td><td class="hide-m">${cob}</td><td><span class="pill ${evCls(e)}">${esc(e.estado)}</span></td></tr>`; }).join('') || '<tr><td colspan="8" class="empty">Aún no hay eventos. Crea el primero o importa tu Excel en Ajustes.</td></tr>'}</tbody></table></div></div>`;
+    b.innerHTML = `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Evento</th><th class="hide-m">Cliente</th><th class="hide-m">Lugar</th><th>Equipo</th><th class="num hide-m">Costo equipo</th><th class="hide-m">Cobranza</th><th>Estado</th></tr></thead><tbody>${list.map(e => { const s = evStats(e); const cob = s.inv.length ? (s.saldo > 0 ? `<span class="pill p-pend">Saldo ${money(s.saldo)}</span>` : '<span class="pill p-pagada">Cobrado</span>') : '<span class="muted">Sin factura</span>'; return `<tr class="click" data-ev="${e.id}"><td>${fshort(e.inicio)}${e.fin && e.fin !== e.inicio ? ' → ' + fshort(e.fin) : ''}</td><td><b>${esc(e.nombre)}</b>${isExt(e) ? ' <span class="pill r-happy">Externo · no ocupa fecha</span>' : ''}</td><td class="hide-m">${esc(cliName(e.clienteId))}</td><td class="hide-m">${esc(e.ubicacion || '')}</td><td>${new Set(s.sh.map(x => x.workerId)).size}</td><td class="num hide-m">${money(s.costo)}</td><td class="hide-m">${cob}</td><td><span class="pill ${evCls(e)}">${esc(e.estado)}</span></td></tr>`; }).join('') || '<tr><td colspan="8" class="empty">Aún no hay eventos. Crea el primero o importa tu Excel en Ajustes.</td></tr>'}</tbody></table></div></div>`;
     bindItems(b);
   }
   body();
@@ -285,7 +287,7 @@ VIEWS.eventos = () => {
 function calView(b, list) {
   const [y, m] = ST.month.split('-').map(Number); const first = new Date(y, m - 1, 1); const start = new Date(first); start.setDate(1 - ((first.getDay() + 6) % 7));
   let cells = ''; for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate() + i); const s = iso(d); const evs = list.filter(e => s >= e.inicio && s <= (e.fin || e.inicio));
-    cells += `<div class="d ${d.getMonth() !== m - 1 ? 'out' : ''} ${s === today() ? 'today' : ''}" data-day="${s}"><span class="n">${d.getDate()}</span>${evs.map(e => `<div class="ev ${e.estado === 'Por confirmar' ? 'porc' : e.estado === 'Cancelado' ? 'canc' : e.estado === 'Realizado' ? 'real' : ''}" data-ev="${e.id}">${esc(e.nombre)}</div>`).join('')}</div>`; }
+    cells += `<div class="d ${d.getMonth() !== m - 1 ? 'out' : ''} ${s === today() ? 'today' : ''}" data-day="${s}"><span class="n">${d.getDate()}</span>${evs.map(e => `<div class="ev ${isExt(e) ? 'ext' : ''} ${e.estado === 'Por confirmar' ? 'porc' : e.estado === 'Cancelado' ? 'canc' : e.estado === 'Realizado' ? 'real' : ''}" data-ev="${e.id}">${esc(e.nombre)}</div>`).join('')}</div>`; }
   b.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><button class="btn sm ghost" id="pm">${I.left}</button><h3 style="margin:0">${monthLabel(ST.month)}</h3><button class="btn sm ghost" id="nm">${I.right}</button></div><div class="cal">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(x => `<div class="dow">${x}</div>`).join('')}${cells}</div></div>`;
   $('#pm').onclick = () => { ST.month = shiftMonth(ST.month, -1); calView(b, list); }; $('#nm').onclick = () => { ST.month = shiftMonth(ST.month, 1); calView(b, list); };
   $$('.ev', b).forEach(x => x.onclick = ev => { ev.stopPropagation(); eventModal(byId('events', x.dataset.ev)); });
@@ -300,6 +302,7 @@ function eventModal(e, preset = {}) {
       <label class="f full">Nombre del evento<input name="nombre" value="${esc(e.nombre)}" placeholder="Ej: Feria Mi Barrio Emprende 2026" required></label>
       <label class="f">Cliente<select name="clienteId"><option value="">— Elegir cliente —</option>${opts([...DB.clients].sort((a, b) => a.nombre.localeCompare(b.nombre)), e.clienteId, c => c.nombre, c => c.id)}<option value="__new">+ Nuevo cliente…</option></select></label>
       <label class="f">Estado<select name="estado">${opts(EST_EV, e.estado)}</select></label>
+      <label class="check full" style="justify-self:start"><input type="checkbox" id="extChk" ${isExt(e) ? 'checked' : ''}> Externo (ARVI Happy): no cuenta como evento ni ocupa fechas en Disponibilidad</label>
       <label class="f">Desde<input type="date" name="inicio" value="${e.inicio}"></label>
       <label class="f">Hasta<input type="date" name="fin" value="${e.fin || e.inicio}"></label>
       <label class="f">Lugar<input name="ubicacion" value="${esc(e.ubicacion)}" placeholder="Ej: Complejo Deportivo PF Alimentos"></label>
@@ -322,7 +325,7 @@ function eventModal(e, preset = {}) {
   $('[name=clienteId]', f).onchange = ev => { if (ev.target.value === '__new') clientModal(null, c => { ev.target.insertAdjacentHTML('afterbegin', `<option value="${c.id}">${esc(c.nombre)}</option>`); ev.target.value = c.id; }); };
   const days = () => daysBetween($('[name=inicio]', f).value, $('[name=fin]', f).value);
   function drawSh() {
-    const ds = days(); const ws = sortedWorkers().filter(w => w.activo !== false);
+    const ds0 = days(), ds = ds0.length ? daysBetween(addDays(ds0[0], -2), addDays(ds0[ds0.length - 1], 1)) : ds0; const ws = sortedWorkers().filter(w => w.activo !== false);
     shifts.sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '') || ROLES.indexOf(a.rol) - ROLES.indexOf(b.rol));
     $('#shB', m).innerHTML = shifts.map((s, i) => `<tr><td><select data-i="${i}" data-k="fecha">${opts([...new Set([...ds, s.fecha])].filter(Boolean), s.fecha, fshort)}</select></td><td><select data-i="${i}" data-k="workerId"><option value="">—</option>${opts(ws.concat(ws.find(w => w.id === s.workerId) ? [] : DB.workers.filter(w => w.id === s.workerId)), s.workerId, w => w.nombre, w => w.id)}<option value="__newwk">+ Nueva persona…</option></select></td><td><select data-i="${i}" data-k="rol">${opts(ROLES, s.rol)}<option value="__newrole">+ Nuevo rol…</option></select></td><td><input data-i="${i}" data-k="pago" inputmode="numeric" value="${esc(s.pago)}" style="text-align:right"></td><td><button class="x" data-rm="${i}">×</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted" style="padding:14px">Aún no hay personas asignadas</td></tr>';
     $$('[data-k]', m).forEach(x => x.onchange = () => { shifts[+x.dataset.i][x.dataset.k] = x.dataset.k === 'pago' ? num(x.value) : x.value; drawSum(); });
@@ -346,7 +349,7 @@ function eventModal(e, preset = {}) {
   function saveEv(closeAfter = true) {
     const d = formData(f); if (!d.nombre.trim()) { toast('Ponle nombre al evento'); return false; }
     if (d.clienteId === '__new') d.clienteId = '';
-    Object.assign(e, d, { monto: num(d.monto) || '', vehiculos: $$('#veh input:checked', m).map(x => x.value) });
+    Object.assign(e, d, { monto: num(d.monto) || '', vehiculos: $$('#veh input:checked', m).map(x => x.value), externo: $('#extChk', m).checked });
     upsert('events', e);
     const keep = new Set(shifts.filter(s => s.workerId).map(s => s.id));
     DB.shifts.filter(s => s.eventId === e.id && !keep.has(s.id)).forEach(s => removeRec('shifts', s.id));
@@ -541,7 +544,7 @@ const DST = { libre: ['Disponible', '#e9f7df', '#3aa848'], pocos: ['Últimos cup
 const dispCfg = () => DB.dias.find(d => d.id === 'cfg') || { id: 'cfg', cap: 1 };
 function dayStatus(s) {
   const cap = Math.max(1, num(dispCfg().cap) || 1), ov = DB.dias.find(d => d.id === 'd' + s);
-  const evs = DB.events.filter(e => e.estado !== 'Cancelado' && s >= e.inicio && s <= (e.fin || e.inicio));
+  const evs = DB.events.filter(e => e.estado !== 'Cancelado' && !isExt(e) && s >= e.inicio && s <= (e.fin || e.inicio));
   let st = !evs.length ? 'libre' : evs.length >= cap ? 'tomado' : 'pocos';
   if (ov && DST[ov.estado]) st = ov.estado;
   return { st, evs, ov: ov && DST[ov.estado] ? ov.estado : '', cap };
@@ -565,7 +568,7 @@ VIEWS.disp = () => {
   for (let d = 1; d <= n; d++) {
     const s = `${y}-${pad(m)}-${pad(d)}`, ds = dayStatus(s), past = s < t; if (!past) cnt[ds.st]++;
     const [lab, bg, bd] = DST[ds.st];
-    cells += `<div class="dd ${past ? 'past' : ''}" data-day="${s}" style="background:${bg};border-color:${bd}"><div class="row" style="justify-content:space-between"><b>${d}</b>${ds.ov ? '<span title="Ajustado a mano">✋</span>' : ''}</div><div class="st" style="color:${bd}">${lab}</div>${ds.evs.slice(0, 2).map(e => `<div class="mini-ev">${esc(e.nombre)}</div>`).join('')}${ds.evs.length > 2 ? `<div class="mini-ev">+${ds.evs.length - 2} más</div>` : ''}</div>`;
+    cells += `<div class="dd ${past ? 'past' : ''}" data-day="${s}" style="background:${bg};border-color:${bd}"><div class="row" style="justify-content:space-between"><b>${d}</b>${ds.ov ? '<span title="Ajustado a mano">✋</span>' : ''}</div><div class="st" style="color:${bd}">${lab}</div>${ds.evs.slice(0, 2).map(e => `<div class="mini-ev">${esc(e.nombre)}</div>`).join('')}${ds.evs.length > 2 ? `<div class="mini-ev">+${ds.evs.length - 2} más</div>` : ''}${DB.events.some(e => isExt(e) && s >= e.inicio && s <= (e.fin || e.inicio)) ? '<div class="mini-ev" style="color:#93297c">ARVI Happy (externo)</div>' : ''}</div>`;
   }
   $('#dCal').innerHTML = `<div class="dcal">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(x => `<div class="dow">${x}</div>`).join('')}${cells}</div>`;
   $('#dSum').innerHTML = Object.entries(DST).map(([k, [l, , bd]]) => `<div class="card kpi" style="padding:14px 16px"><div class="lab">${l}</div><div class="val" style="color:${bd}">${cnt[k]}</div><div class="foot">días desde hoy</div></div>`).join('');
@@ -574,7 +577,7 @@ VIEWS.disp = () => {
 function dayModal(s) {
   const ds = dayStatus(s);
   const { m, close } = modal(`<header><h3>${(d => d[0].toUpperCase() + d.slice(1))(pd(s).toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</h3><button class="btn sm ghost" data-close>Cerrar</button></header>
-    <div class="sec">Eventos de este día</div><div class="list">${ds.evs.map(e => evItem(e)).join('') || '<div class="muted">No hay eventos este día.</div>'}</div>
+    <div class="sec">Eventos de este día</div><div class="list">${ds.evs.map(e => evItem(e)).join('') || '<div class="muted">No hay eventos este día.</div>'}</div>${(x => x.length ? `<div class="muted" style="margin-top:8px">ARVI Happy (externo) este día: no ocupa la fecha.</div>` : '')(DB.events.filter(e => isExt(e) && s >= e.inicio && s <= (e.fin || e.inicio)))}
     <div class="sec">Cómo aparece para clientes</div>
     <div class="chips">${[['', 'Automático (según eventos)'], ['libre', 'Disponible'], ['pocos', 'Últimos cupos'], ['tomado', 'Reservado / bloqueado']].map(([k, l]) => `<label class="check"><input type="radio" name="ov" value="${k}" ${ds.ov === k ? 'checked' : ''}>${l}</label>`).join('')}</div>
     <p class="muted">Ahora se ve como: <b>${DST[ds.st][0]}</b>${ds.ov ? ' (ajustado a mano)' : ''}.</p>
@@ -641,7 +644,7 @@ function importEventos(wb, year, month) {
   let dayRow = -1, dayCol = {}; for (let r = 0; r <= Math.min(ref.e.r, 6); r++) { let cnt = 0; for (let c = 1; c <= ref.e.c; c++) { const v = cell(r, c); if (v && typeof v.v === 'number' && v.v >= 1 && v.v <= 31 && Number.isInteger(v.v)) cnt++; } if (cnt >= 10) { dayRow = r; break; } }
   if (dayRow < 0) return 'No encontré la fila de días (1 a 31).';
   for (let c = 1; c <= ref.e.c; c++) { const v = cell(dayRow, c); if (v && typeof v.v === 'number' && v.v >= 1 && v.v <= 31) dayCol[c] = v.v; }
-  const ym = year + '-' + pad(month); let nW = 0, nE = 0, nS = 0, order = 0; const evMap = {};
+  const ym = year + '-' + pad(month); let nW = 0, nE = 0, nS = 0, order = 0; const evMap = {}, evDays = {};
   for (let r = dayRow + 1; r <= ref.e.r; r++) {
     const nc = cell(r, 0); if (!nc || typeof nc.v !== 'string' || !nc.v.trim()) continue; const nombre = nc.v.trim().replace(/\s+/g, ' ');
     const fg = nc.s && nc.s.fgColor; const grupo = /GRUA/i.test(nombre) || (fg && fg.theme === 4 && fg.tint < 0) ? 'Grúa' : (!fg || fg.theme === 0 || !nc.s.patternType) ? 'Apoyo externo' : 'Operador';
@@ -653,12 +656,14 @@ function importEventos(wb, year, month) {
       const evn = v.v.trim().replace(/\s+/g, ' '); const pv = cell(r + 1, +c); const pago = pv && typeof pv.v === 'number' ? pv.v : 0;
       const f2 = v.s && v.s.fgColor; const rgb = (f2 && f2.rgb || '').toUpperCase();
       const rol = /ARVI ?HAPPY/i.test(evn) || rgb === 'F7ABEC' ? 'ARVI Happy' : f2 && f2.theme === 5 ? 'Montaje' : f2 && f2.theme === 7 ? 'Montaje' : grupo === 'Grúa' ? 'Grúa' : 'Funcionamiento';
-      const key = norm(evn); let e = evMap[key] || DB.events.find(x => norm(x.nombre) === key && x.inicio.slice(0, 7) === ym);
-      if (!e) { e = upsert('events', { nombre: evn.replace(/\b\w+/g, s => s[0] + s.slice(1).toLowerCase()), clienteId: '', inicio: fecha, fin: fecha, ubicacion: '', direccion: '', contacto: '', telefonoContacto: '', horarioMontaje: '', horarioFunc: '', ingreso: '', juegos: '', estado: fecha < today() ? 'Realizado' : 'Confirmado', monto: '', vehiculos: [], notas: 'Importado desde Excel' }); nE++; }
-      evMap[key] = e; if (fecha < e.inicio) e.inicio = fecha; if (fecha > (e.fin || e.inicio)) e.fin = fecha; upsert('events', e);
+      const ext = rol === 'ARVI Happy', key = ext ? 'ARVI HAPPY' : norm(evn); let e = evMap[key] || DB.events.find(x => (ext ? isExt(x) : norm(x.nombre) === key) && x.inicio.slice(0, 7) === ym);
+      if (!e) { e = upsert('events', { externo: ext, nombre: ext ? 'ARVI Happy' : evn.replace(/\b\w+/g, s => s[0] + s.slice(1).toLowerCase()), clienteId: '', inicio: fecha, fin: fecha, ubicacion: '', direccion: '', contacto: '', telefonoContacto: '', horarioMontaje: '', horarioFunc: '', ingreso: '', juegos: '', estado: fecha < today() ? 'Realizado' : 'Confirmado', monto: '', vehiculos: [], notas: 'Importado desde Excel' }); nE++; }
+      evMap[key] = e; (evDays[key] = evDays[key] || { f: [], all: [] }).all.push(fecha); if (rol === 'Funcionamiento' || ext) evDays[key].f.push(fecha);
       if (!DB.shifts.some(s => s.eventId === e.id && s.workerId === w.id && s.fecha === fecha)) { upsert('shifts', { eventId: e.id, workerId: w.id, fecha, rol, pago }); nS++; }
     }
   }
+  // fechas del evento = días de funcionamiento (no los días de montaje/grúa de cada persona)
+  for (const [k, e] of Object.entries(evMap)) { const L = (evDays[k].f.length ? evDays[k].f : evDays[k].all).sort(); upsert('events', { ...e, inicio: L[0], fin: L[L.length - 1], externo: isExt(e) }); }
   ST.month = ym; return `Listo: ${nW} personas nuevas, ${nE} eventos y ${nS} turnos de ${monthLabel(ym)}. <a href="#prog" onclick="go('prog');return false">Ver programación</a>`;
 }
 
