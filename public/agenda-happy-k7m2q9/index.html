@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Agenda ARVI HAPPY</title>
+<link rel="icon" href="/happy/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="login" class="login hidden">
+  <div class="login-card">
+    <img src="/happy/assets/logo.webp" alt="ARVI HAPPY" class="login-logo">
+    <h1>Agenda <span>Happy</span></h1>
+    <p class="muted">Ingresa con tu usuario para ver y editar las reservas.</p>
+    <form id="loginForm" autocomplete="on">
+      <label>Usuario<input id="lgUser" name="username" autocomplete="username" required placeholder="ArviAdmin"></label>
+      <label>Contraseña<input id="lgPass" name="password" type="password" autocomplete="current-password" required></label>
+      <button class="btn btn-sun btn-lg" type="submit">Entrar 🎉</button>
+      <p id="lgErr" class="err"></p>
+    </form>
+  </div>
+  <img src="/happy/assets/nino.webp" class="login-char l" alt="">
+  <img src="/happy/assets/nina.webp" class="login-char r" alt="">
+</section>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <div id="demoBar" class="demo hidden">🧪 Modo demostración: datos de ejemplo guardados solo en este navegador. Conecta Firebase en <b>config.js</b> para usar la agenda real.</div>
+  <header class="top">
+    <div class="brand"><img src="/happy/assets/logo.webp" alt="ARVI HAPPY"><span class="brand-t">Agenda</span></div>
+    <div class="live"><span class="dot"></span><span id="liveTxt">En vivo</span></div>
+    <div class="who"><span id="whoName"></span><button id="btnLogout" class="btn btn-ghost btn-sm">Salir</button></div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <div class="month-nav">
+        <button id="prevM" class="btn btn-round" aria-label="Mes anterior">‹</button>
+        <h2 id="monthTitle"></h2>
+        <button id="nextM" class="btn btn-round" aria-label="Mes siguiente">›</button>
+        <button id="todayBtn" class="btn btn-ghost btn-sm">Hoy</button>
+      </div>
+      <div class="actions">
+        <div class="seg"><button data-view="cal" class="on">📅 Calendario</button><button data-view="list">📋 Lista</button></div>
+        <button id="btnNew" class="btn btn-pink">＋ Nueva reserva</button>
+        <div class="dd">
+          <button class="btn btn-ghost" id="btnMore">⋯ Más</button>
+          <div class="dd-menu" id="ddMenu">
+            <button id="expPdf">📄 Exportar mes en PDF</button>
+            <button id="expJpg">🖼️ Exportar mes en JPG</button>
+            <button id="btnImport">📥 Importar agenda (Excel)</button>
+          </div>
+        </div>
+        <input type="file" id="fileImport" accept=".xlsx,.xls" hidden>
+      </div>
+    </div>
+
+    <section class="stats" id="stats"></section>
+    <section id="alerts" class="alerts"></section>
+
+    <section id="calView">
+      <div class="cal" id="cal"></div>
+      <div class="legend">
+        <span><i class="lg red"></i>Con saldo pendiente</span>
+        <span><i class="lg yel"></i>Abonado</span>
+        <span><i class="lg grn"></i>Pagado completo</span>
+        <span><i class="lg gry"></i>Cancelado</span>
+      </div>
+    </section>
+
+    <section id="listView" class="hidden">
+      <div class="list-filters">
+        <input id="search" placeholder="🔍 Buscar por nombre, niño, contacto…">
+        <select id="fltPay"><option value="">Todos los pagos</option><option value="pend">Con saldo pendiente</option><option value="ok">Pagados</option><option value="gar">Garantía pendiente</option></select>
+        <label class="chk"><input type="checkbox" id="fltAll"> Todos los meses</label>
+      </div>
+      <div id="list" class="list"></div>
+    </section>
+  </main>
+</div>
+
+<!-- DAY PANEL -->
+<aside id="dayPanel" class="panel hidden" aria-modal="true" role="dialog">
+  <div class="panel-card">
+    <div class="panel-head"><h3 id="dayTitle"></h3><button class="x" data-close>✕</button></div>
+    <div id="dayList"></div>
+    <button id="dayAdd" class="btn btn-pink" style="width:100%">＋ Agregar reserva este día</button>
+  </div>
+</aside>
+
+<!-- FORM -->
+<aside id="formPanel" class="panel hidden" aria-modal="true" role="dialog">
+  <form class="panel-card form" id="resForm">
+    <div class="panel-head"><h3 id="formTitle">Nueva reserva</h3><button type="button" class="x" data-close>✕</button></div>
+
+    <fieldset><legend>🎈 Evento</legend>
+      <div class="g2">
+        <label>Fecha<input type="date" name="fecha" required></label>
+        <label>Tipo<select name="tipo"><option>Cumpleaños</option><option>Convenio / curso / jardín</option><option>Baby shower</option><option>Reunión familiar</option><option>Otro</option></select></label>
+      </div>
+      <div class="g2">
+        <label>Bloque<select name="bloque"><option value="PM">PM · 17:00 a 20:00</option><option value="AM">AM · 11:00 a 14:00</option><option value="ALT">Alternativa · 16:00 a 19:00</option><option value="OTRO">Otro horario</option></select></label>
+        <label>Horario (texto)<input name="horario" placeholder="17:00 a 20:00"></label>
+      </div>
+      <div class="g2">
+        <label>Nombre responsable<input name="responsable" required></label>
+        <label>Nombre del niño/a o grupo<input name="nino"></label>
+      </div>
+      <div class="g2">
+        <label>Contacto (teléfono o correo)<input name="contacto"></label>
+        <label>Estado<select name="estado"><option value="reservado">Reservado</option><option value="confirmado">Confirmado</option><option value="realizado">Realizado</option><option value="cancelado">Cancelado</option></select></label>
+      </div>
+    </fieldset>
+
+    <fieldset><legend>💰 Pagos</legend>
+      <div class="g3">
+        <label>Precio a pagar<input name="precio" inputmode="numeric" placeholder="150.000"><small id="suggest" class="hint"></small></label>
+        <label>Abonado<input name="abono" inputmode="numeric" placeholder="0"></label>
+        <label>Fecha abono<input type="date" name="fechaAbono"></label>
+      </div>
+      <div class="g3">
+        <label>Saldo pagado<input name="saldoPagado" inputmode="numeric" placeholder="0"></label>
+        <label>Fecha pago saldo<input type="date" name="fechaSaldo"></label>
+        <label>Garantía ($50.000)<select name="garantia"><option value="pendiente">Pendiente</option><option value="pagada">Pagada</option><option value="devuelta">Devuelta</option><option value="na">No aplica</option></select></label>
+      </div>
+      <div class="paybox" id="payBox"></div>
+    </fieldset>
+
+    <fieldset><legend>⭐ Información extra</legend>
+      <div class="g3">
+        <label>Personaje<input name="personaje" placeholder="Ej: Pikachu"></label>
+        <label>Corpóreo<input name="corporeo"></label>
+        <label class="chk2"><input type="checkbox" name="horaExtra"> Hora extra</label>
+      </div>
+      <label>Notas<textarea name="notas" rows="3" placeholder="Decoración, alergias, pedidos especiales…"></textarea></label>
+    </fieldset>
+
+    <p class="meta" id="formMeta"></p>
+    <div class="form-actions">
+      <button type="button" id="btnDel" class="btn btn-ghost danger hidden">🗑 Eliminar</button>
+      <span style="flex:1"></span>
+      <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-sun">Guardar</button>
+    </div>
+  </form>
+</aside>
+
+<div id="toast" class="toast"></div>
+<div id="exportStage" class="export-stage" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
