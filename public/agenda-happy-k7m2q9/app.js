@@ -85,7 +85,7 @@ async function firebaseStore(app) {
     subscribe(cb) {
       fs.onSnapshot(col, { includeMetadataChanges: true }, (snap) => {
         setLive(!snap.metadata.fromCache)
-        cb(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+        cb(snap.docs.filter((d) => !d.id.startsWith('gestion__')).map((d) => ({ id: d.id, ...d.data() }))) // los gestion__ son de arvi.cl/gestion
       }, (err) => { setLive(false); toast('Error de conexión: ' + err.code) })
     },
     async save(r) {

@@ -3,7 +3,7 @@
 import { firebaseConfig, USERS } from '../agenda-happy-k7m2q9/config.js?v=4';
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const DEMO = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PEGAR_AQUI';
-const PREFIX = 'gestion_', LS_DEMO = 'arviGestion.demo.v1';
+const PREFIX = 'gestion__', COLL = 'reservas', LS_DEMO = 'arviGestion.demo.v1';
 const ROLES = ['Montaje', 'Funcionamiento', 'Desmontaje', 'ARVI Happy', 'Grúa'];
 const RCLS = { Montaje: 'r-mont', Funcionamiento: 'r-func', Desmontaje: 'r-desm', 'ARVI Happy': 'r-happy', 'Grúa': 'r-grua' };
 const RCOL = { Montaje: '#fde4cf', Funcionamiento: '#d8efc9', Desmontaje: '#e3e3fb', 'ARVI Happy': '#fbd5f3', 'Grúa': '#d5e7fb' };
@@ -50,7 +50,7 @@ async function flush() {
   try {
     for (let i = 0; i < ops.length; i += 400) {
       const bt = FS.writeBatch(db);
-      for (const o of ops.slice(i, i + 400)) { const ref = FS.doc(db, PREFIX + o.col, o.id); if (o.del) bt.delete(ref); else bt.set(ref, o.rec); }
+      for (const o of ops.slice(i, i + 400)) { const ref = FS.doc(db, COLL, PREFIX + o.col + '__' + o.id); bt.set(ref, { ...o.rec, _g: o.col }); }
       await bt.commit();
     }
     setSync('ok', 'Guardado · en vivo');
@@ -69,15 +69,15 @@ window.restoreRec = (c, i) => { restoreRec(c, i); render(); toast('Recuperado');
 let rTimer = null; const scheduleRender = () => { clearTimeout(rTimer); rTimer = setTimeout(() => { if (!$('#app').classList.contains('hidden')) render(); }, 250); };
 function subscribe() {
   if (DEMO) { try { const d = JSON.parse(localStorage.getItem(LS_DEMO) || '{}'); DB = Object.assign(blank(), d); TRASH = d.trash || []; delete DB.trash; } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
-  let first = 0;
-  for (const col of COLS) {
-    FS.onSnapshot(FS.collection(db, PREFIX + col), { includeMetadataChanges: true }, snap => {
-      const all = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-      DB[col] = all.filter(x => !x.borrado); TRASH = TRASH.filter(x => x.col !== col).concat(all.filter(x => x.borrado).map(rec => ({ col, rec })));
-      if (!queue.length) setSync(snap.metadata.fromCache ? 'busy' : 'ok', snap.metadata.fromCache ? 'Conectando…' : 'En vivo · ' + USER);
-      if (++first <= COLS.length || !snap.metadata.hasPendingWrites) scheduleRender();
-    }, err => { console.warn(err); setSync('bad', err.code === 'permission-denied' ? 'Sin permisos: actualiza las reglas de Firebase' : 'Sin conexión'); });
-  }
+  // Los datos viven en la misma base del calendario (colección 'reservas'), con ids gestion__<tipo>__<id>.
+  let first = true;
+  FS.onSnapshot(FS.collection(db, COLL), { includeMetadataChanges: true }, snap => {
+    const nb = blank(), tr = [];
+    for (const d of snap.docs) { if (!d.id.startsWith(PREFIX)) continue; const x = d.data(), col = x._g; if (!nb[col]) continue; const rec = { ...x, id: d.id.slice(PREFIX.length + col.length + 2) }; delete rec._g; (rec.borrado ? tr.push({ col, rec }) : nb[col].push(rec)); }
+    DB = nb; TRASH = tr;
+    if (!queue.length) setSync(snap.metadata.fromCache ? 'busy' : 'ok', snap.metadata.fromCache ? 'Conectando…' : 'En vivo · ' + USER);
+    if (first || !snap.metadata.hasPendingWrites) scheduleRender(); first = false;
+  }, err => { console.warn(err); setSync('bad', err.code === 'permission-denied' ? 'Sin permisos' : 'Sin conexión'); });
 }
 function setSync(s, txt) { const d = $('#syncDot'); if (d) { d.className = 'dot ' + s; $('#syncTxt').textContent = txt; } const m = $('#syncM'); if (m) { m.textContent = '● ' + (s === 'ok' ? 'En vivo' : s === 'busy' ? 'Guardando' : s === 'bad' ? 'Error' : 'Demo'); m.className = 'pill ' + (s === 'ok' ? 'p-pagada' : s === 'bad' ? 'p-venc' : 'p-pend'); } }
 
