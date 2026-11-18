@@ -559,13 +559,13 @@ async function pdfFicha(d) {
     }
     if (col) y += rowH; y += 14;
   }
-  function table(cols, rows, blanks = 0) {
+  function table(cols, rows, blanks = 0, minH = 24) {
     const tw = cols.reduce((a, c) => a + c.w, 0), ws = cols.map(c => c.w / tw * CW);
     const head = () => { ensure(44); doc.setFillColor(...BGL); doc.rect(M, y, CW, 20, 'F'); doc.setDrawColor(...LN); doc.rect(M, y, CW, 20); let x = M; font('bold', 8, G9); cols.forEach((c, i) => { doc.text(c.h.toUpperCase(), c.a === 'c' ? x + ws[i] / 2 : x + 7, y + 13.5, c.a === 'c' ? { align: 'center' } : {}); x += ws[i]; }); y += 20; };
     head();
     const all = [...rows, ...Array.from({ length: blanks }, () => cols.map(() => ''))];
     all.forEach((r, ri) => {
-      font('normal', 9.5); const cells = r.map((v, i) => doc.splitTextToSize(String(v ?? ''), ws[i] - 12)); const h = Math.max(24, 10 + Math.max(...cells.map(c => c.length)) * 12);
+      font('normal', 9.5); const cells = r.map((v, i) => doc.splitTextToSize(String(v ?? ''), ws[i] - 12)); const h = Math.max(minH, 10 + Math.max(...cells.map(c => c.length)) * 12);
       if (y + h > BOT) { doc.addPage(); header(false); head(); }
       if (ri % 2) { doc.setFillColor(250, 252, 248); doc.rect(M, y, CW, h, 'F'); }
       let x = M; doc.setDrawColor(...LN); doc.setLineWidth(.6);
@@ -588,7 +588,7 @@ async function pdfFicha(d) {
   grid([['Fecha de montaje', fd(d.fechaMontaje)], ['Horario de montaje', d.horaMontaje], ['Funcionamiento', d.fechaDesde ? (d.fechaHasta && d.fechaHasta !== d.fechaDesde ? `Del ${fd(d.fechaDesde)} al ${fd(d.fechaHasta)}` : fd(d.fechaDesde)) : '', 2], ['Horario de funcionamiento', d.horaFunc], ['Fecha y horario de desmontaje', [fd(d.fechaDesmontaje), d.horaDesmontaje].filter(Boolean).join(' · ')]]);
   section('Lugar y contacto');
   grid([['Dirección de destino', d.direccion, 2], ['Comuna', d.comuna], ['Referencia / ingreso', d.referencia], ['Contacto en terreno', d.contacto], ['Teléfono contacto', d.telefono], ['Correo contacto', d.email], ['Encargado ARVI en terreno', [d.encargado, d.encargadoTel].filter(Boolean).join(' · ')]]);
-  if (d.sec.juegos) { section('Juegos solicitados', 130); const js = parseJuegos(d.juegos); table([{ h: 'Juego', w: 5 }, { h: 'Cant.', w: 1, a: 'c' }, { h: 'Entrega', w: 2.3, box: ['OK', 'Obs.'] }, { h: 'Retiro', w: 2.3, box: ['OK', 'Obs.'] }], js.map(j => [j.n, String(j.q), '', '']), d.blankJ); if (d.personajes) grid([['Personajes / corpóreos', d.personajes, 2]]); }
+  if (d.sec.juegos) { section('Juegos solicitados', 130); const js = parseJuegos(d.juegos); table([{ h: 'Juego', w: 4.2 }, { h: 'Cant.', w: 0.9, a: 'c' }, { h: 'Estado en la entrega', w: 3.2 }, { h: 'Estado en el retiro', w: 3.2 }], js.map(j => [j.n, String(j.q), '', '']), d.blankJ, 30); if (d.personajes) grid([['Personajes / corpóreos', d.personajes, 2]]); }
   if (d.sec.equipo) { section('Personal ARVI', 130); const rolOf = id => [...new Set(DB.shifts.filter(s => s.workerId === id && d.evento && evName(s.eventId) === d.evento).map(s => s.rol))].join(' y ') || (byId('workers', id) || {}).funcion || 'Operador';
     table([{ h: 'Nombre', w: 4 }, { h: 'C.I. / RUT', w: 2.4 }, { h: 'Función', w: 2.6 }, { h: 'Firma', w: 2.6 }], d.equipo.map(id => byId('workers', id)).filter(Boolean).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(w => [w.nombre, w.rut || '', rolOf(w.id), '']), d.blankEq); }
   if (d.sec.vehiculos) { section('Vehículos', 130); table([{ h: 'Patente', w: 2 }, { h: 'Descripción', w: 4 }, { h: 'Conductor', w: 3.5 }, { h: 'Hora llegada', w: 2 }], d.vehiculos.map(v => byId('vehicles', v)).filter(Boolean).map(v => [v.patente, v.descripcion || '', '', '']), d.vehiculos.length ? 0 : 2); }
