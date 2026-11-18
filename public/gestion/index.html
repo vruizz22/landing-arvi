@@ -146,8 +146,9 @@ label.f input:focus,label.f select:focus,label.f textarea:focus{outline:2px soli
   <form class="loginbox" id="loginForm" autocomplete="on">
     <img src="logo.png" alt="ARVI">
     <h1>Gestión ARVI</h1>
-    <p>Eventos, equipo y cobranza en un solo lugar</p>
-    <input type="password" id="pw" placeholder="Clave de acceso" autocomplete="current-password" required>
+    <p>Eventos, equipo y cobranza en un solo lugar.<br>Mismos usuarios que la agenda ARVI HAPPY.</p>
+    <input id="lgUser" placeholder="Usuario (ArviAdmin…) o correo" autocomplete="username" required>
+    <input type="password" id="pw" placeholder="Contraseña" autocomplete="current-password" required>
     <button class="btn y" style="width:100%;justify-content:center;padding:13px" type="submit">Entrar</button>
     <div class="err" id="loginErr"></div>
   </form>
@@ -164,6 +165,7 @@ label.f input:focus,label.f select:focus,label.f textarea:focus{outline:2px soli
     <button class="nav" data-v="clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6M9 10h.01M15 10h.01"/></svg>Clientes</button>
     <button class="nav" data-v="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
     <div class="spacer"></div>
+    <div class="sync" style="font-weight:700;color:#ffe48a">👋 <span id="who"></span></div>
     <div class="sync" id="syncBox"><span class="dot" id="syncDot"></span><span id="syncTxt">Sin conexión a la nube</span></div>
     <button class="nav" id="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Salir</button>
   </aside>
@@ -174,6 +176,6 @@ label.f input:focus,label.f select:focus,label.f textarea:focus{outline:2px soli
 </div>
 <div id="modalRoot"></div>
 <script src="xlsx.full.min.js"></script>
-<script src="app.js"></script>
+<script type="module" src="app.js?v=2"></script>
 </body>
 </html>

@@ -1,8 +1,9 @@
 /* ARVI · Gestión — eventos, equipo y cobranza conectados.
-   Datos cifrados (AES-GCM, clave derivada con PBKDF2) en caché local y en un repositorio privado de GitHub. */
-'use strict';
-const VER = { salt: 'xQRhS8DVoQs/cFIrBQEu+w==', hash: 'a60dd5004d7290bf744f1ad51be063e04bd7ed3f2bcb22c9ab6d3265cf08b9d2', iter: 310000 };
-const ITER = 310000, LS_CACHE = 'arviGestion.cache.v1', LS_CONN = 'arviGestion.conn.v1', SS_PW = 'arviGestion.s';
+   Usa el mismo Firebase y los mismos usuarios que la agenda de ARVI HAPPY (Authentication + Firestore). */
+import { firebaseConfig, USERS } from '../agenda-happy-k7m2q9/config.js?v=4';
+const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
+const DEMO = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PEGAR_AQUI';
+const PREFIX = 'gestion_', LS_DEMO = 'arviGestion.demo.v1';
 const ROLES = ['Montaje', 'Funcionamiento', 'Desmontaje', 'ARVI Happy', 'Grúa'];
 const RCLS = { Montaje: 'r-mont', Funcionamiento: 'r-func', Desmontaje: 'r-desm', 'ARVI Happy': 'r-happy', 'Grúa': 'r-grua' };
 const RCOL = { Montaje: '#fde4cf', Funcionamiento: '#d8efc9', Desmontaje: '#e3e3fb', 'ARVI Happy': '#fbd5f3', 'Grúa': '#d5e7fb' };
@@ -35,123 +36,80 @@ const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 function b64big(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
 
-/* ---------- cifrado ---------- */
-const keyCache = new Map();
-async function deriveKey(pw, saltB64, iter = ITER) {
-  const k = pw + '|' + saltB64 + '|' + iter; if (keyCache.has(k)) return keyCache.get(k);
-  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey', 'deriveBits']);
-  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: unb64(saltB64), iterations: iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
-  keyCache.set(k, key); return key;
-}
-async function checkPw(pw) {
-  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: unb64(VER.salt), iterations: VER.iter, hash: 'SHA-256' }, base, 256);
-  const h = await crypto.subtle.digest('SHA-256', bits); return [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, '0')).join('') === VER.hash;
-}
-let SALT = null;
-async function encrypt(obj, pw) {
-  SALT = SALT || b64(crypto.getRandomValues(new Uint8Array(16)));
-  const key = await deriveKey(pw, SALT); const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(obj)));
-  return { v: 1, alg: 'AES-GCM/PBKDF2-SHA256', iter: ITER, salt: SALT, iv: b64(iv), ct: b64big(new Uint8Array(ct)) };
-}
-async function decrypt(p, pw) {
-  const key = await deriveKey(pw, p.salt, p.iter || ITER);
-  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(p.iv) }, key, unb64(p.ct));
-  SALT = SALT || p.salt; return JSON.parse(new TextDecoder().decode(pt));
-}
-
-/* ---------- datos ---------- */
+/* ---------- datos (Firestore en vivo) ---------- */
 const COLS = ['workers', 'vehicles', 'clients', 'events', 'shifts', 'invoices'];
-const blank = () => ({ v: 1, workers: [], vehicles: [], clients: [], events: [], shifts: [], invoices: [], del: {}, meta: { created: Date.now() } });
-let DB = blank(), PW = '', CONN = null, dirty = false, pushTimer = null, remoteSha = null, syncState = 'off';
+const blank = () => ({ workers: [], vehicles: [], clients: [], events: [], shifts: [], invoices: [] });
+let DB = blank(), FS = null, db = null, auth = null, authMod = null, USER = '';
 const byId = (col, id) => DB[col].find(x => x.id === id);
-function upsert(col, rec) { rec.u = Date.now(); if (!rec.id) rec.id = uid(); const i = DB[col].findIndex(x => x.id === rec.id); if (i >= 0) DB[col][i] = rec; else DB[col].push(rec); persist(); return rec; }
-function removeRec(col, id) { DB[col] = DB[col].filter(x => x.id !== id); DB.del[id] = Date.now(); persist(); }
-function merge(a, b) {
-  const out = blank(); out.meta = Object.assign({}, b.meta, a.meta); out.del = Object.assign({}, b.del || {});
-  for (const [k, v] of Object.entries(a.del || {})) out.del[k] = Math.max(out.del[k] || 0, v);
-  for (const c of COLS) {
-    const m = new Map(); for (const r of (b[c] || [])) m.set(r.id, r);
-    for (const r of (a[c] || [])) { const o = m.get(r.id); if (!o || (r.u || 0) >= (o.u || 0)) m.set(r.id, r); }
-    out[c] = [...m.values()].filter(r => !(out.del[r.id] && out.del[r.id] >= (r.u || 0)));
-  }
-  return out;
-}
-async function persist() {
-  dirty = true;
-  try { localStorage.setItem(LS_CACHE, JSON.stringify(await encrypt(DB, PW))); } catch (e) { console.warn(e); }
-  if (CONN) { clearTimeout(pushTimer); pushTimer = setTimeout(push, 1500); setSync('busy', 'Guardando…'); }
-  else setSync('off', 'Solo en este equipo');
-}
-
-/* ---------- GitHub (repositorio privado) ---------- */
-function ghUrl() { return `https://api.github.com/repos/${CONN.owner}/${CONN.repo}/contents/${CONN.path || 'datos/gestion.enc.json'}`; }
-async function ghGet() {
-  const r = await fetch(ghUrl() + '?ref=' + encodeURIComponent(CONN.branch || 'main') + '&t=' + Date.now(), { headers: { Authorization: 'Bearer ' + CONN.token, Accept: 'application/vnd.github+json' }, cache: 'no-store' });
-  if (r.status === 404) return null; if (!r.ok) throw new Error('GitHub ' + r.status);
-  const j = await r.json(); let content = j.content;
-  if (!content && j.download_url) content = null;
-  if (!content) { const raw = await fetch(j.git_url, { headers: { Authorization: 'Bearer ' + CONN.token, Accept: 'application/vnd.github.raw+json' } }); return { sha: j.sha, payload: JSON.parse(await raw.text()) }; }
-  const txt = new TextDecoder().decode(unb64(content.replace(/\n/g, ''))); return { sha: j.sha, payload: JSON.parse(txt) };
-}
-async function ghPut(payload, sha) {
-  const body = { message: 'Gestión ARVI · ' + new Date().toLocaleString('es-CL'), content: b64big(new TextEncoder().encode(JSON.stringify(payload))), branch: CONN.branch || 'main' };
-  if (sha) body.sha = sha;
-  const r = await fetch(ghUrl(), { method: 'PUT', headers: { Authorization: 'Bearer ' + CONN.token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  if (r.status === 409 || r.status === 422) return { conflict: true }; if (!r.ok) throw new Error('GitHub ' + r.status);
-  const j = await r.json(); return { sha: j.content.sha };
-}
-let pushing = false;
-async function push() {
-  if (!CONN || pushing) return; pushing = true; setSync('busy', 'Guardando…');
+const clean = o => JSON.parse(JSON.stringify(o));
+let queue = [], qTimer = null;
+function enqueue(op) { queue.push(op); clearTimeout(qTimer); qTimer = setTimeout(flush, 40); setSync('busy', 'Guardando…'); }
+async function flush() {
+  const ops = queue; queue = [];
+  if (DEMO) { try { localStorage.setItem(LS_DEMO, JSON.stringify(DB)); } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
   try {
-    for (let k = 0; k < 4; k++) {
-      const res = await ghPut(await encrypt(DB, PW), remoteSha);
-      if (!res.conflict) { remoteSha = res.sha; dirty = false; setSync('ok', 'Guardado en la nube'); break; }
-      const rem = await ghGet(); if (rem) { DB = merge(DB, await decrypt(rem.payload, PW)); remoteSha = rem.sha; }
+    for (let i = 0; i < ops.length; i += 400) {
+      const bt = FS.writeBatch(db);
+      for (const o of ops.slice(i, i + 400)) { const ref = FS.doc(db, PREFIX + o.col, o.id); if (o.del) bt.delete(ref); else bt.set(ref, o.rec); }
+      await bt.commit();
     }
-  } catch (e) { console.warn(e); setSync('bad', 'Error al guardar · reintento'); setTimeout(push, 15000); }
-  pushing = false;
+    setSync('ok', 'Guardado · en vivo');
+  } catch (e) { console.warn(e); setSync('bad', 'Error al guardar (' + (e.code || e.message) + ')'); toast('No se pudo guardar: ' + (e.code === 'permission-denied' ? 'faltan permisos en Firebase (reglas)' : e.code || e.message)); }
 }
-async function pull(silent) {
-  if (!CONN) return;
-  try {
-    setSync('busy', 'Sincronizando…'); const rem = await ghGet();
-    if (!rem) { remoteSha = null; await push(); return; }
-    const remote = await decrypt(rem.payload, PW); remoteSha = rem.sha;
-    const before = JSON.stringify(DB); DB = merge(DB, remote);
-    try { localStorage.setItem(LS_CACHE, JSON.stringify(await encrypt(DB, PW))); } catch (e) { }
-    if (JSON.stringify(DB) !== JSON.stringify(remote)) await push(); else setSync('ok', 'Al día · ' + new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }));
-    if (!silent && before !== JSON.stringify(DB)) render();
-  } catch (e) { console.warn(e); setSync('bad', e.message.includes('401') ? 'Llave de conexión inválida' : 'Sin conexión a la nube'); }
+function upsert(col, rec) {
+  rec.u = Date.now(); rec.por = USER; if (!rec.id) rec.id = uid();
+  const i = DB[col].findIndex(x => x.id === rec.id); if (i >= 0) DB[col][i] = rec; else DB[col].push(rec);
+  enqueue({ col, id: rec.id, rec: clean(rec) }); return rec;
 }
-function setSync(s, txt) { syncState = s; const d = $('#syncDot'); if (d) { d.className = 'dot ' + s; $('#syncTxt').textContent = txt; } const m = $('#syncM'); if (m) { m.textContent = '● ' + (s === 'ok' ? 'Nube' : s === 'busy' ? 'Guardando' : s === 'bad' ? 'Error' : 'Local'); m.className = 'pill ' + (s === 'ok' ? 'p-pagada' : s === 'bad' ? 'p-venc' : 'p-pend'); } }
-async function saveConn(c) { CONN = c; localStorage.setItem(LS_CONN, JSON.stringify(await encrypt(c, PW))); }
+function removeRec(col, id) { DB[col] = DB[col].filter(x => x.id !== id); enqueue({ col, id, del: true }); }
+let rTimer = null; const scheduleRender = () => { clearTimeout(rTimer); rTimer = setTimeout(() => { if (!$('#app').classList.contains('hidden')) render(); }, 250); };
+function subscribe() {
+  if (DEMO) { try { DB = Object.assign(blank(), JSON.parse(localStorage.getItem(LS_DEMO) || '{}')); } catch (e) { } setSync('off', 'Modo demo · solo en este navegador'); return; }
+  let first = 0;
+  for (const col of COLS) {
+    FS.onSnapshot(FS.collection(db, PREFIX + col), { includeMetadataChanges: true }, snap => {
+      DB[col] = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      if (!queue.length) setSync(snap.metadata.fromCache ? 'busy' : 'ok', snap.metadata.fromCache ? 'Conectando…' : 'En vivo · ' + USER);
+      if (++first <= COLS.length || !snap.metadata.hasPendingWrites) scheduleRender();
+    }, err => { console.warn(err); setSync('bad', err.code === 'permission-denied' ? 'Sin permisos: actualiza las reglas de Firebase' : 'Sin conexión'); });
+  }
+}
+function setSync(s, txt) { const d = $('#syncDot'); if (d) { d.className = 'dot ' + s; $('#syncTxt').textContent = txt; } const m = $('#syncM'); if (m) { m.textContent = '● ' + (s === 'ok' ? 'En vivo' : s === 'busy' ? 'Guardando' : s === 'bad' ? 'Error' : 'Demo'); m.className = 'pill ' + (s === 'ok' ? 'p-pagada' : s === 'bad' ? 'p-venc' : 'p-pend'); } }
 
-/* ---------- login ---------- */
-$('#loginForm').addEventListener('submit', async e => {
-  e.preventDefault(); const pw = $('#pw').value; $('#loginErr').textContent = 'Verificando…';
-  if (!(await checkPw(pw))) { $('#loginErr').textContent = 'Clave incorrecta'; return; }
-  await start(pw);
-});
-async function start(pw) {
-  PW = pw; sessionStorage.setItem(SS_PW, pw);
-  try { const c = localStorage.getItem(LS_CACHE); if (c) DB = Object.assign(blank(), await decrypt(JSON.parse(c), PW)); } catch (e) { console.warn('cache', e); }
-  try { const c = localStorage.getItem(LS_CONN); if (c) CONN = await decrypt(JSON.parse(c), PW); } catch (e) { }
-  const hk = new URLSearchParams(location.hash.slice(1)).get('k');
-  if (hk) { try { const c = await decrypt(JSON.parse(atob(decodeURIComponent(hk))), PW); await saveConn(c); history.replaceState(null, '', location.pathname); toast('Conexión a la nube activada en este equipo'); } catch (e) { toast('El enlace de acceso no es válido'); } }
-  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
-  setSync(CONN ? 'busy' : 'off', CONN ? 'Conectando…' : 'Solo en este equipo');
-  go(location.hash.replace('#', '').split('?')[0] || 'inicio');
-  if (CONN) { await pull(); setInterval(() => { if (!dirty && !pushing) pull(); }, 60000); }
+/* ---------- ingreso (mismos usuarios que la agenda ARVI HAPPY) ---------- */
+const prettyUser = k => ({ arviadmin: 'ArviAdmin', coniadmin: 'ConiAdmin', bastianadmin: 'BastiánAdmin' })[k] || k;
+const normUser = s => s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+async function boot() {
+  if (DEMO) { const u = sessionStorage.getItem('arviGestion.demoUser'); if (u) enter(u); return; }
+  const { initializeApp, getApps } = await import(FB + 'firebase-app.js');
+  authMod = await import(FB + 'firebase-auth.js'); FS = await import(FB + 'firebase-firestore.js');
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  auth = authMod.getAuth(app); db = FS.getFirestore(app);
+  authMod.onAuthStateChanged(auth, u => { if (u) enter(prettyUser(Object.keys(USERS).find(k => USERS[k] === u.email) || u.email)); });
 }
-$('#logout').onclick = () => { sessionStorage.removeItem(SS_PW); location.reload(); };
-(async () => { const s = sessionStorage.getItem(SS_PW); if (s && await checkPw(s)) start(s); })();
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault(); const raw = $('#lgUser').value.trim(), pass = $('#pw').value, err = $('#loginErr'); err.textContent = '';
+  let key = normUser(raw); if (raw.includes('@')) key = Object.keys(USERS).find(k => USERS[k] === raw.toLowerCase()) || '';
+  const email = raw.includes('@') ? raw.toLowerCase() : USERS[key];
+  if (!email) { err.textContent = 'Usuario no encontrado. Escribe ArviAdmin, ConiAdmin o BastiánAdmin.'; return; }
+  if (DEMO) { sessionStorage.setItem('arviGestion.demoUser', prettyUser(key)); return enter(prettyUser(key)); }
+  err.textContent = 'Entrando…';
+  try { if (!authMod) await boot(); await authMod.signInWithEmailAndPassword(auth, email, pass); }
+  catch (ex) { err.textContent = ex.code === 'auth/too-many-requests' ? 'Demasiados intentos, espera un momento.' : ex.code === 'auth/network-request-failed' ? 'Sin conexión a internet.' : 'Usuario o contraseña incorrectos'; }
+});
+let entered = false;
+function enter(user) {
+  USER = user; $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#who').textContent = user;
+  if (entered) return; entered = true;
+  go(location.hash.replace('#', '').split('?')[0] || 'inicio'); subscribe();
+}
+$('#logout').onclick = async () => { if (DEMO) sessionStorage.removeItem('arviGestion.demoUser'); else await authMod.signOut(auth); location.reload(); };
+boot().catch(e => { console.warn(e); $('#loginErr').textContent = 'No se pudo cargar el acceso. Revisa tu conexión.'; });
 
 /* ---------- navegación ---------- */
 let VIEW = 'inicio', ST = { month: today().slice(0, 7), evMode: 'lista', evQ: '', evEst: '', invQ: '', invEst: '', invCli: '', invYear: '', eqTab: 'personas' };
 $$('.nav[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
+window.go = go;
 function go(v) { if (!VIEWS[v]) v = 'inicio'; VIEW = v; history.replaceState(null, '', '#' + v); $$('.nav[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); render(); window.scrollTo(0, 0); }
 function render() { $('#view').innerHTML = ''; VIEWS[VIEW](); }
 
@@ -485,28 +443,22 @@ function clientModal(c, after) {
 
 /* ---- Ajustes ---- */
 VIEWS.ajustes = () => {
-  const v = $('#view'); const c = CONN || { owner: 'arvi-cl', repo: 'gestion-datos', branch: 'main', path: 'datos/gestion.enc.json', token: '' };
-  v.innerHTML = head('Ajustes', 'Conexión a la nube, importación desde Excel y respaldos') + `
+  const v = $('#view');
+  v.innerHTML = head('Ajustes', 'Importación desde Excel y respaldos') + `
   <div class="grid two">
-    <div class="card"><h3>Conexión a la nube (GitHub privado)</h3><p class="muted">Los datos se guardan cifrados con la clave de acceso. Sin conexión, quedan solo en este navegador.</p>
-      <div class="form" id="cf"><label class="f">Cuenta u organización<input name="owner" value="${esc(c.owner)}"></label><label class="f">Repositorio privado<input name="repo" value="${esc(c.repo)}"></label><label class="f">Rama<input name="branch" value="${esc(c.branch || 'main')}"></label><label class="f">Archivo<input name="path" value="${esc(c.path)}"></label><label class="f full">Llave de conexión (token)<input name="token" type="password" value="${esc(c.token)}" placeholder="github_pat_…"></label></div>
-      <div class="row" style="margin-top:12px"><button class="btn y" id="conn">Conectar y sincronizar</button>${CONN ? '<button class="btn ghost" id="link">Copiar enlace de acceso para el equipo</button><button class="btn red" id="disc">Desconectar este equipo</button>' : ''}</div>
-      <p class="muted" style="margin-top:10px">El enlace de acceso lleva la conexión cifrada: solo funciona junto con la clave. Envíalo por un canal privado.</p></div>
-    <div class="card"><h3>Importar desde Excel</h3><p class="muted">Carga tus planillas actuales. Puedes repetir la importación: no duplica personas, clientes ni facturas.</p>
+    <div class="card"><h3>Importar desde Excel</h3><p class="muted">Carga tus planillas actuales. Puedes repetir la importación: no duplica personas, clientes, turnos ni facturas.</p>
       <div class="sec">Programación de eventos (eventos_arvi_juegos.xlsx)</div><div class="row"><select id="imM">${opts(MESES.map((x, i) => i), new Date().getMonth(), i => MESES[i])}</select><input id="imY" type="number" value="${new Date().getFullYear()}" style="width:90px;padding:9px;border-radius:10px;border:1.5px solid var(--line)"><label class="btn ghost">Elegir archivo<input type="file" id="fEv" accept=".xlsx,.xls" hidden></label></div>
       <div class="sec">Cobranza (COBRANZA_2026_ARVI.xlsx)</div><label class="btn ghost">Elegir archivo<input type="file" id="fCo" accept=".xlsx,.xls" hidden></label>
       <div id="imR" class="muted" style="margin-top:10px"></div></div>
-    <div class="card"><h3>Respaldo</h3><p class="muted">Descarga todo en Excel (una hoja por módulo) o un respaldo cifrado.</p><div class="row"><button class="btn ghost" id="bx">${I.xls}Excel completo</button><button class="btn ghost" id="bj">Respaldo cifrado</button><label class="btn ghost">Restaurar respaldo<input type="file" id="br" accept=".json" hidden></label></div>
+    <div class="card"><h3>Conexión y respaldo</h3><p class="muted">${DEMO ? 'Modo demo: los datos quedan solo en este navegador.' : 'Datos en vivo en Firebase (mismo proyecto y usuarios que la agenda ARVI HAPPY). Sesión: <b>' + esc(USER) + '</b>.'}</p>
+      <div class="row"><button class="btn ghost" id="bx">${I.xls}Excel completo</button><button class="btn ghost" id="bj">Respaldo (.json)</button><label class="btn ghost">Restaurar respaldo<input type="file" id="br" accept=".json" hidden></label></div>
       <p class="muted" style="margin-top:12px">${DB.events.length} eventos · ${DB.shifts.length} turnos · ${DB.workers.length} personas · ${DB.clients.length} clientes · ${DB.invoices.length} facturas</p></div>
   </div>`;
-  $('#conn').onclick = async () => { const d = formData($('#cf')); if (!d.token) return toast('Pega la llave de conexión'); const prev = CONN; CONN = d; try { setSync('busy', 'Probando…'); await ghGet(); await saveConn(d); toast('Conectado'); await pull(); render(); } catch (e) { CONN = prev; setSync('bad', 'No se pudo conectar'); toast('No se pudo conectar: revisa repositorio y llave (' + e.message + ')'); } };
-  const lk = $('#link'); if (lk) lk.onclick = async () => { const u = location.origin + location.pathname + '#k=' + encodeURIComponent(btoa(JSON.stringify(await encrypt(CONN, PW)))); try { await navigator.clipboard.writeText(u); toast('Enlace copiado'); } catch (e) { prompt('Copia este enlace', u); } };
-  const dc = $('#disc'); if (dc) dc.onclick = () => { if (!confirm('¿Desconectar este equipo de la nube? Los datos siguen en la nube.')) return; localStorage.removeItem(LS_CONN); CONN = null; setSync('off', 'Solo en este equipo'); render(); };
-  $('#fEv').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellStyles: true, cellDates: true }); const r = importEventos(wb, +$('#imY').value, +$('#imM').value + 1); $('#imR').innerHTML = r; e.target.value = ''; };
-  $('#fCo').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true }); const r = importCobranza(wb); $('#imR').innerHTML = r; e.target.value = ''; };
+  $('#fEv').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellStyles: true, cellDates: true }); $('#imR').innerHTML = importEventos(wb, +$('#imY').value, +$('#imM').value + 1); e.target.value = ''; };
+  $('#fCo').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true }); $('#imR').innerHTML = importCobranza(wb); e.target.value = ''; };
   $('#bx').onclick = exportAllXlsx;
-  $('#bj').onclick = async () => download(new Blob([JSON.stringify(await encrypt(DB, PW))], { type: 'application/json' }), `respaldo-gestion-arvi-${today()}.json`);
-  $('#br').onchange = async e => { try { const p = JSON.parse(await e.target.files[0].text()); const d = await decrypt(p, PW); if (!confirm('Se combinará el respaldo con los datos actuales. ¿Continuar?')) return; DB = merge(d, DB); persist(); render(); toast('Respaldo restaurado'); } catch (x) { toast('Respaldo inválido o de otra clave'); } };
+  $('#bj').onclick = () => download(new Blob([JSON.stringify(DB)], { type: 'application/json' }), `respaldo-gestion-arvi-${today()}.json`);
+  $('#br').onchange = async e => { try { const d = JSON.parse(await e.target.files[0].text()); if (!confirm('Se agregarán los registros del respaldo (los que ya existen se reemplazan). ¿Continuar?')) return; for (const c of COLS) for (const r of (d[c] || [])) upsert(c, r); render(); toast('Respaldo restaurado'); } catch (x) { toast('Respaldo inválido'); } };
 };
 
 /* ---------- importadores ---------- */
