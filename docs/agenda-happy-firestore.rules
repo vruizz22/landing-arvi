@@ -6,6 +6,13 @@ service cloud.firestore {
       allow read, write: if request.auth != null
         && request.auth.token.email in ['arvi.juegos@gmail.com', 'coniadmin@arvi.cl', 'ajienciapica@gmail.com'];
     }
+    // Web de gestión (arvi.cl/gestion): eventos, equipo y cobranza. Mismos 3 usuarios.
+    // Nunca se permite borrar: lo eliminado va a la papelera dentro de la web.
+    match /{coleccion}/{id} {
+      allow read, create, update: if coleccion.matches('gestion_.*')
+        && request.auth != null
+        && request.auth.token.email in ['arvi.juegos@gmail.com', 'coniadmin@arvi.cl', 'ajienciapica@gmail.com'];
+    }
     match /{document=**} {
       allow read, write: if false;
     }
