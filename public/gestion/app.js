@@ -99,14 +99,23 @@ $('#loginForm').addEventListener('submit', async e => {
   if (!email) { err.textContent = 'Usuario no encontrado. Escribe ArviAdmin, ConiAdmin o BastiánAdmin.'; return; }
   if (DEMO) { sessionStorage.setItem('arviGestion.demoUser', prettyUser(key)); return enter(prettyUser(key)); }
   err.textContent = 'Entrando…';
-  try { if (!authMod) await boot(); await authMod.signInWithEmailAndPassword(auth, email, pass); }
-  catch (ex) { err.textContent = ex.code === 'auth/too-many-requests' ? 'Demasiados intentos, espera un momento.' : ex.code === 'auth/network-request-failed' ? 'Sin conexión a internet.' : 'Usuario o contraseña incorrectos'; }
+  const slow = setTimeout(() => { if (!entered) err.textContent = 'Está tardando… revisa tu conexión y vuelve a intentar.'; }, 15000);
+  try {
+    try { await BOOT; } catch (x) { BOOT = boot(); await BOOT; }
+    const cred = await authMod.signInWithEmailAndPassword(auth, email, pass);
+    clearTimeout(slow); err.textContent = '';
+    enter(prettyUser(Object.keys(USERS).find(k => USERS[k] === cred.user.email) || cred.user.email));
+  } catch (ex) {
+    clearTimeout(slow); console.warn(ex);
+    err.textContent = ex.code === 'auth/too-many-requests' ? 'Demasiados intentos, espera un momento.' : ex.code === 'auth/network-request-failed' ? 'Sin conexión a internet.' : ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'].includes(ex.code) ? 'Usuario o contraseña incorrectos' : 'No se pudo entrar (' + (ex.code || ex.message) + ')';
+  }
 });
 let entered = false;
 function enter(user) {
   USER = user; $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#who').textContent = user;
   if (entered) return; entered = true;
-  go(location.hash.replace('#', '').split('?')[0] || 'inicio'); subscribe();
+  try { go(location.hash.replace('#', '').split('?')[0] || 'inicio'); } catch (e) { console.error(e); $('#view').innerHTML = '<div class="card"><h3>Error al mostrar</h3><p class="muted">' + esc(e.message) + '</p></div>'; }
+  try { subscribe(); } catch (e) { console.error(e); setSync('bad', 'Error: ' + e.message); }
 }
 $('#logout').onclick = async () => { if (DEMO) sessionStorage.removeItem('arviGestion.demoUser'); else await authMod.signOut(auth); location.reload(); };
 
@@ -659,4 +668,4 @@ function jpgStatement(c) {
     note: 'Para pagos o consultas escríbenos a info@arvi.cl. Si ya realizaste el pago, por favor envíanos el comprobante.' }, 'Estado de cuenta · ' + c.nombre);
 }
 
-boot().catch(e => { console.warn(e); $('#loginErr').textContent = 'No se pudo cargar el acceso. Revisa tu conexión.'; });
+let BOOT = boot().catch(e => { console.warn(e); $('#loginErr').textContent = 'No se pudo cargar el acceso (' + (e.message || e) + '). Recarga la página.'; throw e; });
