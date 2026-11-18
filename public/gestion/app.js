@@ -31,7 +31,7 @@ const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpp
 const rutKey = s => String(s ?? '').replace(/[^0-9kK]/g, '').toUpperCase();
 function lev(a, b) { const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
 function daysBetween(a, b) { const out = []; if (!a) return out; let d = a; const end = b && b >= a ? b : a; let guard = 0; while (d <= end && guard++ < 120) { out.push(d); d = addDays(d, 1); } return out; }
-function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.append(msg); document.body.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 2600); }
 const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 function b64big(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
@@ -76,7 +76,8 @@ function subscribe() {
     for (const d of snap.docs) { if (!d.id.startsWith(PREFIX)) continue; const x = d.data(), col = x._g; if (!nb[col]) continue; const rec = { ...x, id: d.id.slice(PREFIX.length + col.length + 2) }; delete rec._g; (rec.borrado ? tr.push({ col, rec }) : nb[col].push(rec)); }
     DB = nb; TRASH = tr;
     if (!queue.length) setSync(snap.metadata.fromCache ? 'busy' : 'ok', snap.metadata.fromCache ? 'Conectando…' : 'En vivo · ' + USER);
-    if (first || !snap.metadata.hasPendingWrites) scheduleRender(); first = false;
+    if (first && !snap.metadata.fromCache) { first = false; hideSplash(); return; }
+    if (!snap.metadata.hasPendingWrites) scheduleRender();
   }, err => { console.warn(err); setSync('bad', err.code === 'permission-denied' ? 'Sin permisos' : 'Sin conexión'); });
 }
 function setSync(s, txt) { const d = $('#syncDot'); if (d) { d.className = 'dot ' + s; $('#syncTxt').textContent = txt; } const m = $('#syncM'); if (m) { m.textContent = '● ' + (s === 'ok' ? 'En vivo' : s === 'busy' ? 'Guardando' : s === 'bad' ? 'Error' : 'Demo'); m.className = 'pill ' + (s === 'ok' ? 'p-pagada' : s === 'bad' ? 'p-venc' : 'p-pend'); } }
@@ -98,22 +99,24 @@ $('#loginForm').addEventListener('submit', async e => {
   const email = raw.includes('@') ? raw.toLowerCase() : USERS[key];
   if (!email) { err.textContent = 'Usuario no encontrado. Escribe ArviAdmin, ConiAdmin o BastiánAdmin.'; return; }
   if (DEMO) { sessionStorage.setItem('arviGestion.demoUser', prettyUser(key)); return enter(prettyUser(key)); }
-  err.textContent = 'Entrando…';
+  err.textContent = ''; $('#lgBtn').classList.add('loading');
   const slow = setTimeout(() => { if (!entered) err.textContent = 'Está tardando… revisa tu conexión y vuelve a intentar.'; }, 15000);
   try {
     try { await BOOT; } catch (x) { BOOT = boot(); await BOOT; }
     const cred = await authMod.signInWithEmailAndPassword(auth, email, pass);
-    clearTimeout(slow); err.textContent = '';
+    clearTimeout(slow); err.textContent = ''; $('#lgBtn').classList.remove('loading');
     enter(prettyUser(Object.keys(USERS).find(k => USERS[k] === cred.user.email) || cred.user.email));
   } catch (ex) {
-    clearTimeout(slow); console.warn(ex);
+    clearTimeout(slow); console.warn(ex); $('#lgBtn').classList.remove('loading');
     err.textContent = ex.code === 'auth/too-many-requests' ? 'Demasiados intentos, espera un momento.' : ex.code === 'auth/network-request-failed' ? 'Sin conexión a internet.' : ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'].includes(ex.code) ? 'Usuario o contraseña incorrectos' : 'No se pudo entrar (' + (ex.code || ex.message) + ')';
   }
 });
 let entered = false;
+function hideSplash() { const sp = $('#splash'); if (sp.classList.contains('out')) return; sp.classList.add('out'); if (VIEW) render(true); }
 function enter(user) {
   USER = user; $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#who').textContent = user;
   if (entered) return; entered = true;
+  if (!DEMO) { $('#splash').classList.remove('out'); setTimeout(hideSplash, 6000); }
   try { go(location.hash.replace('#', '').split('?')[0] || 'inicio'); } catch (e) { console.error(e); $('#view').innerHTML = '<div class="card"><h3>Error al mostrar</h3><p class="muted">' + esc(e.message) + '</p></div>'; }
   try { subscribe(); } catch (e) { console.error(e); setSync('bad', 'Error: ' + e.message); }
 }
@@ -123,8 +126,22 @@ $('#logout').onclick = async () => { if (DEMO) sessionStorage.removeItem('arviGe
 let VIEW = 'inicio', ST = { month: today().slice(0, 7), evMode: 'lista', evQ: '', evEst: '', invQ: '', invEst: '', invCli: '', invYear: '', eqTab: 'personas' };
 $$('.nav[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 window.go = go;
-function go(v) { if (!VIEWS[v]) v = 'inicio'; VIEW = v; history.replaceState(null, '', '#' + v); $$('.nav[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); render(); window.scrollTo(0, 0); }
-function render() { $('#view').innerHTML = ''; VIEWS[VIEW](); }
+function go(v) { if (!VIEWS[v]) v = 'inicio'; VIEW = v; history.replaceState(null, '', '#' + v); $$('.nav[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); render(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function render(anim) {
+  const v = $('#view'); v.classList.remove('enter'); v.innerHTML = ''; VIEWS[VIEW]();
+  if (!anim) { $$('.val[data-n]', v).forEach(x => x.textContent = x.dataset.f === 'm' ? money(+x.dataset.n) : x.dataset.n); return; }
+  [...v.children].forEach((c, i) => c.style.setProperty('--i', i));
+  $$('.grid > .card, .list > .item', v).forEach((c, i) => { c.classList.add('anim'); c.style.setProperty('--i', i + 1); });
+  $$('tbody', v).forEach(tb => [...tb.children].forEach((r, i) => r.style.setProperty('--i', i)));
+  void v.offsetWidth; v.classList.add('enter'); countUp(v);
+}
+function countUp(root) {
+  $$('.val[data-n]', root).forEach(x => {
+    const n = +x.dataset.n, f = x.dataset.f === 'm' ? money : y => String(y), t0 = performance.now(), D = 900;
+    const step = t => { const p = Math.min(1, (t - t0) / D), e = 1 - Math.pow(1 - p, 3); x.textContent = f(Math.round(n * e)); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
 
 /* ---------- dominio ---------- */
 const evName = id => (byId('events', id) || {}).nombre || '—';
@@ -179,7 +196,7 @@ function head(title, sub, actions = '') { return `<div class="top"><div><h2>${ti
 function opts(list, sel, lab = x => x, val = x => x) { return list.map(x => `<option value="${esc(val(x))}"${String(val(x)) === String(sel ?? '') ? ' selected' : ''}>${esc(lab(x))}</option>`).join(''); }
 function modal(html, wide) {
   const m = el(`<div class="modal"><div class="sheet${wide ? ' wide' : ''}">${html}</div></div>`);
-  m.addEventListener('mousedown', e => { if (e.target === m) close(); }); const close = () => m.remove();
+  m.addEventListener('mousedown', e => { if (e.target === m) close(); }); const close = () => { if (m.classList.contains('closing')) return; m.classList.add('closing'); setTimeout(() => m.remove(), 200); };
   $('#modalRoot').appendChild(m); $$('[data-close]', m).forEach(b => b.onclick = close); return { m, close };
 }
 function formData(root) { const o = {}; $$('[name]', root).forEach(i => { o[i.name] = i.type === 'checkbox' ? i.checked : i.value; }); return o; }
@@ -188,6 +205,11 @@ const shiftMonth = (ym, d) => { const [y, m] = ym.split('-').map(Number); const 
 
 /* ================= VISTAS ================= */
 const VIEWS = {};
+const KI = {
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  money: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/><path d="M6 9.5v.01M18 15.5v.01"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.01"/></svg>',
+  team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.6.1 4.6 1.7 5.4 4.4"/></svg>' };
 VIEWS.inicio = () => {
   const t = today(), ym = t.slice(0, 7), in7 = addDays(t, 7);
   const prox = DB.events.filter(e => e.estado !== 'Cancelado' && (e.fin || e.inicio) >= t).sort((a, b) => a.inicio.localeCompare(b.inicio));
@@ -197,15 +219,20 @@ VIEWS.inicio = () => {
   const pagoMes = DB.shifts.filter(s => (s.fecha || '').slice(0, 7) === ym).reduce((s, x) => s + num(x.pago), 0);
   const alertas = abiertas.filter(([, c]) => c.estado === 'Vencida' || c.estado === 'Por vencer').sort((a, b) => (a[1].dias ?? 0) - (b[1].dias ?? 0));
   const v = $('#view');
-  v.innerHTML = head('Hola equipo ARVI', new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), `<button class="btn y" id="nEv">${I.plus}Nuevo evento</button><button class="btn" id="nInv">${I.plus}Nueva factura</button>`) +
+  const nombre = (USER || 'equipo').replace(/admin$/i, '');
+  const hora = new Date().getHours(), saludo = hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
+  v.innerHTML = `<div class="hero"><div class="bunting"></div><img class="hz" src="zorro-hola.webp" alt="">
+      <h2>${saludo}, <em>${esc(nombre)}</em></h2><div class="sub">${(d => d[0].toUpperCase() + d.slice(1))(new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</div>
+      <div class="chipsH"><span><b>${DB.events.length}</b> eventos</span><span><b>${DB.workers.length}</b> personas</span><span><b>${DB.clients.length}</b> clientes</span><span><b>${DB.invoices.length}</b> facturas</span></div>
+      <div class="row"><button class="btn y" id="nEv">${I.plus}Nuevo evento</button><button class="btn ghost" id="nInv">${I.plus}Nueva factura</button></div></div>` +
     `<div class="grid kpis">
-      <div class="card kpi"><div class="lab">Eventos este mes</div><div class="val">${mes.length}</div><div class="foot">${prox.filter(e => e.inicio <= in7).length} en los próximos 7 días</div></div>
-      <div class="card kpi"><div class="lab">Por cobrar</div><div class="val">${money(porCobrar)}</div><div class="foot">${abiertas.length} facturas abiertas</div></div>
-      <div class="card kpi ${vencido ? 'warn' : ''}"><div class="lab">Vencido</div><div class="val">${money(vencido)}</div><div class="foot">${abiertas.filter(([, c]) => c.estado === 'Vencida').length} facturas vencidas</div></div>
-      <div class="card kpi"><div class="lab">Pago equipo · ${MESES[new Date().getMonth()]}</div><div class="val">${money(pagoMes)}</div><div class="foot">${DB.shifts.filter(s => (s.fecha || '').slice(0, 7) === ym).length} turnos asignados</div></div>
+      <div class="card kpi"><span class="ico">${KI.cal}</span><div class="lab">Eventos este mes</div><div class="val" data-n="${mes.length}">${mes.length}</div><div class="foot">${prox.filter(e => e.inicio <= in7).length} en los próximos 7 días</div></div>
+      <div class="card kpi"><span class="ico">${KI.money}</span><div class="lab">Por cobrar</div><div class="val" data-n="${porCobrar}" data-f="m">${money(porCobrar)}</div><div class="foot">${abiertas.length} facturas abiertas</div></div>
+      <div class="card kpi ${vencido ? 'warn' : ''}"><span class="ico">${KI.alert}</span><div class="lab">Vencido</div><div class="val" data-n="${vencido}" data-f="m">${money(vencido)}</div><div class="foot">${abiertas.filter(([, c]) => c.estado === 'Vencida').length} facturas vencidas</div></div>
+      <div class="card kpi"><span class="ico">${KI.team}</span><div class="lab">Pago equipo · ${MESES[new Date().getMonth()]}</div><div class="val" data-n="${pagoMes}" data-f="m">${money(pagoMes)}</div><div class="foot">${DB.shifts.filter(s => (s.fecha || '').slice(0, 7) === ym).length} turnos asignados</div></div>
     </div>
     <div class="grid two" style="margin-top:14px">
-      <div class="card"><h3>Próximos eventos</h3><div class="list" id="hEv">${prox.slice(0, 8).map(e => evItem(e)).join('') || '<div class="empty">No hay eventos próximos</div>'}</div></div>
+      <div class="card"><h3>${prox.length ? 'Próximos eventos' : 'Eventos de ' + MESES[new Date().getMonth()]}</h3><div class="list" id="hEv">${(prox.length ? prox : mes.slice().sort((a, b) => b.inicio.localeCompare(a.inicio))).slice(0, 8).map(e => evItem(e)).join('') || '<div class="empty"><img src="zorro.webp" alt="">Aún no hay eventos. Crea uno o importa tu Excel en Ajustes.</div>'}</div></div>
       <div class="card"><h3>Cobranza que requiere atención</h3><div class="list">${alertas.slice(0, 8).map(([f, c]) => `<div class="item" data-inv="${f.id}"><div class="grow"><div class="ell"><b>N° ${esc(f.numero)}</b> · ${esc(cliName(f.clienteId))}</div><div class="muted">${c.estado === 'Vencida' ? 'Venció hace ' + (-c.dias) + ' días' : 'Vence en ' + c.dias + ' días'} · saldo ${money(c.saldo)}</div></div><span class="pill ${c.cls}">${c.estado}</span></div>`).join('') || '<div class="empty">Todo al día 🎉</div>'}</div></div>
     </div>`;
   $('#nEv').onclick = () => eventModal(); $('#nInv').onclick = () => invoiceModal();
