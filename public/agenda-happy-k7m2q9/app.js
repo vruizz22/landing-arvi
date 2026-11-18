@@ -1,4 +1,4 @@
-import { firebaseConfig, USERS } from './config.js?v=3'
+import { firebaseConfig, USERS } from './config.js?v=4'
 
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/'
 const DEMO = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PEGAR_AQUI'
@@ -394,6 +394,72 @@ $('#expPdf').addEventListener('click', async () => {
   }
   pdf.save(fname('pdf')); $('#exportStage').innerHTML = ''
 })
+
+// ---------- imagen de fechas disponibles (sin datos de clientes) ----------
+// Mañana = bloque AM (11:00 a 14:00). Tarde = bloques PM / alternativa (16:00 a 20:00), que se solapan.
+function slotsTaken(dayISO) {
+  let am = false, pm = false
+  state.items.filter((r) => r.fecha === dayISO && r.estado !== 'cancelado').forEach((r) => {
+    if (r.bloque === 'AM') am = true
+    else if (r.bloque === 'PM' || r.bloque === 'ALT') pm = true
+    else {
+      const h = String(r.horario || '').match(/\d{1,2}/)
+      const start = h ? Number(h[0]) : null
+      if (start != null && start < 12) am = true
+      else if (start != null && start >= 15) pm = true
+      else { am = true; pm = true }
+    }
+  })
+  return { am, pm }
+}
+function buildAvailSheet() {
+  const stage = $('#exportStage'); stage.innerHTML = ''
+  const y = state.y, m = state.m
+  const first = new Date(y, m, 1), last = new Date(y, m + 1, 0)
+  const lead = (first.getDay() + 6) % 7
+  const cells = Math.ceil((lead + last.getDate()) / 7) * 7
+  const t = todayISO()
+  let grid = DIAS.map((d, i) => `<div class="dow ${i > 4 ? 'we' : ''}">${d}</div>`).join('')
+  let libres = 0
+  for (let i = 0; i < cells; i++) {
+    const dn = i - lead + 1
+    if (dn < 1 || dn > last.getDate()) { grid += '<div class="aday out"></div>'; continue }
+    const k = iso(new Date(y, m, dn))
+    if (k < t) { grid += `<div class="aday past"><div class="n">${dn}</div></div>`; continue }
+    const { am, pm } = slotsTaken(k)
+    const cls = am && pm ? 'full' : !am && !pm ? 'free' : 'half'
+    if (cls !== 'full') libres++
+    const slot = (taken, txt) => `<div class="slot ${taken ? 'no' : 'ok'}">${taken ? '—' : txt}</div>`
+    grid += `<div class="aday ${cls}"><div class="n">${dn}</div>${cls === 'full' ? '<div class="slot no">Reservado</div>' : slot(am, '☀️ Mañana') + slot(pm, '🌙 Tarde')}</div>`
+  }
+  const el = document.createElement('div'); el.className = 'av'
+  el.innerHTML = `<div class="av-head"><img src="/happy/assets/logo.webp" alt=""><h1>Fechas <span>disponibles</span></h1><h2>${MESES[m]} ${y}</h2></div>
+    <div class="av-card"><div class="cal">${grid}</div>
+      <div class="av-legend"><span><i style="border-color:var(--lime);background:#f3fbe9"></i>Disponible</span><span><i style="border-color:var(--sun);background:var(--sun-soft)"></i>Disponible solo un horario</span><span><i style="border-color:#ffd0d6;background:#ffe9ec"></i>Reservado</span></div></div>
+    <div class="av-hours">☀️ Mañana: 11:00 a 14:00 &nbsp;·&nbsp; 🌙 Tarde: 17:00 a 20:00 o 16:00 a 19:00</div>
+    <div class="av-foot"><div class="av-wa"><span class="ic"><svg width="32" height="32" viewBox="0 0 24 24"><path fill="#fff" d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8Z"/></svg></span><div><small>¡Reserva tu fecha por WhatsApp!</small><b>+56 9 8808 2320</b></div></div>
+      <div class="av-addr"><b>Abate Molina 866, El Bosque</b><br><span>🚇 Metro Observatorio</span></div></div>`
+  stage.appendChild(el)
+  return { el, libres }
+}
+async function exportAvail() {
+  toast('Preparando imagen de fechas disponibles…')
+  const { el, libres } = buildAvailSheet()
+  const c = await window.html2canvas(el, { scale: 1, backgroundColor: null, useCORS: true, logging: false })
+  const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.92))
+  const name = `ArviHappy_fechas_disponibles_${MESES[state.m]}_${state.y}.jpg`
+  $('#exportStage').innerHTML = ''
+  const file = new File([blob], name, { type: 'image/jpeg' })
+  // En el celular abre el menú de compartir (WhatsApp, etc.); en el computador descarga la imagen.
+  if (navigator.canShare && navigator.canShare({ files: [file] }) && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    try { await navigator.share({ files: [file], title: 'Fechas disponibles ARVI HAPPY' }); return } catch (e) { /* cancelado: descargar */ }
+  }
+  const a = document.createElement('a'); a.download = name; a.href = URL.createObjectURL(blob); a.click()
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000)
+  toast(`✅ Imagen lista · ${libres} días con horario libre`)
+}
+$('#btnAvail').addEventListener('click', exportAvail)
+$('#expAvail').addEventListener('click', exportAvail)
 
 // ---------- import Excel (formato AGENDA_ARVIHAPPY) ----------
 $('#btnImport').addEventListener('click', () => $('#fileImport').click())

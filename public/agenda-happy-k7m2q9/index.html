@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=3">
+<link rel="stylesheet" href="./styles.css?v=4">
 </head>
 <body>
 
@@ -50,12 +50,14 @@
       </div>
       <div class="actions">
         <div class="seg"><button data-view="cal" class="on">📅 Calendario</button><button data-view="list">📋 Lista</button></div>
+        <button id="btnAvail" class="btn btn-sun">📤 Fechas disponibles</button>
         <button id="btnNew" class="btn btn-pink">＋ Nueva reserva</button>
         <div class="dd">
           <button class="btn btn-ghost" id="btnMore">⋯ Más</button>
           <div class="dd-menu" id="ddMenu">
             <button id="expPdf">📄 Exportar mes en PDF</button>
             <button id="expJpg">🖼️ Exportar mes en JPG</button>
+            <button id="expAvail">📤 Imagen de fechas disponibles (para clientes)</button>
             <button id="btnImport">📥 Importar agenda (Excel)</button>
           </div>
         </div>
@@ -159,6 +161,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
-<script type="module" src="./app.js?v=3"></script>
+<script type="module" src="./app.js?v=4"></script>
 </body>
 </html>
