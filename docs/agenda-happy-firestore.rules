@@ -4,7 +4,7 @@ service cloud.firestore {
     // Solo los 3 administradores de ARVI HAPPY pueden leer y escribir reservas.
     match /reservas/{id} {
       allow read, write: if request.auth != null
-        && request.auth.token.email in ['arviadmin@arvi.cl', 'coniadmin@arvi.cl', 'bastianadmin@arvi.cl'];
+        && request.auth.token.email in ['arvi.juegos@gmail.com', 'coniadmin@arvi.cl', 'ajienciapica@gmail.com'];
     }
     match /{document=**} {
       allow read, write: if false;

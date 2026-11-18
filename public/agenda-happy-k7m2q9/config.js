@@ -15,7 +15,7 @@ export const firebaseConfig = {
 // Usuario que se escribe en la pantalla de ingreso → correo creado en Firebase Authentication.
 // Las contraseñas NO van en este archivo: se definen solo en Firebase.
 export const USERS = {
-  arviadmin: 'arviadmin@arvi.cl',
+  arviadmin: 'arvi.juegos@gmail.com',
   coniadmin: 'coniadmin@arvi.cl',
-  bastianadmin: 'bastianadmin@arvi.cl',
+  bastianadmin: 'ajienciapica@gmail.com',
 }

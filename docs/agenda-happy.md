@@ -13,11 +13,11 @@ Calendario de reservas en tiempo real para el salón ARVI HAPPY.
 2. **Authentication** → Comenzar → habilitar **Correo electrónico/contraseña**. En la pestaña *Usuarios* → **Agregar usuario**, crea estos 3 (la contraseña la defines tú ahí):
    | Usuario en la agenda | Correo en Firebase |
    | --- | --- |
-   | ArviAdmin | `arviadmin@arvi.cl` |
+   | ArviAdmin | `arvi.juegos@gmail.com` |
    | ConiAdmin | `coniadmin@arvi.cl` |
-   | BastiánAdmin | `bastianadmin@arvi.cl` |
+   | BastiánAdmin | `ajienciapica@gmail.com` |
    (Los correos no necesitan existir; solo son el identificador interno.)
-3. **Firestore Database** → Crear base de datos → modo producción → región `southamerica-east1` (São Paulo).
+3. **Firestore Database** → Crear base de datos → modo producción → región `southamerica-west1` (Santiago).
    En la pestaña **Reglas**, pega el contenido de [`agenda-happy-firestore.rules`](./agenda-happy-firestore.rules) y publica.
 4. **Configuración del proyecto** (engranaje) → *Tus apps* → ícono web `</>` → registra la app → copia el objeto `firebaseConfig` y pégalo en `public/agenda-happy-k7m2q9/config.js` (reemplaza `PEGAR_AQUI`). Esos datos no son secretos.
 5. Haz push a `master` → se despliega solo.
