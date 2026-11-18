@@ -230,6 +230,7 @@ const shiftMonth = (ym, d) => { const [y, m] = ym.split('-').map(Number); const 
 
 /* ================= VISTAS ================= */
 const VIEWS = {};
+I.doc = I.doc || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
 const KI = {
   cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   money: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/><path d="M6 9.5v.01M18 15.5v.01"/></svg>',
@@ -297,7 +298,7 @@ function calView(b, list) {
 function eventModal(e, preset = {}) {
   const isNew = !e; e = e ? JSON.parse(JSON.stringify(e)) : Object.assign({ id: uid(), nombre: '', clienteId: '', inicio: today(), fin: today(), ubicacion: '', direccion: '', contacto: '', telefonoContacto: '', horarioMontaje: '', horarioFunc: '', ingreso: '', juegos: '', estado: 'Por confirmar', monto: '', vehiculos: [], notas: '' }, preset);
   let shifts = DB.shifts.filter(s => s.eventId === e.id).map(s => ({ ...s }));
-  const { m, close } = modal(`<header><h3>${isNew ? 'Nuevo evento' : esc(e.nombre)}</h3><div class="row">${isNew ? '' : `<button class="btn sm ghost" id="jCli">${I.img}JPG cliente</button><button class="btn sm ghost" id="jEq">${I.img}JPG equipo</button><button class="btn sm ghost" id="xls1">${I.xls}Excel</button>`}<button class="btn sm ghost" data-close>Cerrar</button></div></header>
+  const { m, close } = modal(`<header><h3>${isNew ? 'Nuevo evento' : esc(e.nombre)}</h3><div class="row">${isNew ? '' : `<button class="btn sm ghost" id="pFi">${I.doc}Ficha técnica PDF</button><button class="btn sm ghost" id="jCli">${I.img}JPG cliente</button><button class="btn sm ghost" id="jEq">${I.img}JPG equipo</button><button class="btn sm ghost" id="xls1">${I.xls}Excel</button>`}<button class="btn sm ghost" data-close>Cerrar</button></div></header>
     <div class="form" id="f">
       <label class="f full">Nombre del evento<input name="nombre" value="${esc(e.nombre)}" placeholder="Ej: Feria Mi Barrio Emprende 2026" required></label>
       <label class="f">Cliente<select name="clienteId"><option value="">— Elegir cliente —</option>${opts([...DB.clients].sort((a, b) => a.nombre.localeCompare(b.nombre)), e.clienteId, c => c.nombre, c => c.id)}<option value="__new">+ Nuevo cliente…</option></select></label>
@@ -328,7 +329,7 @@ function eventModal(e, preset = {}) {
     const ds0 = days(), ds = ds0.length ? daysBetween(addDays(ds0[0], -2), addDays(ds0[ds0.length - 1], 1)) : ds0; const ws = sortedWorkers().filter(w => w.activo !== false);
     shifts.sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '') || ROLES.indexOf(a.rol) - ROLES.indexOf(b.rol));
     $('#shB', m).innerHTML = shifts.map((s, i) => `<tr><td><select data-i="${i}" data-k="fecha">${opts([...new Set([...ds, s.fecha])].filter(Boolean), s.fecha, fshort)}</select></td><td><select data-i="${i}" data-k="workerId"><option value="">—</option>${opts(ws.concat(ws.find(w => w.id === s.workerId) ? [] : DB.workers.filter(w => w.id === s.workerId)), s.workerId, w => w.nombre, w => w.id)}<option value="__newwk">+ Nueva persona…</option></select></td><td><select data-i="${i}" data-k="rol">${opts(ROLES, s.rol)}<option value="__newrole">+ Nuevo rol…</option></select></td><td><input data-i="${i}" data-k="pago" inputmode="numeric" value="${esc(s.pago)}" style="text-align:right"></td><td><button class="x" data-rm="${i}">×</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted" style="padding:14px">Aún no hay personas asignadas</td></tr>';
-    $$('[data-k]', m).forEach(x => x.onchange = () => { shifts[+x.dataset.i][x.dataset.k] = x.dataset.k === 'pago' ? num(x.value) : x.value; drawSum(); });
+    $$('[data-k]', m).forEach(x => x.onchange = () => { const sh = shifts[+x.dataset.i]; sh[x.dataset.k] = x.dataset.k === 'pago' ? num(x.value) : x.value; if (x.dataset.k === 'workerId' && !num(sh.pago)) { const wk = byId('workers', sh.workerId); if (wk && num(wk.pagoDia)) { sh.pago = num(wk.pagoDia); const pi = $(`[data-i="${x.dataset.i}"][data-k="pago"]`, m); if (pi) pi.value = sh.pago; } } drawSum(); });
     $$('[data-rm]', m).forEach(x => x.onclick = () => { shifts.splice(+x.dataset.rm, 1); drawSh(); });
     drawSum();
   }
@@ -358,7 +359,7 @@ function eventModal(e, preset = {}) {
   }
   $('#save', m).onclick = () => saveEv(true);
   const del = $('#del', m); if (del) del.onclick = () => { if (!confirm('¿Eliminar este evento y sus turnos? Las facturas se mantienen.')) return; DB.shifts.filter(s => s.eventId === e.id).forEach(s => removeRec('shifts', s.id)); DB.invoices.filter(x => (x.eventIds || []).includes(e.id)).forEach(x => upsert('invoices', { ...x, eventIds: x.eventIds.filter(i => i !== e.id) })); removeRec('events', e.id); close(); render(); };
-  if (!isNew) { $('#jCli', m).onclick = () => { if (saveEv(false)) jpgEventClient(byId('events', e.id)); }; $('#jEq', m).onclick = () => { if (saveEv(false)) jpgEventTeam(byId('events', e.id)); }; $('#xls1', m).onclick = () => { if (saveEv(false)) exportEventXlsx(byId('events', e.id)); }; }
+  if (!isNew) { $('#pFi', m).onclick = () => { if (saveEv(false)) { close(); fichaModal(byId('events', e.id)); } }; $('#jCli', m).onclick = () => { if (saveEv(false)) jpgEventClient(byId('events', e.id)); }; $('#jEq', m).onclick = () => { if (saveEv(false)) jpgEventTeam(byId('events', e.id)); }; $('#xls1', m).onclick = () => { if (saveEv(false)) exportEventXlsx(byId('events', e.id)); }; }
   drawSh();
 }
 
@@ -404,24 +405,211 @@ VIEWS.equipo = () => {
   $('#nW').onclick = () => tab === 'personas' ? workerModal() : vehicleModal();
   const ym = today().slice(0, 7);
   if (tab === 'personas') {
-    $('#eqB').innerHTML = `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Nombre</th><th>RUT</th><th class="hide-m">Teléfono</th><th>Grupo</th><th class="hide-m">Función</th><th class="num hide-m">Turnos mes</th><th class="num">Pago mes</th></tr></thead><tbody>${sortedWorkers().map(w => { const s = DB.shifts.filter(x => x.workerId === w.id && (x.fecha || '').slice(0, 7) === ym); return `<tr class="click" data-w="${w.id}" style="${w.activo === false ? 'opacity:.5' : ''}"><td><b>${esc(w.nombre)}</b></td><td>${esc(w.rut || '—')}</td><td class="hide-m">${esc(w.telefono || '')}</td><td>${esc(w.grupo || '')}</td><td class="hide-m">${esc(w.funcion || '')}</td><td class="num hide-m">${s.length}</td><td class="num">${money(s.reduce((a, x) => a + num(x.pago), 0))}</td></tr>`; }).join('') || '<tr><td colspan="7" class="empty">Sin personas. Agrégalas o importa tu Excel en Ajustes.</td></tr>'}</tbody></table></div></div>`;
+    $('#eqB').innerHTML = `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Nombre</th><th>RUT</th><th class="hide-m">Teléfono</th><th>Grupo</th><th class="hide-m">Función</th><th class="hide-m">Perfil</th><th class="num hide-m">Turnos mes</th><th class="num">Pago mes</th></tr></thead><tbody>${sortedWorkers().map(w => { const s = DB.shifts.filter(x => x.workerId === w.id && (x.fecha || '').slice(0, 7) === ym); return `<tr class="click" data-w="${w.id}" style="${w.activo === false ? 'opacity:.5' : ''}"><td><b>${esc(w.nombre)}</b></td><td>${esc(w.rut || '—')}</td><td class="hide-m">${esc(w.telefono || '')}</td><td>${esc(w.grupo || '')}</td><td class="hide-m">${esc(w.funcion || '')}</td><td class="hide-m"><span class="pbar" title="Perfil ${perfilPct(w)}% completo"><i style="width:${perfilPct(w)}%"></i></span> <span class="muted" style="font-size:12px">${perfilPct(w)}%</span></td><td class="num hide-m">${s.length}</td><td class="num">${money(s.reduce((a, x) => a + num(x.pago), 0))}</td></tr>`; }).join('') || '<tr><td colspan="7" class="empty">Sin personas. Agrégalas o importa tu Excel en Ajustes.</td></tr>'}</tbody></table></div></div>`;
     $$('[data-w]', v).forEach(r => r.onclick = () => workerModal(byId('workers', r.dataset.w)));
   } else {
     $('#eqB').innerHTML = `<div class="card" style="padding:0"><table><thead><tr><th>Patente</th><th>Descripción</th><th>Eventos</th></tr></thead><tbody>${DB.vehicles.map(vh => `<tr class="click" data-vh="${vh.id}"><td><b>${esc(vh.patente)}</b></td><td>${esc(vh.descripcion || '')}</td><td>${DB.events.filter(e => (e.vehiculos || []).includes(vh.id)).length}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">Sin vehículos</td></tr>'}</tbody></table></div>`;
     $$('[data-vh]', v).forEach(r => r.onclick = () => vehicleModal(byId('vehicles', r.dataset.vh)));
   }
 };
-function workerModal(w) {
-  const isNew = !w; w = w ? { ...w } : { id: uid(), nombre: '', rut: '', telefono: '', grupo: 'Operador', funcion: '', activo: true, notas: '' };
-  const hist = DB.shifts.filter(s => s.workerId === w.id).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 12);
-  const { m, close } = modal(`<header><h3>${isNew ? 'Nueva persona' : esc(w.nombre)}</h3><button class="btn sm ghost" data-close>Cerrar</button></header>
-    <div class="form" id="f"><label class="f full">Nombre completo<input name="nombre" value="${esc(w.nombre)}"></label><label class="f">RUT<input name="rut" value="${esc(w.rut)}" placeholder="12.345.678-9"></label><label class="f">Teléfono<input name="telefono" value="${esc(w.telefono)}"></label>
-    <label class="f">Grupo<select name="grupo">${opts(GRUPOS, w.grupo)}<option value="__newgrp">+ Nuevo grupo…</option></select></label><label class="f">Función<input name="funcion" value="${esc(w.funcion)}" placeholder="Ej: montaje y funcionamiento"></label>
-    <label class="f full">Notas<textarea name="notas">${esc(w.notas)}</textarea></label><label class="check"><input type="checkbox" name="activo" ${w.activo !== false ? 'checked' : ''}>Activo</label></div>
-    ${hist.length ? `<div class="sec">Últimos turnos</div><table class="mini"><tbody>${hist.map(s => `<tr><td>${fdate(s.fecha)}</td><td>${esc(evName(s.eventId))}</td><td><span class="pill ${RCLS[s.rol]}">${s.rol}</span></td><td class="num">${money(s.pago)}</td></tr>`).join('')}</tbody></table>` : ''}
+/* ================= PERFIL DE PERSONA (se va completando) ================= */
+const DOCS_W = ['Copia de cédula de identidad', 'Certificado de antecedentes', 'Contrato o acuerdo de servicios', 'Inducción de seguridad', 'Licencia de conducir', 'Seguro / mutual'];
+const PERFIL_KEYS = ['rut', 'telefono', 'email', 'nacimiento', 'direccion', 'comuna', 'emNombre', 'emTelefono', 'banco', 'nCuenta', 'tallaPolera', 'juegosOpera'];
+const perfilPct = w => Math.round(100 * (PERFIL_KEYS.filter(k => String(w[k] || '').trim()).length + Math.min(3, (w.docs || []).filter(d => d.ok).length)) / (PERFIL_KEYS.length + 3));
+function workerModal(w, tab0) {
+  const isNew = !w; w = w ? JSON.parse(JSON.stringify(w)) : { id: uid(), nombre: '', rut: '', telefono: '', grupo: 'Operador', funcion: '', activo: true, notas: '' };
+  w.docs = w.docs || []; w.extra = w.extra || []; w.bitacora = w.bitacora || [];
+  let tab = tab0 || 'datos';
+  const TABS = [['datos', 'Datos'], ['emerg', 'Emergencia y salud'], ['pago', 'Pago'], ['skills', 'Habilidades'], ['docs', 'Documentos'], ['extra', 'Más datos'], ['bit', 'Bitácora'], ['hist', 'Historial']];
+  const F = (k, l, ph = '', type = 'text', full = false) => `<label class="f ${full ? 'full' : ''}">${l}<input name="${k}" type="${type}" value="${esc(w[k] || '')}" placeholder="${esc(ph)}"></label>`;
+  const S = (k, l, list) => `<label class="f">${l}<select name="${k}">${opts(['', ...list], w[k] || '', x => x || '—')}</select></label>`;
+  const { m, close } = modal(`<header><div><h3>${isNew ? 'Nueva persona' : esc(w.nombre)}</h3><div class="muted" id="pPct"></div></div><button class="btn sm ghost" data-close>Cerrar</button></header>
+    <div class="tabsW">${TABS.map(([k, l]) => `<button class="tabW" data-tab="${k}">${l}</button>`).join('')}</div><div id="wBody" class="form"></div>
     <div class="row" style="justify-content:space-between;margin-top:16px">${isNew ? '<span></span>' : '<button class="btn red" id="del">Eliminar</button>'}<button class="btn y" id="save">Guardar</button></div>`);
-  $('#save', m).onclick = () => { const d = formData($('#f', m)); if (!d.nombre.trim()) return toast('Falta el nombre'); upsert('workers', { ...w, ...d, nombre: d.nombre.trim() }); close(); render(); };
+  const body = $('#wBody', m);
+  const collect = () => { $$('[name]', body).forEach(i => { w[i.name] = i.type === 'checkbox' ? i.checked : i.value; }); };
+  const pct = () => { $('#pPct', m).innerHTML = `Perfil completo al <b>${perfilPct(w)}%</b> <span class="pbar"><i style="width:${perfilPct(w)}%"></i></span>`; };
+  function draw() {
+    $$('.tabW', m).forEach(b => b.classList.toggle('on', b.dataset.tab === tab)); pct();
+    if (tab === 'datos') body.innerHTML = F('nombre', 'Nombre completo', '', 'text', true) + F('rut', 'RUT', '12.345.678-9') + F('telefono', 'Teléfono', '+56 9 …') + F('email', 'Correo', '', 'email') + F('nacimiento', 'Fecha de nacimiento', '', 'date') + F('nacionalidad', 'Nacionalidad', 'Chilena') + F('ingresoArvi', 'Trabaja con ARVI desde', '', 'date') + F('direccion', 'Dirección', '', 'text', true) + F('comuna', 'Comuna') +
+      `<label class="f">Grupo<select name="grupo">${opts(GRUPOS, w.grupo)}<option value="__newgrp">+ Nuevo grupo…</option></select></label>` + F('funcion', 'Función habitual', 'Ej: montaje y funcionamiento') + `<label class="check"><input type="checkbox" name="activo" ${w.activo !== false ? 'checked' : ''}>Activo</label>`;
+    if (tab === 'emerg') body.innerHTML = F('emNombre', 'Contacto de emergencia') + F('emParentesco', 'Parentesco', 'Ej: madre') + F('emTelefono', 'Teléfono de emergencia') + F('prevision', 'Previsión de salud', 'Fonasa / Isapre') + `<label class="f full">Alergias, condiciones o medicamentos<textarea name="salud">${esc(w.salud || '')}</textarea></label>`;
+    if (tab === 'pago') body.innerHTML = F('banco', 'Banco') + S('tipoCuenta', 'Tipo de cuenta', ['Cuenta RUT', 'Cuenta Vista', 'Cuenta Corriente', 'Cuenta de Ahorro']) + F('nCuenta', 'N° de cuenta') + F('pagoDia', 'Pago sugerido por día ($)', 'Ej: 80000', 'number') + S('boleta', 'Forma de pago', ['Boleta de honorarios', 'Transferencia', 'Efectivo', 'Otro']) + `<label class="f full">Notas de pago<textarea name="pagoNotas">${esc(w.pagoNotas || '')}</textarea></label><p class="muted full">El pago sugerido se completa solo al asignar a esta persona en un turno.</p>`;
+    if (tab === 'skills') body.innerHTML = `<label class="f full">Juegos que sabe operar<input name="juegosOpera" value="${esc(w.juegosOpera || '')}" placeholder="Ej: Sillas voladoras, Barco, Go kart, Tren"></label>` + S('licencia', 'Licencia de conducir', ['Sin licencia', 'B', 'A2', 'A3', 'A4', 'A5', 'C', 'D']) + S('tallaPolera', 'Talla polera', ['XS', 'S', 'M', 'L', 'XL', 'XXL']) + F('tallaZapato', 'Talla zapato') + `<label class="f full">Cursos y certificaciones<textarea name="cursos" placeholder="Ej: Primeros auxilios (2025), Manejo de extintores">${esc(w.cursos || '')}</textarea></label><label class="f full">Notas generales<textarea name="notas">${esc(w.notas || '')}</textarea></label>`;
+    if (tab === 'docs') { const all = [...new Set([...DOCS_W, ...w.docs.map(d => d.tipo)])];
+      body.innerHTML = `<div class="full"><table class="mini"><thead><tr><th>Documento</th><th>Entregado</th><th>Vence</th></tr></thead><tbody>${all.map((t, i) => { const d = w.docs.find(x => x.tipo === t) || {}; const venc = d.vence && d.vence < today(); return `<tr><td>${esc(t)}</td><td><input type="checkbox" data-doc="${i}" ${d.ok ? 'checked' : ''}></td><td><input type="date" data-dv="${i}" value="${d.vence || ''}" style="padding:5px 8px;border-radius:8px;border:1.5px solid ${venc ? 'var(--red)' : 'var(--line)'}">${venc ? ' <span class="pill p-venc">Vencido</span>' : ''}</td></tr>`; }).join('')}</tbody></table>
+        <div class="row" style="margin-top:10px"><input id="nDoc" placeholder="Otro documento" style="padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><button class="btn sm" id="aDoc">${I.plus}Agregar</button></div></div>`;
+      const sync = () => { w.docs = all.map((t, i) => ({ tipo: t, ok: $(`[data-doc="${i}"]`, body).checked, vence: $(`[data-dv="${i}"]`, body).value })).filter(d => d.ok || d.vence || !DOCS_W.includes(d.tipo)); pct(); };
+      $$('[data-doc],[data-dv]', body).forEach(x => x.onchange = sync);
+      $('#aDoc', body).onclick = () => { const t = $('#nDoc', body).value.trim(); if (!t) return; sync(); w.docs.push({ tipo: t, ok: false, vence: '' }); draw(); }; }
+    if (tab === 'extra') { body.innerHTML = `<p class="muted full">Agrega cualquier dato que necesiten (ej: patente propia, AFP, horario disponible).</p><div class="full" id="exL">${w.extra.map((x, i) => `<div class="row" style="margin-bottom:8px"><input data-ek="${i}" value="${esc(x.k)}" placeholder="Dato" style="flex:1;padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><input data-evv="${i}" value="${esc(x.v)}" placeholder="Valor" style="flex:2;padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><button class="btn sm ghost" data-ex="${i}">✕</button></div>`).join('') || ''}</div><div class="full"><button class="btn sm" id="aEx">${I.plus}Agregar dato</button></div>`;
+      const sync = () => { w.extra = w.extra.map((x, i) => ({ k: $(`[data-ek="${i}"]`, body).value, v: $(`[data-evv="${i}"]`, body).value })); };
+      $$('[data-ek],[data-evv]', body).forEach(x => x.oninput = sync);
+      $$('[data-ex]', body).forEach(b => b.onclick = () => { sync(); w.extra.splice(+b.dataset.ex, 1); draw(); });
+      $('#aEx', body).onclick = () => { sync(); w.extra.push({ k: '', v: '' }); draw(); $$('[data-ek]', body).pop().focus(); }; }
+    if (tab === 'bit') { body.innerHTML = `<div class="full"><textarea id="bTxt" placeholder="Ej: Muy buen desempeño en Ladera, llegó puntual, aprendió a operar el barco…" style="width:100%;min-height:70px"></textarea><div class="row" style="margin:8px 0 14px"><button class="btn sm" id="aBit">${I.plus}Agregar a la bitácora</button></div>
+        <div class="list">${w.bitacora.slice().sort((a, b) => b.fecha.localeCompare(a.fecha)).map(b => `<div class="item" style="cursor:default"><div class="date"><b>${+b.fecha.slice(8, 10)}</b><span>${MESES[+b.fecha.slice(5, 7) - 1].slice(0, 3)}</span></div><div><div>${esc(b.texto)}</div><div class="muted" style="font-size:12px">${esc(b.por || '')} · ${fdate(b.fecha)}</div></div></div>`).join('') || '<div class="muted">Aún no hay anotaciones.</div>'}</div></div>`;
+      $('#aBit', body).onclick = () => { const t = $('#bTxt', body).value.trim(); if (!t) return; w.bitacora.push({ fecha: today(), texto: t, por: USER }); draw(); }; }
+    if (tab === 'hist') { const sh = DB.shifts.filter(s => s.workerId === w.id).sort((a, b) => b.fecha.localeCompare(a.fecha)); const evs = new Set(sh.map(s => s.eventId)); const tot = sh.reduce((a, s) => a + num(s.pago), 0);
+      body.innerHTML = `<div class="full grid" style="grid-template-columns:repeat(3,1fr);gap:10px"><div class="card kpi" style="padding:12px 14px"><div class="lab">Eventos</div><div class="val">${evs.size}</div></div><div class="card kpi" style="padding:12px 14px"><div class="lab">Días trabajados</div><div class="val">${new Set(sh.map(s => s.fecha)).size}</div></div><div class="card kpi" style="padding:12px 14px"><div class="lab">Total pagado</div><div class="val" style="font-size:22px">${money(tot)}</div></div></div>
+        <div class="full"><table class="mini"><tbody>${sh.map(s => `<tr><td>${fdate(s.fecha)}</td><td>${esc(evName(s.eventId))}</td><td><span class="pill ${RCLS[s.rol] || ''}">${esc(s.rol)}</span></td><td class="num">${money(s.pago)}</td></tr>`).join('') || '<tr><td class="muted">Sin turnos todavía.</td></tr>'}</tbody></table></div>`; }
+    $$('input,select,textarea', body).forEach(i => i.addEventListener('change', () => { if (i.name) { w[i.name] = i.type === 'checkbox' ? i.checked : i.value; pct(); } }));
+  }
+  $$('.tabW', m).forEach(b => b.onclick = () => { collect(); tab = b.dataset.tab; draw(); });
+  draw();
+  $('#save', m).onclick = () => { collect(); if (!String(w.nombre || '').trim()) { tab = 'datos'; draw(); return toast('Falta el nombre'); } w.nombre = w.nombre.trim(); w.extra = w.extra.filter(x => x.k || x.v); upsert('workers', w); close(); render(); toast('Perfil guardado'); };
   const del = $('#del', m); if (del) del.onclick = () => { if (DB.shifts.some(s => s.workerId === w.id)) { if (!confirm('Esta persona tiene turnos. Mejor márcala como inactiva. ¿Eliminar igual?')) return; } removeRec('workers', w.id); close(); render(); };
+}
+
+/* ================= FICHA TÉCNICA (PDF formal) ================= */
+let PDFLIB = null;
+async function loadPdf() {
+  if (PDFLIB) return PDFLIB;
+  await new Promise((ok, ko) => { if (window.jspdf) return ok(); const s = document.createElement('script'); s.src = 'pdf/jspdf.umd.min.js'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+  const b64 = async u => { const buf = await (await fetch(u)).arrayBuffer(); let s = ''; const a = new Uint8Array(buf); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
+  const fonts = await Promise.all(['400Regular', '600SemiBold', '800ExtraBold'].map(w => b64(`pdf/Outfit_${w}.ttf`)));
+  await logoP; let logo = null; if (LOGO) { const c = document.createElement('canvas'); c.width = LOGO.width; c.height = LOGO.height; c.getContext('2d').drawImage(LOGO, 0, 0); logo = c.toDataURL('image/png'); }
+  PDFLIB = { fonts, logo, ratio: LOGO ? LOGO.height / LOGO.width : .4 }; return PDFLIB;
+}
+const COND_DEF = 'Los juegos son instalados y operados exclusivamente por personal de ARVI.\nEl cliente asegura un punto eléctrico de 220V, acceso para el vehículo de carga y un espacio despejado para el montaje.\nPor seguridad, ante lluvia o viento fuerte el encargado ARVI puede suspender el funcionamiento de los juegos inflables.\nCualquier cambio de horario o de lugar debe coordinarse con ARVI con anticipación.';
+const REQ_DEF = ['Punto eléctrico 220V a menos de 30 m', 'Superficie plana (pasto / cemento)', 'Acceso para camión hasta la zona de montaje', 'Espacio de montaje despejado', 'Baño disponible para el equipo', 'Estacionamiento para vehículos ARVI', 'Cuidado nocturno de los juegos (eventos de más de un día)'];
+function parseJuegos(t) {
+  return String(t || '').split(/\n|[–-](?=\s*[A-Za-zÁÉÍÓÚÑáéíóúñ(])|,|;|•/).map(x => x.trim()).filter(Boolean).map(x => { const q = x.match(/\bx\s*(\d+)\b/i); return { n: x.replace(/\bx\s*\d+\b/i, '').replace(/\s+/g, ' ').trim(), q: q ? +q[1] : 1 }; }).filter(j => j.n);
+}
+function fichaDefaults(e) {
+  e = e || {}; const c = byId('clients', e.clienteId) || {};
+  const ids = [...new Set(DB.shifts.filter(s => s.eventId === e.id).map(s => s.workerId))];
+  const montaje = DB.shifts.filter(s => s.eventId === e.id && s.rol === 'Montaje').map(s => s.fecha).sort()[0] || '';
+  const desm = DB.shifts.filter(s => s.eventId === e.id && s.rol === 'Desmontaje').map(s => s.fecha).sort().pop() || '';
+  const n = DB.events.filter(x => x.ficha && x.ficha.numero).length + 1;
+  return {
+    numero: `FT-${new Date().getFullYear()}-${String(n).padStart(3, '0')}`, emision: today(), cliente: c.nombre || '', rutCliente: c.rut || '', propuesta: '', evento: e.nombre || '',
+    fechaMontaje: montaje, horaMontaje: e.horarioMontaje || '', fechaDesde: e.inicio || '', fechaHasta: e.fin || e.inicio || '', horaFunc: e.horarioFunc || '', fechaDesmontaje: desm, horaDesmontaje: '',
+    direccion: [e.ubicacion, e.direccion].filter(Boolean).join(' · '), comuna: '', referencia: e.ingreso || '', contacto: e.contacto || '', telefono: e.telefonoContacto || '', email: c.email || '',
+    encargado: '', encargadoTel: '', juegos: parseJuegos(e.juegos).map(j => j.q > 1 ? `${j.n} x${j.q}` : j.n).join('\n'), personajes: '', obs: /importado desde excel/i.test(e.notas || '') ? '' : (e.notas || ''),
+    equipo: ids, vehiculos: e.vehiculos || [], blankEq: 2, blankJ: 2, papel: 'letter', cond: COND_DEF, req: REQ_DEF.join('\n'),
+    sec: { juegos: true, equipo: true, vehiculos: true, req: true, control: true, obs: true, cond: true, firmas: true }
+  };
+}
+VIEWS.fichas = () => {
+  const v = $('#view'); const evs = DB.events.filter(e => !isExt(e)).sort((a, b) => (b.inicio || '').localeCompare(a.inicio || ''));
+  v.innerHTML = head('Fichas técnicas', 'Documento formal en PDF para el cliente y el equipo: datos del evento, juegos, operadores, requerimientos y firmas.', `<button class="btn y" id="fBl">${I.plus}Ficha en blanco</button>`) +
+    `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Evento</th><th class="hide-m">Cliente</th><th>Equipo</th><th>Ficha</th><th></th></tr></thead><tbody>${evs.map(e => `<tr><td>${fdate(e.inicio)}</td><td><b>${esc(e.nombre)}</b></td><td class="hide-m">${esc(cliName(e.clienteId))}</td><td>${new Set(DB.shifts.filter(s => s.eventId === e.id).map(s => s.workerId)).size} personas</td><td>${e.ficha && e.ficha.numero ? `<span class="pill p-pagada">${esc(e.ficha.numero)}</span>` : '<span class="pill p-pend">Sin ficha</span>'}</td><td class="num"><button class="btn sm" data-fi="${e.id}">${I.doc || ''}${e.ficha ? 'Abrir' : 'Crear'} ficha</button></td></tr>`).join('') || '<tr><td colspan="6" class="empty">Aún no hay eventos.</td></tr>'}</tbody></table></div></div>`;
+  $('#fBl').onclick = () => fichaModal(null);
+  $$('[data-fi]', v).forEach(b => b.onclick = () => fichaModal(byId('events', b.dataset.fi)));
+};
+function fichaModal(e) {
+  const d = Object.assign(fichaDefaults(e), JSON.parse(JSON.stringify((e && e.ficha) || {}))); d.sec = Object.assign(fichaDefaults(e).sec, d.sec || {});
+  const T = (k, l, ph = '', type = 'text', full = false) => `<label class="f ${full ? 'full' : ''}">${l}<input name="${k}" type="${type}" value="${esc(d[k] || '')}" placeholder="${esc(ph)}"></label>`;
+  const A = (k, l, ph = '') => `<label class="f full">${l}<textarea name="${k}" placeholder="${esc(ph)}" style="min-height:90px">${esc(d[k] || '')}</textarea></label>`;
+  const SEC = [['juegos', 'Juegos solicitados'], ['equipo', 'Personal ARVI'], ['vehiculos', 'Vehículos'], ['req', 'Requerimientos del lugar'], ['control', 'Control en terreno (para rellenar)'], ['obs', 'Observaciones'], ['cond', 'Condiciones de servicio'], ['firmas', 'Firmas y recepción conforme']];
+  const ws = sortedWorkers().filter(w => w.activo !== false || d.equipo.includes(w.id));
+  const { m, close } = modal(`<header><div><h3>Ficha técnica ${esc(d.numero)}</h3><div class="muted">${e ? esc(e.nombre) : 'Ficha en blanco'} · los campos vacíos salen en el PDF con línea para rellenar</div></div><button class="btn sm ghost" data-close>Cerrar</button></header>
+  <div class="form" id="ff">
+    <div class="sec full">1. Datos generales</div>${T('numero', 'N° de ficha')}${T('emision', 'Fecha de emisión', '', 'date')}${T('cliente', 'Cliente / razón social')}${T('rutCliente', 'RUT cliente')}${T('propuesta', 'Propuesta / cotización', 'Ej: COT-10673')}${T('evento', 'Nombre del evento')}
+    <div class="sec full">2. Fechas y horarios</div>${T('fechaMontaje', 'Fecha de montaje', '', 'date')}${T('horaMontaje', 'Horario de montaje', 'Ej: 08:00 a 12:00')}${T('fechaDesde', 'Funcionamiento desde', '', 'date')}${T('fechaHasta', 'Funcionamiento hasta', '', 'date')}${T('horaFunc', 'Horario de funcionamiento', 'Ej: 11:00 a 18:00')}${T('fechaDesmontaje', 'Fecha de desmontaje', '', 'date')}${T('horaDesmontaje', 'Horario de desmontaje')}
+    <div class="sec full">3. Lugar y contacto</div>${T('direccion', 'Dirección de destino', '', 'text', true)}${T('comuna', 'Comuna')}${T('referencia', 'Referencia / ingreso', 'Ej: entrada por portón 2')}${T('contacto', 'Contacto en terreno')}${T('telefono', 'Teléfono contacto')}${T('email', 'Correo contacto')}${T('encargado', 'Encargado ARVI en terreno')}${T('encargadoTel', 'Teléfono encargado ARVI')}
+    <div class="sec full">4. Juegos</div>${A('juegos', 'Juegos solicitados (uno por línea, cantidad con x2, x3…)', 'Sillas voladoras\nBarco\nInflable simple x3')}${T('personajes', 'Personajes / corpóreos', 'Ej: Kitty y Mickey', 'text', true)}${T('blankJ', 'Filas extra en blanco (juegos)', '', 'number')}
+    <div class="sec full">5. Personal ARVI <span class="muted" style="font-weight:500">· viene de los turnos del evento</span></div>
+    <div class="full chips" id="fEq">${ws.map(w => `<label class="check"><input type="checkbox" value="${w.id}" ${d.equipo.includes(w.id) ? 'checked' : ''}>${esc(w.nombre)}${w.rut ? '' : ' <span class="muted">(sin RUT)</span>'}</label>`).join('')}</div>${T('blankEq', 'Filas extra en blanco (personal)', '', 'number')}
+    <div class="sec full">6. Vehículos</div><div class="full chips" id="fVh">${DB.vehicles.map(vh => `<label class="check"><input type="checkbox" value="${vh.id}" ${d.vehiculos.includes(vh.id) ? 'checked' : ''}>${esc(vh.patente)} ${esc(vh.descripcion || '')}</label>`).join('') || '<span class="muted">Sin vehículos registrados (se deja espacio para rellenar).</span>'}</div>
+    <div class="sec full">7. Requerimientos, observaciones y condiciones</div>${A('req', 'Requerimientos del lugar (casillas para marcar)')}${A('obs', 'Observaciones')}${A('cond', 'Condiciones de servicio')}
+    <div class="sec full">Secciones a incluir en el PDF</div><div class="full chips" id="fSec">${SEC.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" ${d.sec[k] ? 'checked' : ''}>${l}</label>`).join('')}</div>
+    <label class="f">Tamaño de hoja<select name="papel">${opts(['letter', 'a4'], d.papel, x => x === 'letter' ? 'Carta' : 'A4')}</select></label>
+  </div>
+  <div class="row" style="justify-content:space-between;margin-top:16px"><span class="muted">${e ? 'Los datos quedan guardados en el evento.' : ''}</span><div class="row">${e ? '<button class="btn ghost" id="fSave">Guardar</button>' : ''}<button class="btn y" id="fPdf">${I.doc || ''}Descargar PDF</button></div></div>`);
+  const read = () => { const o = formData($('#ff', m)); Object.assign(d, o); d.equipo = $$('#fEq input:checked', m).map(x => x.value); d.vehiculos = $$('#fVh input:checked', m).map(x => x.value); d.sec = Object.fromEntries(SEC.map(([k]) => [k, !!$(`#fSec input[value="${k}"]`, m).checked])); d.blankEq = Math.max(0, Math.min(20, num(d.blankEq))); d.blankJ = Math.max(0, Math.min(20, num(d.blankJ))); return d; };
+  const save = () => { if (!e) return; read(); const ev = byId('events', e.id); upsert('events', { ...ev, ficha: JSON.parse(JSON.stringify(d)) }); };
+  if (e) $('#fSave', m).onclick = () => { save(); toast('Ficha guardada en el evento'); };
+  $('#fPdf', m).onclick = async () => { const b = $('#fPdf', m); b.classList.add('loading'); try { read(); save(); await pdfFicha(d); } catch (x) { console.error(x); toast('No se pudo crear el PDF: ' + x.message); } b.classList.remove('loading'); };
+}
+async function pdfFicha(d) {
+  const L = await loadPdf(); const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: d.papel === 'a4' ? 'a4' : 'letter' });
+  doc.addFileToVFS('O4.ttf', L.fonts[0]); doc.addFont('O4.ttf', 'Outfit', 'normal'); doc.addFileToVFS('O6.ttf', L.fonts[1]); doc.addFont('O6.ttf', 'Outfit', 'semibold'); doc.addFileToVFS('O8.ttf', L.fonts[2]); doc.addFont('O8.ttf', 'Outfit', 'bold');
+  const PW = doc.internal.pageSize.getWidth(), PH = doc.internal.pageSize.getHeight(), M = 40, CW = PW - 2 * M, BOT = PH - 58;
+  const G9 = [15, 77, 36], G7 = [31, 122, 53], G5 = [58, 168, 72], YY = [255, 198, 26], INK = [22, 38, 27], MU = [107, 124, 112], LN = [205, 214, 204], BGL = [240, 247, 236];
+  const font = (st, sz, col = INK) => { doc.setFont('Outfit', st); doc.setFontSize(sz); doc.setTextColor(...col); };
+  const star = (x, y, r, col) => { const p = []; for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, q = k % 2 ? r * .45 : r; p.push([x + q * Math.cos(a), y + q * Math.sin(a)]); } doc.setFillColor(...col); doc.lines(p.slice(1).map((pt, i) => [pt[0] - p[i][0], pt[1] - p[i][1]]), p[0][0], p[0][1], [1, 1], 'F', true); };
+  const fd = s => s ? (d2 => d2.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))(new Date(s + 'T12:00')) : '';
+  let y = 0, secN = 0;
+  function header(first) {
+    const HB = first ? 104 : 50; doc.setFillColor(...G9); doc.rect(0, 0, PW, HB, 'F'); doc.setFillColor(...YY); doc.rect(0, HB, PW, 4, 'F');
+    for (let i = 0; i < 9; i++) star(PW - 30 - i * 47, first ? 20 : 14, 3 + (i % 3), [60, 140, 75]);
+    if (first) {
+      if (L.logo) { doc.setFillColor(255, 255, 255); const lw = Math.min(130, 64 / L.ratio); doc.roundedRect(M - 8, (HB - lw * L.ratio) / 2 - 8, lw + 16, lw * L.ratio + 16, 8, 8, 'F'); doc.addImage(L.logo, 'PNG', M, (HB - lw * L.ratio) / 2, lw, lw * L.ratio); }
+      font('bold', 19, [255, 255, 255]); doc.text('FICHA TÉCNICA DE FUNCIONAMIENTO', PW - M, 50, { align: 'right' });
+      font('semibold', 10, [255, 228, 138]); doc.text(`N° ${d.numero || '________'}   ·   Emitida el ${d.emision ? fdate(d.emision) : '____/____/______'}`, PW - M, 70, { align: 'right' });
+      y = 130;
+    } else { font('bold', 12, [255, 255, 255]); doc.text('FICHA TÉCNICA DE FUNCIONAMIENTO', M, 31); font('semibold', 10, [255, 228, 138]); doc.text(`N° ${d.numero || ''} · ${d.evento || ''}`, PW - M, 31, { align: 'right' }); y = 76; }
+  }
+  const ensure = h => { if (y + h > BOT) { doc.addPage(); header(false); } };
+  function section(t, need = 48) { ensure(need); secN++; doc.setFillColor(...G7); doc.roundedRect(M, y, CW, 22, 4, 4, 'F'); doc.setFillColor(...YY); doc.rect(M, y, 5, 22, 'F'); font('bold', 10.5, [255, 255, 255]); doc.text(`${secN}.  ${t.toUpperCase()}`, M + 14, y + 15); y += 30; }
+  // cuadrícula de datos: [etiqueta, valor, ancho(1 o 2)]
+  function grid(items) {
+    let col = 0, rowH = 0, x0 = M; const cw = CW / 2;
+    for (const [lab, val, span = 1] of items) {
+      if (col + span > 2) { y += rowH; col = 0; rowH = 0; }
+      const w = cw * span, x = x0 + col * cw; font('normal', 10.5); const lines = val ? doc.splitTextToSize(String(val), w - 16) : []; const h = 30 + Math.max(1, lines.length) * 13;
+      if (col === 0) ensure(h);
+      doc.setDrawColor(...LN); doc.setLineWidth(.6); doc.rect(x, y, w, h);
+      font('semibold', 7.5, MU); doc.text(lab.toUpperCase(), x + 8, y + 12);
+      if (lines.length) { font('semibold', 10.5, INK); doc.text(lines, x + 8, y + 27); } else { doc.setDrawColor(170, 180, 170); doc.setLineDashPattern([1.5, 2], 0); doc.line(x + 8, y + h - 9, x + w - 10, y + h - 9); doc.setLineDashPattern([], 0); }
+      rowH = Math.max(rowH, h); col += span; if (col >= 2) { y += rowH; col = 0; rowH = 0; }
+    }
+    if (col) y += rowH; y += 14;
+  }
+  function table(cols, rows, blanks = 0) {
+    const tw = cols.reduce((a, c) => a + c.w, 0), ws = cols.map(c => c.w / tw * CW);
+    const head = () => { ensure(44); doc.setFillColor(...BGL); doc.rect(M, y, CW, 20, 'F'); doc.setDrawColor(...LN); doc.rect(M, y, CW, 20); let x = M; font('bold', 8, G9); cols.forEach((c, i) => { doc.text(c.h.toUpperCase(), c.a === 'c' ? x + ws[i] / 2 : x + 7, y + 13.5, c.a === 'c' ? { align: 'center' } : {}); x += ws[i]; }); y += 20; };
+    head();
+    const all = [...rows, ...Array.from({ length: blanks }, () => cols.map(() => ''))];
+    all.forEach((r, ri) => {
+      font('normal', 9.5); const cells = r.map((v, i) => doc.splitTextToSize(String(v ?? ''), ws[i] - 12)); const h = Math.max(24, 10 + Math.max(...cells.map(c => c.length)) * 12);
+      if (y + h > BOT) { doc.addPage(); header(false); head(); }
+      if (ri % 2) { doc.setFillColor(250, 252, 248); doc.rect(M, y, CW, h, 'F'); }
+      let x = M; doc.setDrawColor(...LN); doc.setLineWidth(.6);
+      cells.forEach((c, i) => { doc.rect(x, y, ws[i], h); const col = cols[i];
+        if (col.box) { doc.setDrawColor(...MU); [0, 1].forEach(k => { const bx = x + 8 + k * (ws[i] - 16) / 2; doc.rect(bx, y + h / 2 - 4.5, 9, 9); font('normal', 7.5, MU); doc.text(col.box[k], bx + 13, y + h / 2 + 3); }); doc.setDrawColor(...LN); }
+        else if (c.length && c[0]) { font(i === 0 ? 'semibold' : 'normal', 9.5, INK); doc.text(c, col.a === 'c' ? x + ws[i] / 2 : x + 6, y + 15, col.a === 'c' ? { align: 'center' } : {}); }
+        x += ws[i]; });
+      y += h;
+    });
+    y += 14;
+  }
+  function checks(list) { const cw = CW / 2; for (let i = 0; i < list.length; i += 2) { font('normal', 9.5, INK); const pair = list.slice(i, i + 2).map(t => doc.splitTextToSize(t, cw - 26)); const h = Math.max(...pair.map(p => p.length)) * 11.5 + 9; ensure(h); pair.forEach((ls, col) => { const x = M + col * cw; doc.setDrawColor(...G7); doc.setLineWidth(1); doc.rect(x + 2, y, 10, 10); font('normal', 9.5, INK); doc.text(ls, x + 18, y + 8.5); }); y += h; } doc.setLineWidth(.6); y += 6; }
+  function lines(n, label) { if (label) { ensure(20); font('semibold', 8, MU); doc.text(label.toUpperCase(), M, y + 8); y += 14; } for (let i = 0; i < n; i++) { ensure(20); doc.setDrawColor(170, 180, 170); doc.line(M, y + 14, M + CW, y + 14); y += 20; } y += 6; }
+  function para(t) { font('normal', 9.5, INK); const L2 = String(t).split('\n').filter(Boolean); L2.forEach(p => { const ls = doc.splitTextToSize(p, CW - 16); ensure(ls.length * 12 + 6); font('normal', 9.5, INK); star(M + 4, y + 4, 3.5, YY); doc.text(ls, M + 14, y + 8); y += ls.length * 12 + 6; }); y += 8; }
+
+  header(true);
+  section('Datos generales');
+  grid([['Cliente / razón social', d.cliente], ['RUT cliente', d.rutCliente], ['Propuesta / cotización', d.propuesta], ['Evento', d.evento]]);
+  section('Fechas y horarios');
+  grid([['Fecha de montaje', fd(d.fechaMontaje)], ['Horario de montaje', d.horaMontaje], ['Funcionamiento', d.fechaDesde ? (d.fechaHasta && d.fechaHasta !== d.fechaDesde ? `Del ${fd(d.fechaDesde)} al ${fd(d.fechaHasta)}` : fd(d.fechaDesde)) : '', 2], ['Horario de funcionamiento', d.horaFunc], ['Fecha y horario de desmontaje', [fd(d.fechaDesmontaje), d.horaDesmontaje].filter(Boolean).join(' · ')]]);
+  section('Lugar y contacto');
+  grid([['Dirección de destino', d.direccion, 2], ['Comuna', d.comuna], ['Referencia / ingreso', d.referencia], ['Contacto en terreno', d.contacto], ['Teléfono contacto', d.telefono], ['Correo contacto', d.email], ['Encargado ARVI en terreno', [d.encargado, d.encargadoTel].filter(Boolean).join(' · ')]]);
+  if (d.sec.juegos) { section('Juegos solicitados', 130); const js = parseJuegos(d.juegos); table([{ h: 'Juego', w: 5 }, { h: 'Cant.', w: 1, a: 'c' }, { h: 'Entrega', w: 2.3, box: ['OK', 'Obs.'] }, { h: 'Retiro', w: 2.3, box: ['OK', 'Obs.'] }], js.map(j => [j.n, String(j.q), '', '']), d.blankJ); if (d.personajes) grid([['Personajes / corpóreos', d.personajes, 2]]); }
+  if (d.sec.equipo) { section('Personal ARVI', 130); const rolOf = id => [...new Set(DB.shifts.filter(s => s.workerId === id && d.evento && evName(s.eventId) === d.evento).map(s => s.rol))].join(' y ') || (byId('workers', id) || {}).funcion || 'Operador';
+    table([{ h: 'Nombre', w: 4 }, { h: 'C.I. / RUT', w: 2.4 }, { h: 'Función', w: 2.6 }, { h: 'Firma', w: 2.6 }], d.equipo.map(id => byId('workers', id)).filter(Boolean).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(w => [w.nombre, w.rut || '', rolOf(w.id), '']), d.blankEq); }
+  if (d.sec.vehiculos) { section('Vehículos', 130); table([{ h: 'Patente', w: 2 }, { h: 'Descripción', w: 4 }, { h: 'Conductor', w: 3.5 }, { h: 'Hora llegada', w: 2 }], d.vehiculos.map(v => byId('vehicles', v)).filter(Boolean).map(v => [v.patente, v.descripcion || '', '', '']), d.vehiculos.length ? 0 : 2); }
+  if (d.sec.req) { section('Requerimientos del lugar', 130); checks(String(d.req || '').split('\n').map(x => x.trim()).filter(Boolean)); }
+  if (d.sec.control) { section('Control en terreno', 130); grid([['Hora de llegada del equipo', ''], ['Hora de término de montaje', ''], ['Hora de inicio de funcionamiento', ''], ['Hora de término de funcionamiento', ''], ['Hora de retiro', ''], ['Asistentes aproximados', '']]); lines(3, 'Incidentes o novedades'); }
+  if (d.sec.obs) { section('Observaciones'); if (d.obs) para(d.obs); lines(d.obs ? 2 : 4); }
+  if (d.sec.cond && d.cond) { section('Condiciones de servicio'); para(d.cond); }
+  if (d.sec.firmas) {
+    section('Firmas y recepción conforme'); ensure(150);
+    font('normal', 9, MU); doc.text(doc.splitTextToSize('Con su firma, las partes confirman la información de esta ficha y la recepción conforme del servicio.', CW), M, y + 4); y += 26;
+    const parts = ['Encargado ARVI', 'Ventas ARVI', 'Cliente']; const w3 = (CW - 24) / 3;
+    parts.forEach((p, i) => { const x = M + i * (w3 + 12); doc.setDrawColor(...LN); doc.roundedRect(x, y, w3, 118, 6, 6); doc.setDrawColor(...INK); doc.line(x + 12, y + 56, x + w3 - 12, y + 56); font('bold', 10, G9); doc.text(p.toUpperCase(), x + w3 / 2, y + 72, { align: 'center' });
+      font('normal', 8.5, MU); ['Nombre', 'RUT', 'Fecha'].forEach((k, j) => { doc.text(k + ':', x + 12, y + 88 + j * 11); doc.setDrawColor(190, 198, 188); doc.line(x + 46, y + 89 + j * 11, x + w3 - 12, y + 89 + j * 11); }); });
+    y += 130;
+  }
+  // pie en todas las páginas
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFillColor(...G9); doc.rect(0, PH - 34, PW, 34, 'F'); doc.setFillColor(...YY); doc.rect(0, PH - 34, PW, 3, 'F'); star(M + 4, PH - 16, 6, YY);
+    font('semibold', 8.5, [255, 255, 255]); doc.text('ARVI · Entretenciones infantiles · arvi.cl', M + 16, PH - 13); doc.text(`Ficha ${d.numero || ''} · Página ${i} de ${n}`, PW - M, PH - 13, { align: 'right' }); }
+  doc.save(`Ficha tecnica ${d.numero || ''} ${d.evento || ''}.pdf`.replace(/[\\/:*?"<>|]/g, '').trim());
+  toast('PDF descargado');
 }
 function vehicleModal(vh) {
   const isNew = !vh; vh = vh ? { ...vh } : { id: uid(), patente: '', descripcion: '' };
