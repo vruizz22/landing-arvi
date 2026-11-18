@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>ARVI · Gestión</title>
+<link rel="icon" href="favicon.png">
+<style>
+@font-face{font-family:Outfit;src:url(outfit.ttf) format("truetype");font-weight:100 900;font-display:swap}
+:root{--g900:#0f4d24;--g700:#1f7a35;--g500:#3aa848;--lime:#9bd34a;--y:#ffc61a;--yl:#ffe48a;--cream:#fffaf0;--ink:#16261b;--mute:#6b7c70;--line:#e3eadf;--red:#e5483f;--orange:#f39a2b;--blue:#2f8fe8;--bg:#f4f7f1;--card:#fff;--r:18px}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Outfit,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--g700)}
+.hidden{display:none!important}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 20% 10%,#2f9a45 0,var(--g900) 60%);position:relative;overflow:hidden}
+#login .stars{position:absolute;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#ffe48a 1.5px,transparent 1.6px),radial-gradient(#fff 1px,transparent 1.2px);background-size:90px 90px,55px 55px;background-position:0 0,20px 30px}
+.loginbox{position:relative;background:var(--cream);border-radius:28px;padding:30px 26px;width:min(400px,100%);box-shadow:0 30px 60px rgba(0,0,0,.35);text-align:center}
+.loginbox img{width:190px}
+.loginbox h1{font-size:22px;margin:10px 0 4px;color:var(--g900)}
+.loginbox p{color:var(--mute);margin:0 0 18px;font-size:14px}
+.loginbox input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:#fff;font-size:16px;margin-bottom:12px}
+.err{color:var(--red);font-size:14px;min-height:20px}
+/* layout */
+#app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{background:var(--g900);color:#fff;padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+aside .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 14px}
+aside .brand img{width:110px;background:#fff;border-radius:14px;padding:6px 10px}
+aside .brand span{font-weight:700;color:var(--yl);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.nav{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;color:#d9ecd9;cursor:pointer;border:0;background:none;text-align:left;font-weight:600;width:100%}
+.nav:hover{background:rgba(255,255,255,.08)}
+.nav.on{background:var(--y);color:var(--g900)}
+.nav svg{width:20px;height:20px;flex:none}
+aside .spacer{flex:1}
+.sync{font-size:12px;color:#bcd9be;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;gap:8px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:#999;flex:none}.dot.ok{background:var(--lime)}.dot.busy{background:var(--y)}.dot.bad{background:var(--red)}
+main{padding:22px 26px 60px;min-width:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.top h2{margin:0;font-size:26px;color:var(--g900);font-weight:800}
+.top .sub{color:var(--mute);font-size:14px;margin-top:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:0;border-radius:12px;padding:10px 15px;font-weight:700;cursor:pointer;background:var(--g700);color:#fff;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}
+.btn.y{background:var(--y);color:var(--g900)}.btn.ghost{background:#fff;color:var(--g900);border:1.5px solid var(--line)}.btn.red{background:#fff;color:var(--red);border:1.5px solid #f6c9c6}.btn.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+.btn svg{width:17px;height:17px}
+.card{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:0 1px 0 var(--line),0 8px 24px rgba(15,77,36,.05);border:1px solid var(--line)}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.kpi{position:relative;overflow:hidden}
+.kpi .lab{font-size:13px;color:var(--mute);font-weight:600}
+.kpi .val{font-size:28px;font-weight:800;color:var(--g900);margin-top:4px}
+.kpi .foot{font-size:12.5px;color:var(--mute);margin-top:2px}
+.kpi.warn .val{color:var(--red)}
+.kpi::after{content:"";position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:var(--yl);opacity:.45}
+.two{grid-template-columns:1.2fr 1fr}
+h3{margin:0 0 12px;font-size:17px;color:var(--g900)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--bg);cursor:pointer}
+.item:hover{background:#eaf3e4}
+.date{width:52px;text-align:center;background:var(--g700);color:#fff;border-radius:10px;padding:5px 0;flex:none;line-height:1.05}
+.date b{display:block;font-size:19px}.date small{font-size:11px;text-transform:uppercase}
+.grow{flex:1;min-width:0}.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.muted{color:var(--mute);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.p-pagada{background:#dff3d8;color:#1f6b2e}.p-pend{background:#fff3c4;color:#8a6200}.p-venc{background:#fde0de;color:#b42318}.p-porv{background:#ffe7c7;color:#a24d00}.p-nc{background:#e7e9ff;color:#3b3fa8}.p-nulo{background:#eee;color:#555}.p-salto{background:#f0e1ff;color:#6b2fa8}
+.p-conf{background:#dff3d8;color:#1f6b2e}.p-porc{background:#fff3c4;color:#8a6200}.p-real{background:#e6eef9;color:#245a9c}.p-canc{background:#eee;color:#666}
+.r-mont{background:#fde4cf;color:#9a4a0b}.r-func{background:#d8efc9;color:#2a6a1d}.r-desm{background:#e3e3fb;color:#3a3a9a}.r-happy{background:#fbd5f3;color:#93297c}.r-grua{background:#d5e7fb;color:#1f5c9c}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.tools input,.tools select{padding:9px 12px;border-radius:11px;border:1.5px solid var(--line);background:#fff;min-width:0}
+.tools .search{flex:1;min-width:180px}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);text-align:left;padding:10px;border-bottom:1.5px solid var(--line);position:sticky;top:0;background:#fff;white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer}tr.click:hover td{background:#f6faf3}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap td{white-space:nowrap}
+.tablewrap{overflow:auto;max-height:70vh;border-radius:12px}
+tfoot td{font-weight:800;background:#f6faf3;position:sticky;bottom:0}
+/* programación */
+.sched{overflow:auto;max-height:74vh;border:1px solid var(--line);border-radius:14px;background:#fff}
+.sched table{border-spacing:0;font-size:12.5px}
+.sched th,.sched td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px;min-width:92px;height:52px;vertical-align:top}
+.sched th{height:auto;text-align:center;z-index:2}
+.sched th.we{color:var(--red)}
+.sched td.name,.sched th.name{position:sticky;left:0;background:#fff;z-index:3;min-width:170px;font-weight:700;font-size:13px;vertical-align:middle}
+.sched td.name small{display:block;font-weight:500;color:var(--mute);font-size:11px}
+.sched td.cell{cursor:pointer}.sched td.cell:hover{background:#f3f9ee}
+.sched td.tot{position:sticky;right:0;background:#fffbea;font-weight:800;text-align:right;min-width:110px;vertical-align:middle}
+.chip{border-radius:8px;padding:3px 6px;margin-bottom:3px;font-weight:700;line-height:1.15}
+.chip small{display:block;font-weight:600;opacity:.85}
+.legend{display:flex;gap:8px;flex-wrap:wrap}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal .dow{font-size:12px;font-weight:700;color:var(--mute);text-align:center;padding:4px}
+.cal .d{min-height:96px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.cal .d.out{opacity:.4}.cal .d.today{border:2px solid var(--y)}
+.cal .d .n{font-weight:800;font-size:13px}
+.cal .ev{font-size:11.5px;font-weight:700;background:var(--g700);color:#fff;border-radius:6px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal .ev.porc{background:var(--y);color:var(--g900)}.cal .ev.canc{background:#bbb}.cal .ev.real{background:#4a7fc1}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,30,15,.45);display:flex;align-items:flex-start;justify-content:center;padding:28px 14px;z-index:50;overflow:auto}
+.sheet{background:#fff;border-radius:22px;width:min(860px,100%);padding:22px;box-shadow:0 30px 70px rgba(0,0,0,.3);animation:pop .18s ease}
+.sheet.wide{width:min(1100px,100%)}
+@keyframes pop{from{transform:translateY(10px);opacity:0}}
+.sheet header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.sheet header h3{margin:0;font-size:20px}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form .full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:var(--mute)}
+label.f input,label.f select,label.f textarea{padding:10px 12px;border-radius:11px;border:1.5px solid var(--line);font-weight:500;color:var(--ink);font-size:14.5px;background:#fff;width:100%}
+label.f textarea{min-height:70px;resize:vertical}
+label.f input:focus,label.f select:focus,label.f textarea:focus{outline:2px solid var(--lime);border-color:transparent}
+.sec{margin:18px 0 8px;font-weight:800;color:var(--g900);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mini{width:100%;font-size:13.5px}.mini td,.mini th{padding:7px 8px}
+.mini input,.mini select{padding:6px 8px;border-radius:9px;border:1.5px solid var(--line);width:100%;min-width:0;font-size:13.5px}
+.x{border:0;background:#fee;color:var(--red);border-radius:9px;width:32px;height:32px;cursor:pointer;font-weight:800}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.check{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1.5px solid var(--line);cursor:pointer;font-size:13px;font-weight:600;background:#fff}
+.check input{accent-color:var(--g700)}
+.sum{display:flex;gap:16px;flex-wrap:wrap;background:var(--bg);border-radius:12px;padding:12px 14px;margin-top:10px}
+.sum div{font-size:12.5px;color:var(--mute)}.sum b{display:block;font-size:17px;color:var(--g900)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--g900);color:#fff;padding:12px 18px;border-radius:14px;font-weight:600;z-index:80;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.empty{text-align:center;color:var(--mute);padding:30px}
+.mtop{display:none}
+@media (max-width:900px){
+  #app{grid-template-columns:1fr}
+  aside{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;padding:6px;z-index:40;overflow-x:auto;gap:2px;border-radius:18px 18px 0 0}
+  aside .brand,aside .spacer,aside .sync{display:none}
+  .nav{flex-direction:column;gap:2px;font-size:10.5px;padding:7px 8px;min-width:64px;align-items:center;text-align:center}
+  main{padding:14px 14px 100px}
+  .mtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .mtop img{height:34px}
+  .two{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}.kpi .val{font-size:21px}
+  .form{grid-template-columns:1fr}
+  .top h2{font-size:22px}
+  .hide-m{display:none}
+}
+</style>
+</head>
+<body>
+<section id="login">
+  <div class="stars"></div>
+  <form class="loginbox" id="loginForm" autocomplete="on">
+    <img src="logo.png" alt="ARVI">
+    <h1>Gestión ARVI</h1>
+    <p>Eventos, equipo y cobranza en un solo lugar</p>
+    <input type="password" id="pw" placeholder="Clave de acceso" autocomplete="current-password" required>
+    <button class="btn y" style="width:100%;justify-content:center;padding:13px" type="submit">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<div id="app" class="hidden">
+  <aside>
+    <div class="brand"><img src="logo.png" alt="ARVI"><span>Gestión</span></div>
+    <button class="nav" data-v="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+    <button class="nav" data-v="eventos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Eventos</button>
+    <button class="nav" data-v="prog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4h18v16H3zM3 9h18M9 4v16M15 4v16"/></svg>Programación</button>
+    <button class="nav" data-v="equipo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.6.1 4.6 1.7 5.4 4.4"/></svg>Equipo</button>
+    <button class="nav" data-v="cobranza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Cobranza</button>
+    <button class="nav" data-v="clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6M9 10h.01M15 10h.01"/></svg>Clientes</button>
+    <button class="nav" data-v="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
+    <div class="spacer"></div>
+    <div class="sync" id="syncBox"><span class="dot" id="syncDot"></span><span id="syncTxt">Sin conexión a la nube</span></div>
+    <button class="nav" id="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Salir</button>
+  </aside>
+  <main>
+    <div class="mtop"><img src="logo.png" alt="ARVI"><span class="pill" id="syncM">●</span></div>
+    <div id="view"></div>
+  </main>
+</div>
+<div id="modalRoot"></div>
+<script src="xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
