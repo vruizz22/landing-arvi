@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<base href="/gestion/">
+<script>if (!location.pathname.endsWith("/")) history.replaceState(null, "", "/gestion/" + location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>ARVI · Gestión</title>
@@ -176,6 +178,6 @@ label.f input:focus,label.f select:focus,label.f textarea:focus{outline:2px soli
 </div>
 <div id="modalRoot"></div>
 <script src="xlsx.full.min.js"></script>
-<script type="module" src="app.js?v=4"></script>
+<script type="module" src="app.js?v=5"></script>
 </body>
 </html>
