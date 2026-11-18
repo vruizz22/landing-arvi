@@ -8,8 +8,30 @@ const ROLES = ['Montaje', 'Funcionamiento', 'Desmontaje', 'ARVI Happy', 'Grúa']
 const RCLS = { Montaje: 'r-mont', Funcionamiento: 'r-func', Desmontaje: 'r-desm', 'ARVI Happy': 'r-happy', 'Grúa': 'r-grua' };
 const RCOL = { Montaje: '#fde4cf', Funcionamiento: '#d8efc9', Desmontaje: '#e3e3fb', 'ARVI Happy': '#fbd5f3', 'Grúa': '#d5e7fb' };
 const GRUPOS = ['Operador', 'Grúa', 'Apoyo externo'];
+/* roles y grupos personalizados (Ajustes) — se guardan en la nube y se suman a los de siempre */
+const BASE_ROLES = ROLES.slice(), BASE_GRUPOS = GRUPOS.slice(), RPAL = ['#ffe0a3', '#cdeefa', '#f9d0c4', '#e2d6fb', '#d3f0e0', '#f5e1b8'];
+const rolesCfg = () => (typeof DB !== 'undefined' && DB.dias.find(d => d.id === 'roles')) || { id: 'roles', roles: [], grupos: [] };
+function applyCfg() {
+  const rc = rolesCfg(); ROLES.splice(0, ROLES.length, ...BASE_ROLES, ...(rc.roles || []).filter(r => !BASE_ROLES.includes(r)));
+  GRUPOS.splice(0, GRUPOS.length, ...BASE_GRUPOS, ...(rc.grupos || []).filter(g => !BASE_GRUPOS.includes(g)));
+  ROLES.slice(BASE_ROLES.length).forEach((r, i) => { RCLS[r] = 'r-c' + (i % 6); RCOL[r] = RPAL[i % 6]; });
+}
+function addRole(n) { n = String(n || '').trim(); if (!n) return ''; const rc = rolesCfg(); if (!ROLES.includes(n)) { upsert('dias', { ...rc, roles: [...(rc.roles || []), n] }); applyCfg(); toast('Rol "' + n + '" agregado'); } return n; }
+function addGroup(n) { n = String(n || '').trim(); if (!n) return ''; const rc = rolesCfg(); if (!GRUPOS.includes(n)) { upsert('dias', { ...rc, grupos: [...(rc.grupos || []), n] }); applyCfg(); toast('Grupo "' + n + '" agregado'); } return n; }
+// "+ Nuevo rol / persona / grupo" en cualquier lista desplegable
+document.addEventListener('change', e => {
+  const sel = e.target; if (!(sel instanceof HTMLSelectElement)) return; const v = sel.value;
+  if (!['__newrole', '__newwk', '__newgrp'].includes(v)) return;
+  const ask = v === '__newrole' ? 'Nombre del nuevo rol (ej: Animador, Bodega, Chofer):' : v === '__newgrp' ? 'Nombre del nuevo grupo:' : 'Nombre completo de la nueva persona:';
+  const n = (prompt(ask) || '').trim(); let val = '';
+  if (n && v === '__newrole') val = addRole(n);
+  if (n && v === '__newgrp') val = addGroup(n);
+  if (n && v === '__newwk') { const ex = DB.workers.find(w => norm(w.nombre) === norm(n)); val = ex ? ex.id : upsert('workers', { nombre: n, rut: '', telefono: '', grupo: GRUPOS[0], funcion: '', activo: true, notas: '' }).id; if (!ex) toast(n + ' agregado al equipo · completa su RUT en Equipo'); }
+  if (val && ![...sel.options].some(o => o.value === val)) sel.insertAdjacentHTML('afterbegin', `<option value="${esc(val)}">${esc(v === '__newwk' ? n : val)}</option>`);
+  sel.value = val || (sel.options[0] ? sel.options[0].value : '');
+}, true);
 const EST_EV = ['Por confirmar', 'Confirmado', 'Realizado', 'Cancelado'];
-const EST_MAN = ['', 'PAGADA', 'NC', 'NULO', 'SALTO SII'];
+const EST_MAN = ['', 'NC', 'NULO', 'SALTO SII'];
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 const DOWS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
@@ -31,14 +53,14 @@ const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpp
 const rutKey = s => String(s ?? '').replace(/[^0-9kK]/g, '').toUpperCase();
 function lev(a, b) { const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
 function daysBetween(a, b) { const out = []; if (!a) return out; let d = a; const end = b && b >= a ? b : a; let guard = 0; while (d <= end && guard++ < 120) { out.push(d); d = addDays(d, 1); } return out; }
-function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.append(msg); document.body.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 2600); }
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.append(msg); t.style.bottom = (22 + 62 * document.querySelectorAll('.toast:not(.out)').length) + 'px'; document.body.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 2600); }
 const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 function b64big(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
 
 /* ---------- datos (Firestore en vivo) ---------- */
-const COLS = ['workers', 'vehicles', 'clients', 'events', 'shifts', 'invoices'];
-const blank = () => ({ workers: [], vehicles: [], clients: [], events: [], shifts: [], invoices: [] });
+const COLS = ['workers', 'vehicles', 'clients', 'events', 'shifts', 'invoices', 'dias'];
+const blank = () => ({ workers: [], vehicles: [], clients: [], events: [], shifts: [], invoices: [], dias: [] });
 let DB = blank(), FS = null, db = null, auth = null, authMod = null, USER = '';
 const byId = (col, id) => DB[col].find(x => x.id === id);
 const clean = o => JSON.parse(JSON.stringify(o));
@@ -128,7 +150,7 @@ $$('.nav[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 window.go = go;
 function go(v) { if (!VIEWS[v]) v = 'inicio'; VIEW = v; history.replaceState(null, '', '#' + v); $$('.nav[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); render(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 function render(anim) {
-  const v = $('#view'); v.classList.remove('enter'); v.innerHTML = ''; VIEWS[VIEW]();
+  applyCfg(); const v = $('#view'); v.classList.remove('enter'); v.innerHTML = ''; VIEWS[VIEW]();
   if (!anim) { $$('.val[data-n]', v).forEach(x => x.textContent = x.dataset.f === 'm' ? money(+x.dataset.n) : x.dataset.n); return; }
   [...v.children].forEach((c, i) => c.style.setProperty('--i', i));
   $$('.grid > .card, .list > .item', v).forEach((c, i) => { c.classList.add('anim'); c.style.setProperty('--i', i + 1); });
@@ -161,7 +183,8 @@ function invCalc(f) {
   else if (dias !== null && dias <= 7) { estado = 'Por vencer'; cls = 'p-porv'; }
   else { estado = pagado > 0 ? 'Abonada' : 'Pendiente'; cls = 'p-pend'; }
   const open = ['Vencida', 'Por vencer', 'Pendiente', 'Abonada'].includes(estado);
-  return { bruto, neto, iva, pagado, saldo, venc, dias, estado, cls, open };
+  const label = pagado > 0 && saldo > 0 && estado !== 'Abonada' && ['Vencida', 'Por vencer'].includes(estado) ? estado + ' · abonada' : estado;
+  return { bruto, neto, iva, pagado, saldo, venc, dias, estado, cls, open, label };
 }
 const evCls = e => ({ 'Confirmado': 'p-conf', 'Por confirmar': 'p-porc', 'Realizado': 'p-real', 'Cancelado': 'p-canc' }[e.estado] || 'p-porc');
 function evStats(e) {
@@ -233,7 +256,7 @@ VIEWS.inicio = () => {
     </div>
     <div class="grid two" style="margin-top:14px">
       <div class="card"><h3>${prox.length ? 'Próximos eventos' : 'Eventos de ' + MESES[new Date().getMonth()]}</h3><div class="list" id="hEv">${(prox.length ? prox : mes.slice().sort((a, b) => b.inicio.localeCompare(a.inicio))).slice(0, 8).map(e => evItem(e)).join('') || '<div class="empty"><img src="zorro.webp" alt="">Aún no hay eventos. Crea uno o importa tu Excel en Ajustes.</div>'}</div></div>
-      <div class="card"><h3>Cobranza que requiere atención</h3><div class="list">${alertas.slice(0, 8).map(([f, c]) => `<div class="item" data-inv="${f.id}"><div class="grow"><div class="ell"><b>N° ${esc(f.numero)}</b> · ${esc(cliName(f.clienteId))}</div><div class="muted">${c.estado === 'Vencida' ? 'Venció hace ' + (-c.dias) + ' días' : 'Vence en ' + c.dias + ' días'} · saldo ${money(c.saldo)}</div></div><span class="pill ${c.cls}">${c.estado}</span></div>`).join('') || '<div class="empty">Todo al día 🎉</div>'}</div></div>
+      <div class="card"><h3>Cobranza que requiere atención</h3><div class="list">${alertas.slice(0, 8).map(([f, c]) => `<div class="item" data-inv="${f.id}"><div class="grow"><div class="ell"><b>N° ${esc(f.numero)}</b> · ${esc(cliName(f.clienteId))}</div><div class="muted">${c.estado === 'Vencida' ? 'Venció hace ' + (-c.dias) + ' días' : 'Vence en ' + c.dias + ' días'} · saldo ${money(c.saldo)}</div></div><span class="pill ${c.cls}">${c.label}</span></div>`).join('') || '<div class="empty">Todo al día 🎉</div>'}</div></div>
     </div>`;
   $('#nEv').onclick = () => eventModal(); $('#nInv').onclick = () => invoiceModal();
   bindItems(v);
@@ -244,10 +267,10 @@ function bindItems(root) { $$('[data-ev]', root).forEach(x => x.onclick = () => 
 /* ---- Eventos ---- */
 VIEWS.eventos = () => {
   const v = $('#view');
-  v.innerHTML = head('Eventos', 'Cada evento conecta cliente, equipo, vehículos y facturas', `<button class="btn ghost" id="xEv">${I.xls}Excel</button><button class="btn y" id="nEv">${I.plus}Nuevo evento</button>`) +
+  v.innerHTML = head('Eventos', 'Cada evento conecta cliente, equipo, vehículos y facturas', `<button class="btn ghost" id="toDisp">${I.cal || ''}Fechas disponibles</button><button class="btn ghost" id="xEv">${I.xls}Excel</button><button class="btn y" id="nEv">${I.plus}Nuevo evento</button>`) +
     `<div class="tools"><div class="row"><button class="btn sm ${ST.evMode === 'lista' ? '' : 'ghost'}" data-m="lista">Lista</button><button class="btn sm ${ST.evMode === 'cal' ? '' : 'ghost'}" data-m="cal">Calendario</button></div>
      <input class="search" id="q" placeholder="Buscar evento, cliente o lugar" value="${esc(ST.evQ)}"><select id="fe"><option value="">Todos los estados</option>${opts(EST_EV, ST.evEst)}</select></div><div id="evBody"></div>`;
-  $('#nEv').onclick = () => eventModal(); $('#xEv').onclick = exportEventsXlsx;
+  $('#nEv').onclick = () => eventModal(); $('#xEv').onclick = exportEventsXlsx; $('#toDisp').onclick = () => go('disp');
   $$('[data-m]', v).forEach(b => b.onclick = () => { ST.evMode = b.dataset.m; render(); });
   $('#q').oninput = e => { ST.evQ = e.target.value; body(); }; $('#fe').onchange = e => { ST.evEst = e.target.value; body(); };
   function body() {
@@ -301,7 +324,7 @@ function eventModal(e, preset = {}) {
   function drawSh() {
     const ds = days(); const ws = sortedWorkers().filter(w => w.activo !== false);
     shifts.sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '') || ROLES.indexOf(a.rol) - ROLES.indexOf(b.rol));
-    $('#shB', m).innerHTML = shifts.map((s, i) => `<tr><td><select data-i="${i}" data-k="fecha">${opts([...new Set([...ds, s.fecha])].filter(Boolean), s.fecha, fshort)}</select></td><td><select data-i="${i}" data-k="workerId"><option value="">—</option>${opts(ws.concat(ws.find(w => w.id === s.workerId) ? [] : DB.workers.filter(w => w.id === s.workerId)), s.workerId, w => w.nombre, w => w.id)}</select></td><td><select data-i="${i}" data-k="rol">${opts(ROLES, s.rol)}</select></td><td><input data-i="${i}" data-k="pago" inputmode="numeric" value="${esc(s.pago)}" style="text-align:right"></td><td><button class="x" data-rm="${i}">×</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted" style="padding:14px">Aún no hay personas asignadas</td></tr>';
+    $('#shB', m).innerHTML = shifts.map((s, i) => `<tr><td><select data-i="${i}" data-k="fecha">${opts([...new Set([...ds, s.fecha])].filter(Boolean), s.fecha, fshort)}</select></td><td><select data-i="${i}" data-k="workerId"><option value="">—</option>${opts(ws.concat(ws.find(w => w.id === s.workerId) ? [] : DB.workers.filter(w => w.id === s.workerId)), s.workerId, w => w.nombre, w => w.id)}<option value="__newwk">+ Nueva persona…</option></select></td><td><select data-i="${i}" data-k="rol">${opts(ROLES, s.rol)}<option value="__newrole">+ Nuevo rol…</option></select></td><td><input data-i="${i}" data-k="pago" inputmode="numeric" value="${esc(s.pago)}" style="text-align:right"></td><td><button class="x" data-rm="${i}">×</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted" style="padding:14px">Aún no hay personas asignadas</td></tr>';
     $$('[data-k]', m).forEach(x => x.onchange = () => { shifts[+x.dataset.i][x.dataset.k] = x.dataset.k === 'pago' ? num(x.value) : x.value; drawSum(); });
     $$('[data-rm]', m).forEach(x => x.onclick = () => { shifts.splice(+x.dataset.rm, 1); drawSh(); });
     drawSum();
@@ -312,7 +335,7 @@ function eventModal(e, preset = {}) {
     const monto = num($('[name=monto]', f).value);
     $('#cobr', m).innerHTML = `<div class="sum"><div>Personas<b>${new Set(shifts.map(s => s.workerId).filter(Boolean)).size}</b></div><div>Costo equipo<b>${money(costo)}</b></div><div>Monto acordado<b>${money(monto)}</b></div><div>Facturado (neto)<b>${money(fact)}</b></div><div>Saldo por cobrar<b>${money(saldo)}</b></div><div>Margen estimado<b>${money((fact || monto) - costo)}</b></div></div>
       <div class="sec"><span>Facturas vinculadas</span>${isNew ? '' : `<button class="btn sm" id="newInv">${I.plus}Crear factura</button>`}</div>
-      <div class="list">${inv.map(fv => { const c = invCalc(fv); return `<div class="item" data-inv="${fv.id}"><div class="grow"><b>N° ${esc(fv.numero)}</b> · ${fdate(fv.emision)} · ${money(c.bruto)}<div class="muted">Saldo ${money(c.saldo)}${c.venc ? ' · vence ' + fdate(c.venc) : ''}</div></div><span class="pill ${c.cls}">${c.estado}</span></div>`; }).join('') || `<div class="muted">${isNew ? 'Guarda el evento para vincular facturas.' : 'Sin facturas. Créala aquí o vincúlala desde Cobranza.'}</div>`}</div>`;
+      <div class="list">${inv.map(fv => { const c = invCalc(fv); return `<div class="item" data-inv="${fv.id}"><div class="grow"><b>N° ${esc(fv.numero)}</b> · ${fdate(fv.emision)} · ${money(c.bruto)}<div class="muted">Saldo ${money(c.saldo)}${c.venc ? ' · vence ' + fdate(c.venc) : ''}</div></div><span class="pill ${c.cls}">${c.label}</span></div>`; }).join('') || `<div class="muted">${isNew ? 'Guarda el evento para vincular facturas.' : 'Sin facturas. Créala aquí o vincúlala desde Cobranza.'}</div>`}</div>`;
     $$('[data-inv]', m).forEach(x => x.onclick = () => invoiceModal(byId('invoices', x.dataset.inv), null, () => drawSum()));
     const ni = $('#newInv', m); if (ni) ni.onclick = () => { saveEv(false); invoiceModal(null, { clienteId: $('[name=clienteId]', f).value, neto: monto || '', eventIds: [e.id], emision: today() }, () => drawSum()); };
   }
@@ -359,9 +382,9 @@ function shiftModal(s, preset = {}) {
   const lastPay = DB.shifts.filter(x => x.workerId === s.workerId && num(x.pago)).sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
   if (isNew && lastPay) s.pago = lastPay.pago;
   const { m, close } = modal(`<header><h3>${isNew ? 'Asignar turno' : 'Editar turno'}</h3><button class="btn sm ghost" data-close>Cerrar</button></header>
-    <div class="form" id="f"><label class="f">Persona<select name="workerId">${opts(sortedWorkers(), s.workerId, w => w.nombre, w => w.id)}</select></label><label class="f">Día<input type="date" name="fecha" value="${s.fecha}"></label>
+    <div class="form" id="f"><label class="f">Persona<select name="workerId">${opts(sortedWorkers(), s.workerId, w => w.nombre, w => w.id)}<option value="__newwk">+ Nueva persona…</option></select></label><label class="f">Día<input type="date" name="fecha" value="${s.fecha}"></label>
     <label class="f full">Evento<select name="eventId"><option value="">— Elegir evento —</option>${opts(near, s.eventId, e => e.nombre + ' · ' + fshort(e.inicio), e => e.id)}<option value="__new">+ Crear evento nuevo…</option></select></label>
-    <label class="f">Rol<select name="rol">${opts(ROLES, s.rol)}</select></label><label class="f">Pago<input name="pago" inputmode="numeric" value="${esc(s.pago)}"></label></div>
+    <label class="f">Rol<select name="rol">${opts(ROLES, s.rol)}<option value="__newrole">+ Nuevo rol…</option></select></label><label class="f">Pago<input name="pago" inputmode="numeric" value="${esc(s.pago)}"></label></div>
     <div class="row" style="justify-content:space-between;margin-top:16px">${isNew ? '<span></span>' : '<button class="btn red" id="del">Quitar turno</button>'}<button class="btn y" id="save">Guardar</button></div>`);
   $('[name=eventId]', m).onchange = ev => { if (ev.target.value === '__new') { close(); eventModal(null, { inicio: $('[name=fecha]', m).value, fin: $('[name=fecha]', m).value }); } };
   $('#save', m).onclick = () => { const d = formData($('#f', m)); if (!d.eventId || d.eventId === '__new') return toast('Elige un evento'); upsert('shifts', { ...s, ...d, pago: num(d.pago) }); close(); render(); };
@@ -390,7 +413,7 @@ function workerModal(w) {
   const hist = DB.shifts.filter(s => s.workerId === w.id).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 12);
   const { m, close } = modal(`<header><h3>${isNew ? 'Nueva persona' : esc(w.nombre)}</h3><button class="btn sm ghost" data-close>Cerrar</button></header>
     <div class="form" id="f"><label class="f full">Nombre completo<input name="nombre" value="${esc(w.nombre)}"></label><label class="f">RUT<input name="rut" value="${esc(w.rut)}" placeholder="12.345.678-9"></label><label class="f">Teléfono<input name="telefono" value="${esc(w.telefono)}"></label>
-    <label class="f">Grupo<select name="grupo">${opts(GRUPOS, w.grupo)}</select></label><label class="f">Función<input name="funcion" value="${esc(w.funcion)}" placeholder="Ej: montaje y funcionamiento"></label>
+    <label class="f">Grupo<select name="grupo">${opts(GRUPOS, w.grupo)}<option value="__newgrp">+ Nuevo grupo…</option></select></label><label class="f">Función<input name="funcion" value="${esc(w.funcion)}" placeholder="Ej: montaje y funcionamiento"></label>
     <label class="f full">Notas<textarea name="notas">${esc(w.notas)}</textarea></label><label class="check"><input type="checkbox" name="activo" ${w.activo !== false ? 'checked' : ''}>Activo</label></div>
     ${hist.length ? `<div class="sec">Últimos turnos</div><table class="mini"><tbody>${hist.map(s => `<tr><td>${fdate(s.fecha)}</td><td>${esc(evName(s.eventId))}</td><td><span class="pill ${RCLS[s.rol]}">${s.rol}</span></td><td class="num">${money(s.pago)}</td></tr>`).join('')}</tbody></table>` : ''}
     <div class="row" style="justify-content:space-between;margin-top:16px">${isNew ? '<span></span>' : '<button class="btn red" id="del">Eliminar</button>'}<button class="btn y" id="save">Guardar</button></div>`);
@@ -422,7 +445,7 @@ VIEWS.cobranza = () => {
     const L = filtered(); const t = k => L.reduce((s, [, c]) => s + c[k], 0);
     const open = L.filter(([, c]) => c.open);
     $('#cK').innerHTML = `<div class="card kpi"><div class="lab">Facturado (bruto)</div><div class="val">${money(L.filter(([, c]) => c.open || c.estado === 'Pagada').reduce((s, [, c]) => s + c.bruto, 0))}</div><div class="foot">${L.length} facturas en la vista</div></div><div class="card kpi"><div class="lab">Por cobrar</div><div class="val">${money(open.reduce((s, [, c]) => s + c.saldo, 0))}</div><div class="foot">${open.length} abiertas</div></div><div class="card kpi warn"><div class="lab">Vencido</div><div class="val">${money(open.filter(([, c]) => c.estado === 'Vencida').reduce((s, [, c]) => s + c.saldo, 0))}</div><div class="foot">${open.filter(([, c]) => c.estado === 'Vencida').length} vencidas</div></div><div class="card kpi"><div class="lab">Abonos registrados</div><div class="val">${money(t('pagado'))}</div><div class="foot">en facturas de la vista</div></div>`;
-    $('#cB').innerHTML = `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>N°</th><th>Cliente</th><th class="hide-m">Emisión</th><th class="num hide-m">Neto</th><th class="num hide-m">IVA</th><th class="num">Bruto</th><th class="hide-m">Vence</th><th class="num hide-m">Días</th><th>Estado</th><th class="num">Saldo</th><th class="hide-m">Evento</th></tr></thead><tbody>${L.map(([f, c]) => `<tr class="click" data-inv="${f.id}"><td><b>${esc(f.numero)}</b></td><td class="ell" style="max-width:240px">${esc(cliName(f.clienteId))}</td><td class="hide-m">${fdate(f.emision)}</td><td class="num hide-m">${money(c.neto)}</td><td class="num hide-m">${money(c.iva)}</td><td class="num">${money(c.bruto)}</td><td class="hide-m">${fdate(c.venc)}</td><td class="num hide-m">${c.open && c.dias !== null ? c.dias : ''}</td><td><span class="pill ${c.cls}">${c.estado}</span></td><td class="num">${c.saldo ? money(c.saldo) : '—'}</td><td class="hide-m ell" style="max-width:160px">${(f.eventIds || []).map(evName).join(', ')}</td></tr>`).join('') || '<tr><td colspan="11" class="empty">Sin facturas</td></tr>'}</tbody>
+    $('#cB').innerHTML = `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>N°</th><th>Cliente</th><th class="hide-m">Emisión</th><th class="num hide-m">Neto</th><th class="num hide-m">IVA</th><th class="num">Bruto</th><th class="hide-m">Vence</th><th class="num hide-m">Días</th><th>Estado</th><th class="num">Saldo</th><th class="hide-m">Evento</th></tr></thead><tbody>${L.map(([f, c]) => `<tr class="click" data-inv="${f.id}"><td><b>${esc(f.numero)}</b></td><td class="ell" style="max-width:240px">${esc(cliName(f.clienteId))}</td><td class="hide-m">${fdate(f.emision)}</td><td class="num hide-m">${money(c.neto)}</td><td class="num hide-m">${money(c.iva)}</td><td class="num">${money(c.bruto)}</td><td class="hide-m">${fdate(c.venc)}</td><td class="num hide-m">${c.open && c.dias !== null ? c.dias : ''}</td><td><span class="pill ${c.cls}">${c.label}</span></td><td class="num">${c.saldo ? money(c.saldo) : '—'}</td><td class="hide-m ell" style="max-width:160px">${(f.eventIds || []).map(evName).join(', ')}</td></tr>`).join('') || '<tr><td colspan="11" class="empty">Sin facturas</td></tr>'}</tbody>
       <tfoot><tr><td colspan="2">Totales</td><td class="hide-m"></td><td class="num hide-m">${money(t('neto'))}</td><td class="num hide-m">${money(t('iva'))}</td><td class="num">${money(t('bruto'))}</td><td class="hide-m"></td><td class="hide-m"></td><td></td><td class="num">${money(t('saldo'))}</td><td class="hide-m"></td></tr></tfoot></table></div></div>`;
     bindItems($('#cB'));
   }
@@ -430,11 +453,12 @@ VIEWS.cobranza = () => {
 };
 function invoiceModal(f, preset = {}, after) {
   const isNew = !f; f = f ? JSON.parse(JSON.stringify(f)) : Object.assign({ id: uid(), numero: String((Math.max(0, ...DB.invoices.map(x => num(x.numero))) || 0) + 1), clienteId: '', emision: today(), neto: '', bruto: '', venc: '', estadoManual: '', abonos: [], obs: '', eventIds: [] }, preset);
+  if (f.estadoManual === 'PAGADA') { const c0 = invCalc({ ...f, estadoManual: '' }); if (c0.saldo > 0) f.abonos = [...(f.abonos || []), { fecha: f.venc || f.emision || today(), monto: c0.saldo, nota: 'Pago total' }]; f.estadoManual = ''; }
   const { m, close } = modal(`<header><h3>${isNew ? 'Nueva factura' : 'Factura N° ' + esc(f.numero)}</h3><button class="btn sm ghost" data-close>Cerrar</button></header>
     <div class="form" id="f"><label class="f">N° factura<input name="numero" value="${esc(f.numero)}"></label><label class="f">Cliente<select name="clienteId"><option value="">— Elegir cliente —</option>${opts([...DB.clients].sort((a, b) => a.nombre.localeCompare(b.nombre)), f.clienteId, c => c.nombre + (c.rut ? ' · ' + c.rut : ''), c => c.id)}<option value="__new">+ Nuevo cliente…</option></select></label>
     <label class="f">Fecha emisión<input type="date" name="emision" value="${f.emision || ''}"></label><label class="f">Vencimiento <span style="font-weight:500">(vacío = emisión + 30 días)</span><input type="date" name="venc" value="${f.venc || ''}"></label>
     <label class="f">Monto neto<input name="neto" inputmode="numeric" value="${esc(f.neto)}"></label><label class="f">Monto bruto (con IVA)<input name="bruto" inputmode="numeric" value="${esc(f.bruto)}"></label>
-    <label class="f">Estado especial<select name="estadoManual">${opts(EST_MAN, f.estadoManual, x => x || 'Automático (según abonos y vencimiento)')}</select></label>
+    <label class="f">Estado especial<select name="estadoManual">${opts(EST_MAN, f.estadoManual, x => x || 'Automático (se actualiza con los abonos)')}</select></label>
     <label class="f">Eventos vinculados<select name="ev" multiple size="3" style="height:auto">${opts([...DB.events].sort((a, b) => b.inicio.localeCompare(a.inicio)), null, e => e.nombre + ' · ' + fshort(e.inicio), e => e.id)}</select></label>
     <label class="f full">Observaciones<textarea name="obs">${esc(f.obs)}</textarea></label></div>
     <div class="sec"><span>Abonos y pagos</span><button class="btn sm" id="addA">${I.plus}Registrar abono</button></div>
@@ -448,7 +472,7 @@ function invoiceModal(f, preset = {}, after) {
   function drawAb() { $('#abB', m).innerHTML = f.abonos.map((a, i) => `<tr><td><input type="date" data-a="${i}" data-k="fecha" value="${a.fecha || ''}"></td><td><input data-a="${i}" data-k="monto" inputmode="numeric" value="${esc(a.monto)}" style="text-align:right"></td><td><input data-a="${i}" data-k="nota" value="${esc(a.nota || '')}"></td><td><button class="x" data-rm="${i}">×</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted" style="padding:10px">Sin abonos registrados</td></tr>';
     $$('[data-a]', m).forEach(x => x.onchange = () => { f.abonos[+x.dataset.a][x.dataset.k] = x.dataset.k === 'monto' ? num(x.value) : x.value; calc(); }); $$('[data-rm]', m).forEach(x => x.onclick = () => { f.abonos.splice(+x.dataset.rm, 1); drawAb(); calc(); }); }
   function cur() { const d = formData(F); return { ...f, ...d, neto: num(d.neto), bruto: num(d.bruto), eventIds: $$('[name=ev] option:checked', F).map(o => o.value) }; }
-  function calc() { const c = invCalc(cur()); $('#calc', m).innerHTML = `<div class="sum"><div>Neto<b>${money(c.neto)}</b></div><div>IVA 19%<b>${money(c.iva)}</b></div><div>Bruto<b>${money(c.bruto)}</b></div><div>Pagado<b>${money(c.pagado)}</b></div><div>Saldo<b>${money(c.saldo)}</b></div><div>Vence<b>${fdate(c.venc)}${c.open && c.dias !== null ? ` (${c.dias} días)` : ''}</b></div><div>Estado<b><span class="pill ${c.cls}">${c.estado}</span></b></div></div>`; }
+  function calc() { const c = invCalc(cur()); $('#calc', m).innerHTML = `<div class="sum"><div>Neto<b>${money(c.neto)}</b></div><div>IVA 19%<b>${money(c.iva)}</b></div><div>Bruto<b>${money(c.bruto)}</b></div><div>Pagado<b>${money(c.pagado)}</b></div><div>Saldo<b>${money(c.saldo)}</b></div><div>Vence<b>${fdate(c.venc)}${c.open && c.dias !== null ? ` (${c.dias} días)` : ''}</b></div><div>Estado<b><span class="pill ${c.cls}">${c.label}</span></b></div></div>`; }
   $('#addA', m).onclick = () => { const c = invCalc(cur()); f.abonos.push({ fecha: today(), monto: c.saldo || '', nota: '' }); drawAb(); calc(); };
   function save() { const d = cur(); delete d.ev; if (!String(d.numero).trim()) return toast('Falta el N° de factura'); if (!d.clienteId || d.clienteId === '__new') return toast('Elige el cliente'); if (!d.neto && !d.bruto) return toast('Ingresa el monto'); upsert('invoices', d); close(); if (after) after(); else render(); toast('Factura guardada'); }
   $('#save', m).onclick = save;
@@ -472,7 +496,7 @@ function clientModal(c, after) {
   const { m, close } = modal(`<header><h3>${isNew ? 'Nuevo cliente' : esc(c.nombre)}</h3><div class="row">${isNew ? '' : `<button class="btn sm ghost" id="jC">${I.img}JPG estado de cuenta</button><button class="btn sm ghost" id="xC">${I.xls}Excel</button>`}<button class="btn sm ghost" data-close>Cerrar</button></div></header>
     <div class="form" id="f"><label class="f full">Razón social<input name="nombre" value="${esc(c.nombre)}"></label><label class="f">RUT<input name="rut" value="${esc(c.rut)}"></label><label class="f">Contacto<input name="contacto" value="${esc(c.contacto)}"></label><label class="f">Teléfono<input name="telefono" value="${esc(c.telefono)}"></label><label class="f">Email<input name="email" value="${esc(c.email)}"></label><label class="f full">Notas<textarea name="notas">${esc(c.notas)}</textarea></label></div>
     ${s ? `<div class="sum"><div>Facturado<b>${money(s.fact)}</b></div><div>Saldo<b>${money(s.saldo)}</b></div><div>Vencido<b style="color:var(--red)">${money(s.venc)}</b></div><div>Eventos<b>${s.evs.length}</b></div></div>
-    <div class="sec">Facturas</div><div class="tablewrap" style="max-height:300px"><table class="mini"><thead><tr><th>N°</th><th>Emisión</th><th class="num">Bruto</th><th>Vence</th><th>Estado</th><th class="num">Saldo</th></tr></thead><tbody>${s.inv.sort((a, b) => num(b.numero) - num(a.numero)).map(f => { const k = invCalc(f); return `<tr class="click" data-inv="${f.id}"><td>${esc(f.numero)}</td><td>${fdate(f.emision)}</td><td class="num">${money(k.bruto)}</td><td>${fdate(k.venc)}</td><td><span class="pill ${k.cls}">${k.estado}</span></td><td class="num">${k.saldo ? money(k.saldo) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="6" class="muted">Sin facturas</td></tr>'}</tbody></table></div>
+    <div class="sec">Facturas</div><div class="tablewrap" style="max-height:300px"><table class="mini"><thead><tr><th>N°</th><th>Emisión</th><th class="num">Bruto</th><th>Vence</th><th>Estado</th><th class="num">Saldo</th></tr></thead><tbody>${s.inv.sort((a, b) => num(b.numero) - num(a.numero)).map(f => { const k = invCalc(f); return `<tr class="click" data-inv="${f.id}"><td>${esc(f.numero)}</td><td>${fdate(f.emision)}</td><td class="num">${money(k.bruto)}</td><td>${fdate(k.venc)}</td><td><span class="pill ${k.cls}">${k.label}</span></td><td class="num">${k.saldo ? money(k.saldo) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="6" class="muted">Sin facturas</td></tr>'}</tbody></table></div>
     <div class="sec">Eventos</div><div class="list">${s.evs.sort((a, b) => b.inicio.localeCompare(a.inicio)).map(evItem).join('') || '<div class="muted">Sin eventos</div>'}</div>` : ''}
     <div class="row" style="justify-content:space-between;margin-top:16px">${isNew ? '<span></span>' : '<button class="btn red" id="del">Eliminar cliente</button>'}<button class="btn y" id="save">Guardar</button></div>`, !isNew);
   bindItems(m);
@@ -494,14 +518,121 @@ VIEWS.ajustes = () => {
       <div class="row"><button class="btn ghost" id="bx">${I.xls}Excel completo</button><button class="btn ghost" id="bj">Respaldo (.json)</button><label class="btn ghost">Restaurar respaldo<input type="file" id="br" accept=".json" hidden></label></div>
       <p class="muted" style="margin-top:12px">${DB.events.length} eventos · ${DB.shifts.length} turnos · ${DB.workers.length} personas · ${DB.clients.length} clientes · ${DB.invoices.length} facturas</p></div>
   </div>
+  <div class="card" style="margin-top:16px"><h3>Roles y grupos del equipo</h3><p class="muted">Agrega los roles que usen en los turnos (ej: Animador, Chofer, Bodega) y grupos para ordenar al equipo. Los de siempre no se pueden quitar.</p>
+    <div class="grid two"><div><div class="sec">Roles en turnos</div><div class="chips">${ROLES.map(r => `<span class="pill ${RCLS[r] || ''}">${esc(r)}${BASE_ROLES.includes(r) ? '' : ` <a href="#" data-rmr="${esc(r)}" style="color:inherit;text-decoration:none">✕</a>`}</span>`).join('')}</div><div class="row" style="margin-top:10px"><input id="nr" placeholder="Nuevo rol" style="padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><button class="btn sm" id="nrB">${I.plus}Agregar</button></div></div>
+    <div><div class="sec">Grupos</div><div class="chips">${GRUPOS.map(g => `<span class="pill p-real">${esc(g)}${BASE_GRUPOS.includes(g) ? '' : ` <a href="#" data-rmg="${esc(g)}" style="color:inherit;text-decoration:none">✕</a>`}</span>`).join('')}</div><div class="row" style="margin-top:10px"><input id="ng" placeholder="Nuevo grupo" style="padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><button class="btn sm" id="ngB">${I.plus}Agregar</button></div></div></div></div>
   <div class="card" style="margin-top:16px"><h3>Papelera</h3><p class="muted">Nada se borra de forma definitiva. Lo que eliminas queda aquí y puedes recuperarlo cuando quieras.</p>
-  ${TRASH.length ? `<table class="tbl"><thead><tr><th>Tipo</th><th>Registro</th><th>Eliminado</th><th></th></tr></thead><tbody>${TRASH.slice().sort((a, b) => b.rec.borradoEl - a.rec.borradoEl).map(t => `<tr><td>${({ workers: 'Persona', vehicles: 'Vehículo', clients: 'Cliente', events: 'Evento', shifts: 'Turno', invoices: 'Factura' })[t.col]}</td><td>${esc(t.rec.nombre || t.rec.name || t.rec.patente || (t.rec.numero ? 'Factura N° ' + t.rec.numero : '') || t.rec.fecha || t.rec.id)}</td><td class="muted">${new Date(t.rec.borradoEl).toLocaleString('es-CL')} · ${esc(t.rec.borradoPor || '')}</td><td><button class="btn ghost" onclick="restoreRec('${t.col}','${t.rec.id}')">Recuperar</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">La papelera está vacía.</p>'}</div>`;
+  ${TRASH.length ? `<table class="tbl"><thead><tr><th>Tipo</th><th>Registro</th><th>Eliminado</th><th></th></tr></thead><tbody>${TRASH.slice().sort((a, b) => b.rec.borradoEl - a.rec.borradoEl).map(t => `<tr><td>${({ workers: 'Persona', vehicles: 'Vehículo', clients: 'Cliente', events: 'Evento', shifts: 'Turno', invoices: 'Factura', dias: 'Fecha' })[t.col]}</td><td>${esc(t.rec.nombre || t.rec.name || t.rec.patente || (t.rec.numero ? 'Factura N° ' + t.rec.numero : '') || t.rec.fecha || t.rec.id)}</td><td class="muted">${new Date(t.rec.borradoEl).toLocaleString('es-CL')} · ${esc(t.rec.borradoPor || '')}</td><td><button class="btn ghost" onclick="restoreRec('${t.col}','${t.rec.id}')">Recuperar</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">La papelera está vacía.</p>'}</div>`;
   $('#fEv').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellStyles: true, cellDates: true }); $('#imR').innerHTML = importEventos(wb, +$('#imY').value, +$('#imM').value + 1); e.target.value = ''; };
   $('#fCo').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true }); $('#imR').innerHTML = importCobranza(wb); e.target.value = ''; };
   $('#bx').onclick = exportAllXlsx;
+  $('#nrB').onclick = () => { if (addRole($('#nr').value)) render(); }; $('#ngB').onclick = () => { if (addGroup($('#ng').value)) render(); };
+  $$('[data-rmr]').forEach(a => a.onclick = ev => { ev.preventDefault(); const r = a.dataset.rmr; if (DB.shifts.some(x => x.rol === r) && !confirm('Hay turnos con el rol "' + r + '". Esos turnos lo conservan, pero ya no aparecerá en la lista. ¿Quitar?')) return; const rc = rolesCfg(); upsert('dias', { ...rc, roles: (rc.roles || []).filter(x => x !== r) }); render(); });
+  $$('[data-rmg]').forEach(a => a.onclick = ev => { ev.preventDefault(); const g = a.dataset.rmg; const rc = rolesCfg(); upsert('dias', { ...rc, grupos: (rc.grupos || []).filter(x => x !== g) }); render(); });
   $('#bj').onclick = () => download(new Blob([JSON.stringify(DB)], { type: 'application/json' }), `respaldo-gestion-arvi-${today()}.json`);
   $('#br').onchange = async e => { try { const d = JSON.parse(await e.target.files[0].text()); if (!confirm('Se agregarán los registros del respaldo (los que ya existen se reemplazan). ¿Continuar?')) return; for (const c of COLS) for (const r of (d[c] || [])) upsert(c, r); render(); toast('Respaldo restaurado'); } catch (x) { toast('Respaldo inválido'); } };
 };
+
+
+/* ================= DISPONIBILIDAD (para clientes) =================
+   Se calcula en vivo desde Eventos (sin contar cancelados). Se puede ajustar día a día.
+   La imagen que se exporta no muestra clientes, lugares ni montos: solo si la fecha está libre o tomada. */
+const DST = { libre: ['Disponible', '#e9f7df', '#3aa848'], pocos: ['Últimos cupos', '#fff4c9', '#e0a400'], tomado: ['Reservado', '#fde3e1', '#d6453c'] };
+const dispCfg = () => DB.dias.find(d => d.id === 'cfg') || { id: 'cfg', cap: 1 };
+function dayStatus(s) {
+  const cap = Math.max(1, num(dispCfg().cap) || 1), ov = DB.dias.find(d => d.id === 'd' + s);
+  const evs = DB.events.filter(e => e.estado !== 'Cancelado' && s >= e.inicio && s <= (e.fin || e.inicio));
+  let st = !evs.length ? 'libre' : evs.length >= cap ? 'tomado' : 'pocos';
+  if (ov && DST[ov.estado]) st = ov.estado;
+  return { st, evs, ov: ov && DST[ov.estado] ? ov.estado : '', cap };
+}
+function monthDays(ym) { const [y, m] = ym.split('-').map(Number); const first = new Date(y, m - 1, 1), n = new Date(y, m, 0).getDate(); return { y, m, lead: (first.getDay() + 6) % 7, n }; }
+ST.dispN = ST.dispN || 1;
+VIEWS.disp = () => {
+  const v = $('#view'), cfg = dispCfg();
+  v.innerHTML = head('Disponibilidad', 'Fechas libres y tomadas según los eventos. La imagen para clientes no muestra ningún detalle.', `<select id="dN" style="padding:9px 12px;border-radius:11px;border:1.5px solid var(--line);font-weight:600"><option value="1">1 mes</option><option value="2">2 meses</option><option value="3">3 meses</option></select><button class="btn y" id="dJ">${I.img || ''}Exportar JPG para clientes</button>`) +
+    `<div class="tools"><div class="row"><button class="btn sm ghost" id="pm">${I.left}</button><b style="min-width:150px;text-align:center;font-size:17px;color:var(--g900)">${monthLabel(ST.month)}</b><button class="btn sm ghost" id="nm">${I.right}</button></div>
+     <label class="row muted" style="gap:8px">Eventos simultáneos por día <input id="cap" type="number" min="1" max="9" value="${num(cfg.cap) || 1}" style="width:70px"></label>
+     <div class="legend">${Object.entries(DST).map(([k, [l, bg, bd]]) => `<span class="pill" style="background:${bg};color:#16261b;border:1.5px solid ${bd}">${l}</span>`).join('')}</div></div>
+    <div class="grid" id="dSum" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px"></div><div class="card" id="dCal"></div>
+    <p class="muted" style="margin-top:10px">Toca un día para ver sus eventos, crear uno nuevo o cambiar a mano cómo aparece (por ejemplo, bloquear una fecha). Cualquier evento nuevo, editado o cancelado actualiza la disponibilidad al instante.</p>`;
+  $('#dN').value = String(ST.dispN); $('#dN').onchange = e => ST.dispN = +e.target.value;
+  $('#pm').onclick = () => { ST.month = shiftMonth(ST.month, -1); render(true); }; $('#nm').onclick = () => { ST.month = shiftMonth(ST.month, 1); render(true); };
+  $('#cap').onchange = e => { upsert('dias', { ...dispCfg(), cap: Math.max(1, num(e.target.value) || 1) }); render(); };
+  $('#dJ').onclick = () => jpgDisp(ST.month, ST.dispN);
+  const { y, m, lead, n } = monthDays(ST.month), t = today(); let cells = '', cnt = { libre: 0, pocos: 0, tomado: 0 };
+  for (let i = 0; i < lead; i++) cells += '<div></div>';
+  for (let d = 1; d <= n; d++) {
+    const s = `${y}-${pad(m)}-${pad(d)}`, ds = dayStatus(s), past = s < t; if (!past) cnt[ds.st]++;
+    const [lab, bg, bd] = DST[ds.st];
+    cells += `<div class="dd ${past ? 'past' : ''}" data-day="${s}" style="background:${bg};border-color:${bd}"><div class="row" style="justify-content:space-between"><b>${d}</b>${ds.ov ? '<span title="Ajustado a mano">✋</span>' : ''}</div><div class="st" style="color:${bd}">${lab}</div>${ds.evs.slice(0, 2).map(e => `<div class="mini-ev">${esc(e.nombre)}</div>`).join('')}${ds.evs.length > 2 ? `<div class="mini-ev">+${ds.evs.length - 2} más</div>` : ''}</div>`;
+  }
+  $('#dCal').innerHTML = `<div class="dcal">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(x => `<div class="dow">${x}</div>`).join('')}${cells}</div>`;
+  $('#dSum').innerHTML = Object.entries(DST).map(([k, [l, , bd]]) => `<div class="card kpi" style="padding:14px 16px"><div class="lab">${l}</div><div class="val" style="color:${bd}">${cnt[k]}</div><div class="foot">días desde hoy</div></div>`).join('');
+  $$('.dd', v).forEach(x => x.onclick = () => dayModal(x.dataset.day));
+};
+function dayModal(s) {
+  const ds = dayStatus(s);
+  const { m, close } = modal(`<header><h3>${(d => d[0].toUpperCase() + d.slice(1))(pd(s).toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</h3><button class="btn sm ghost" data-close>Cerrar</button></header>
+    <div class="sec">Eventos de este día</div><div class="list">${ds.evs.map(e => evItem(e)).join('') || '<div class="muted">No hay eventos este día.</div>'}</div>
+    <div class="sec">Cómo aparece para clientes</div>
+    <div class="chips">${[['', 'Automático (según eventos)'], ['libre', 'Disponible'], ['pocos', 'Últimos cupos'], ['tomado', 'Reservado / bloqueado']].map(([k, l]) => `<label class="check"><input type="radio" name="ov" value="${k}" ${ds.ov === k ? 'checked' : ''}>${l}</label>`).join('')}</div>
+    <p class="muted">Ahora se ve como: <b>${DST[ds.st][0]}</b>${ds.ov ? ' (ajustado a mano)' : ''}.</p>
+    <div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn ghost" id="dNew">${I.plus}Crear evento este día</button><button class="btn y" id="dOk">Guardar</button></div>`);
+  bindItems(m);
+  $('#dNew', m).onclick = () => { close(); eventModal(null, { inicio: s, fin: s }); };
+  $('#dOk', m).onclick = () => { const k = ($('[name=ov]:checked', m) || {}).value || ''; const ex = DB.dias.find(d => d.id === 'd' + s);
+    if (k) upsert('dias', { id: 'd' + s, fecha: s, estado: k }); else if (ex) { DB.dias = DB.dias.filter(d => d !== ex); upsert('dias', { ...ex, estado: '' }); }
+    close(); render(); toast('Disponibilidad actualizada'); };
+}
+async function jpgDisp(ym, nMonths) {
+  await logoP; try { await document.fonts.load('800 20px Outfit'); } catch (e) { }
+  const months = Array.from({ length: nMonths }, (_, i) => shiftMonth(ym, i)), W = 1080, P = 48, LW = 280, LH = LOGO ? LW * LOGO.height / LOGO.width : 0, HH = 66 + LH + 26 + 110, t = today();
+  const F = (w, s) => `${w} ${s}px Outfit, system-ui, sans-serif`, gw = W - P * 2, cw = gw / 7, ch = 112;
+  const blockH = mm => { const { lead, n } = monthDays(mm); return 90 + 46 + Math.ceil((lead + n) / 7) * (ch + 8) + 30; };
+  const H = HH + months.reduce((a, mm) => a + blockH(mm), 0) + 110 + 120;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const star = (x, y, r, col) => { g.fillStyle = col; g.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, q = k % 2 ? r * .45 : r; g.lineTo(x + q * Math.cos(a), y + q * Math.sin(a)); } g.closePath(); g.fill(); };
+  g.fillStyle = '#fffaf0'; g.fillRect(0, 0, W, H);
+  // encabezado
+  let gr = g.createLinearGradient(0, 0, W, HH); gr.addColorStop(0, '#1f7a35'); gr.addColorStop(1, '#0f4d24'); g.fillStyle = gr; g.fillRect(0, 0, W, HH);
+  for (let i = 0; i < 30; i++) star((i * 197) % W, 60 + (i * 83) % (HH - 60), 5 + (i % 4) * 4, 'rgba(255,228,138,.16)');
+  const flags = ['#ffc61a', '#9bd34a', '#fffaf0']; for (let x = 0, i = 0; x < W; x += 54, i++) { g.fillStyle = flags[i % 3]; g.beginPath(); g.moveTo(x + 4, 0); g.lineTo(x + 27, 46); g.lineTo(x + 50, 0); g.fill(); }
+  if (LOGO) { const lw = LW, lh = LH; g.fillStyle = '#fff'; rr(W / 2 - lw / 2 - 22, 66, lw + 44, lh + 26, 26); g.fill(); g.drawImage(LOGO, W / 2 - lw / 2, 79, lw, lh); }
+  g.textAlign = 'center'; g.fillStyle = '#fff'; g.font = F(800, 58); g.fillText('Fechas disponibles', W / 2, HH - 40);
+  g.fillStyle = '#ffc61a'; g.fillRect(0, HH - 12, W, 12);
+  let y = HH + 30;
+  for (const mm of months) {
+    const { y: yy, m, lead, n } = monthDays(mm);
+    g.fillStyle = '#0f4d24'; g.font = F(800, 46); g.fillText(MESES[m - 1][0].toUpperCase() + MESES[m - 1].slice(1) + ' ' + yy, W / 2, y + 52); y += 90;
+    ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach((d, i) => { g.fillStyle = i > 4 ? '#1f7a35' : '#6b7c70'; g.font = F(700, 22); g.fillText(d.toUpperCase(), P + cw * i + cw / 2, y + 28); }); y += 46;
+    for (let d = 1; d <= n; d++) {
+      const idx = lead + d - 1, x = P + (idx % 7) * cw + 4, yy2 = y + Math.floor(idx / 7) * (ch + 8), s = `${yy}-${pad(m)}-${pad(d)}`, past = s < t, st = past ? 'past' : dayStatus(s).st;
+      const sty = { libre: ['#ffffff', '#3aa848', '#0f4d24', 'Disponible'], pocos: ['#fff4c9', '#ffc61a', '#7a5a00', 'Últimos cupos'], tomado: ['#e9ece6', '#c9d0c5', '#9aa39a', 'Reservado'], past: ['#f3f3ef', '#e6e6e0', '#c4c7c0', ''] }[st];
+      g.fillStyle = sty[0]; rr(x, yy2, cw - 8, ch, 16); g.fill(); g.lineWidth = st === 'libre' ? 4 : 2.5; g.strokeStyle = sty[1]; rr(x, yy2, cw - 8, ch, 16); g.stroke();
+      g.fillStyle = sty[2]; g.font = F(800, 36); g.fillText(String(d), x + (cw - 8) / 2, yy2 + 50);
+      if (st === 'tomado') { g.strokeStyle = '#c4cbc0'; g.lineWidth = 3; g.beginPath(); g.moveTo(x + 22, yy2 + 38); g.lineTo(x + cw - 30, yy2 + 38); g.stroke(); }
+      if (sty[3]) { g.font = F(700, 15.5); g.fillStyle = sty[2]; g.fillText(sty[3].toUpperCase(), x + (cw - 8) / 2, yy2 + 86); }
+      if (st === 'libre') star(x + cw - 26, yy2 + 20, 9, '#ffc61a');
+    }
+    y += Math.ceil((lead + n) / 7) * (ch + 8) + 30;
+  }
+  // leyenda
+  const leg = [['#ffffff', '#3aa848', 'Disponible'], ['#fff4c9', '#ffc61a', 'Últimos cupos'], ['#e9ece6', '#c9d0c5', 'Reservado']]; g.font = F(700, 24);
+  const lw2 = leg.map(l => 44 + g.measureText(l[2]).width + 40), tot = lw2.reduce((a, b) => a + b, 0); let lx = W / 2 - tot / 2;
+  g.textAlign = 'left'; leg.forEach((l, i) => { g.fillStyle = l[0]; rr(lx, y + 18, 32, 32, 9); g.fill(); g.lineWidth = 3; g.strokeStyle = l[1]; rr(lx, y + 18, 32, 32, 9); g.stroke(); g.fillStyle = '#16261b'; g.font = F(700, 24); g.fillText(l[2], lx + 44, y + 43); lx += lw2[i]; });
+  y += 110;
+  // pie
+  g.fillStyle = '#0f4d24'; g.fillRect(0, H - 120, W, 120); g.fillStyle = '#ffc61a'; g.fillRect(0, H - 120, W, 8);
+  g.textAlign = 'center'; g.fillStyle = '#fff'; g.font = F(800, 34); g.fillText('¡Reserva tu fecha!', W / 2, H - 62); g.fillStyle = '#ffe48a'; g.font = F(600, 22); g.fillText('arvi.cl · No aceptes imitaciones', W / 2, H - 26); g.textAlign = 'left';
+  const name = `ARVI_fechas_disponibles_${months.map(monthLabel).join('_').replace(/ /g, '')}.jpg`;
+  cv.toBlob(async b => {
+    const file = new File([b], name, { type: 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files: [file] }) && /Android|iPhone|iPad/i.test(navigator.userAgent)) { try { await navigator.share({ files: [file], title: 'Fechas disponibles ARVI' }); return; } catch (e) { } }
+    download(b, name); toast('Imagen de fechas disponibles lista');
+  }, 'image/jpeg', 0.93);
+}
 
 /* ---------- importadores ---------- */
 function matchWorker(name) { const n = norm(name); if (!n) return null; let best = null, bd = 99; for (const w of DB.workers) { const d = lev(norm(w.nombre), n); if (d < bd) { bd = d; best = w; } } return bd <= Math.max(1, Math.floor(n.length / 8)) ? best : null; }
@@ -530,6 +661,28 @@ function importEventos(wb, year, month) {
   }
   ST.month = ym; return `Listo: ${nW} personas nuevas, ${nE} eventos y ${nS} turnos de ${monthLabel(ym)}. <a href="#prog" onclick="go('prog');return false">Ver programación</a>`;
 }
+
+/* abonos escritos en "Observaciones" del Excel → abonos reales (el estado se calcula solo) */
+function parseAbonos(obs, emision, venc, bruto, paid) {
+  const out = []; const base = emision || today(), y0 = +base.slice(0, 4), m0 = +base.slice(5, 7);
+  const segs = String(obs || '').toUpperCase().split(/(?=ABONO|SALDO|PAGO TOTAL|PAGADO|PAGO\b)/).map(x => x.trim()).filter(Boolean);
+  for (const sg of segs) {
+    const kw = (sg.match(/^(ABONO|SALDO|PAGO TOTAL|PAGADO|PAGO)/) || [])[1]; if (!kw) continue;
+    const dm = sg.match(/(\d{1,2})[\/-](\d{1,2})(?:[\/-](\d{2,4}))?/); let fecha = '';
+    if (dm) { const mm = +dm[2], yy = dm[3] ? (dm[3].length === 2 ? 2000 + +dm[3] : +dm[3]) : (mm < m0 - 6 ? y0 + 1 : y0); if (mm >= 1 && mm <= 12) fecha = `${yy}-${pad(mm)}-${pad(+dm[1])}`; }
+    const am = sg.replace(/\s+/g, ' ').match(/\$ ?(\d[\d.,]*)/); let monto = 0;
+    if (am) { let t = am[1]; while (/[.,]\d{3}(\D|$)/.test(t)) t = t.replace(/[.,](\d{3})(\D|$)/, '$1$2'); monto = parseInt(t.replace(/\D.*$/, ''), 10) || 0; }
+    if (!paid && (!monto || (kw === 'SALDO' && !fecha))) continue;   // "SALDO $X" sin fecha = lo que falta, no un pago
+    out.push({ fecha, monto, nota: kw === 'ABONO' ? 'Abono' : kw === 'SALDO' ? 'Pago saldo' : 'Pago total', imp: 1 });
+  }
+  if (paid) {
+    const zeros = out.filter(a => !a.monto); zeros.forEach(a => out.splice(out.indexOf(a), 1));
+    const known = out.reduce((s, a) => s + a.monto, 0), rest = Math.max(0, bruto - known), lastF = [...out, ...zeros].map(a => a.fecha).filter(Boolean).pop();
+    if (rest > 0) out.push({ fecha: (zeros.length ? zeros[zeros.length - 1].fecha : '') || lastF || venc || emision || today(), monto: rest, nota: out.length ? 'Pago saldo' : 'Pago total', imp: 1 });
+  }
+  out.forEach(a => { if (!a.fecha) a.fecha = emision || today(); });
+  return out;
+}
 function xDate(v) { if (v == null || v === '') return ''; if (v instanceof Date) return iso(new Date(v.getTime() + 12 * 36e5)); if (typeof v === 'number') { const d = new Date(Math.round((v - 25569) * 864e5)); return iso(new Date(d.getTime() + 12 * 36e5)); } const s = String(v).trim(); let m = s.match(/(\d{1,2})\D+(\d{1,2})\D+(\d{4})/); if (m) return `${m[3]}-${pad(m[2])}-${pad(m[1])}`; m = s.match(/(\d{4})-(\d{2})-(\d{2})/); return m ? m[0] : ''; }
 function importCobranza(wb) {
   let nI = 0, nU = 0, nW = 0, nV = 0;
@@ -548,7 +701,11 @@ function importCobranza(wb) {
         if (!estadoManual && /PAGO TOTAL|PAGAD|^PAGO \d/i.test(obs)) estadoManual = 'PAGADA';
         const emision = xDate(r[cE]); const vv = xDate(r[cV]); const venc = vv && vv > '1901' ? vv : '';
         const ex = DB.invoices.find(x => String(x.numero) === numero);
-        const rec = { ...(ex || { id: uid(), abonos: [], eventIds: [] }), numero, clienteId, emision, neto, bruto, venc, estadoManual: ex && ex.estadoManual && !estadoManual ? ex.estadoManual : estadoManual, obs: obs || (ex ? ex.obs : '') };
+        const paid = estadoManual === 'PAGADA', special = paid ? '' : estadoManual;
+        const imp = special ? [] : parseAbonos(obs, emision, venc, bruto, paid);
+        const keepSpecial = ex && ['NC', 'NULO', 'SALTO SII'].includes(ex.estadoManual) && !estadoManual ? ex.estadoManual : '';
+        const rec = { ...(ex || { id: uid(), abonos: [], eventIds: [] }), numero, clienteId, emision, neto, bruto, venc, estadoManual: special || keepSpecial, obs: obs || (ex ? ex.obs : '') };
+        if (imp.length || !ex) rec.abonos = [...((ex && ex.abonos) || []).filter(a => !a.imp), ...imp];   // otra hoja sin datos de pago no borra lo ya leído
         upsert('invoices', rec); ex ? nU++ : nI++;
       }
       continue;
