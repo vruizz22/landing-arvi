@@ -57,7 +57,6 @@ const T = [
  ['tienen juegos inclusivos','inclusivo'],['juegos para niños en silla de ruedas','inclusivo|ride:carrusel_inc'],['accesibilidad','inclusivo'],
  ['que es arvi seguro','seguro'],['espacios para niños con autismo','seguro'],['niños con nee','seguro'],
  // verano
- ['van a estar en papudo','verano'],['cuando abren en papudo','verano'],['cuanto cuesta el boleto en papudo','verano'],['verano 2027','verano'],['donde van a estar este verano','verano'],['parque arvi papudo','verano'],
  // happy
  ['que es arvi happy','happy'],['quiero celebrar el cumpleaños de mi hijo','happy'],['salon de cumpleaños','happy'],
  ['cuanto cuesta un cumpleaños en arvi happy','h_precio'],['precio del salon','h_precio'],['valor cumpleaños fin de semana','h_precio'],
@@ -87,7 +86,7 @@ for (const [q, exp] of T) {
 const S = [
   [['que es arvi happy', 'happy'], ['y cuanto cuesta?', 'h_precio'], ['que incluye', 'h_incluye'], ['se puede llevar alcohol', 'h_reglas'], ['y donde queda', 'h_donde'], ['llegan a regiones?', 'regiones'], ['cuanto cuesta', 'precio']],
   [['tagada', 'ride:tagada'], ['cuanto mide', 'ride:tagada:med'], ['y necesita electricidad?', 'ride:tagada:en'], ['cuantas personas suben', 'ride:tagada:cap'], ['y el barco pirata?', 'ride:barco'], ['estatura minima', 'ride:barco:est']],
-  [['hola', 'saludo'], ['van a estar en papudo?', 'verano'], ['cuanto cuestan los boletos', 'verano|precio']],
+  [['hola', 'saludo'], ['cuanto cuestan los boletos', 'precio']],
   [['quiero celebrar un cumpleaños', 'happy'], ['cuantas personas caben', 'h_capacidad'], ['y si son mas de 20 niños', 'h_ninos'], ['como reservo', 'h_reserva'], ['puedo cancelar', 'h_cancela']],
 ];
 let cok = 0, cn = 0;
@@ -131,7 +130,6 @@ const T = [
  ['hacen juegos a pedido?','venta'],['me interesa invertir','venta'],['estoy buscando trabajo','trabajo'],
  ['los juegos funcionan sin luz?','rec_sinluz|electricidad'],['que juegos son ecologicos','sustentable'],['como es eso de los juegos a manivela','sustentable'],
  ['tienen algo para niños en silla de ruedas','inclusivo|ride:carrusel_inc'],['mi hijo tiene tea, tienen algo','seguro'],
- ['cuando empiezan en papudo','verano'],['cuanto vale la ficha en papudo','verano'],['van a estar en la playa este verano?','verano'],
  ['quiero hacer el cumple de mi hija','happy'],['cuanto cobran por el cumpleaños un sabado','h_precio'],['el salon tiene juegos?','h_incluye'],
  ['cuantos invitados puedo llevar al salon','h_capacidad'],['mi hijo cumple 11 puede ser en arvi happy','h_edad'],['como llego a arvi happy','h_donde'],
  ['cuanto hay que abonar para reservar el salon','h_reserva'],['si cancelo el cumpleaños me devuelven la plata','h_cancela'],['a que hora puedo llegar a decorar el salon','h_horario|h_deco'],
@@ -183,8 +181,6 @@ const T = [
  ['el cumpleaños se puede hacer un martes en la tarde?','h_horario|h_precio'],
  ['el convenio es para cualquier municipalidad?','convenio'],
  ['arvi seguro donde funciona','seguro'],
- ['que dia abren en papudo','verano'],
- ['el boleto de 2000 es por juego?','verano'],
  ['hola tienen whatsapp?','contacto'],
  ['me pueden llamar?','contacto|humano'],
  ['quiero hablar con un ejecutivo','humano'],
