@@ -256,6 +256,15 @@ aside .brand img{transition:transform .4s var(--spring)}aside .brand img:hover{t
 .tabW:hover{border-color:var(--g500);color:var(--g700)}.tabW.on{background:var(--g700);border-color:var(--g700);color:#fff}
 .pbar{display:inline-block;vertical-align:middle;width:70px;height:7px;border-radius:9px;background:var(--line);overflow:hidden}.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--y),var(--g500));border-radius:9px}
 .form .sec.full{grid-column:1/-1;margin-top:8px}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:12px}
+.arch{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.arch-th{position:relative;height:170px;background:linear-gradient(160deg,var(--g700),var(--g900));display:grid;place-items:center;overflow:hidden}
+.arch-th img{max-height:150px;max-width:86%;border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,.35);transition:transform .35s var(--ease)}
+.arch:hover .arch-th img{transform:scale(1.06) rotate(-1deg)}
+.arch-ext{position:absolute;left:10px;top:10px;background:var(--y);color:var(--g900);font-weight:800;font-size:11px;padding:3px 8px;border-radius:8px}
+.arch-tag{position:absolute;right:10px;top:10px;background:#fff;color:var(--g900);font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.arch-b{padding:14px 16px 16px}.arch-b p{margin:4px 0 6px;font-size:13.5px}
 </style>
 </head>
 <body>
@@ -285,6 +294,7 @@ aside .brand img{transition:transform .4s var(--spring)}aside .brand img:hover{t
     <button class="nav" data-v="equipo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.6.1 4.6 1.7 5.4 4.4"/></svg>Equipo</button>
     <button class="nav" data-v="cobranza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Cobranza</button>
     <button class="nav" data-v="clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6M9 10h.01M15 10h.01"/></svg>Clientes</button>
+    <button class="nav" data-v="archivos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13l3 3 3-3"/></svg>Archivos</button>
     <button class="nav" data-v="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
     <div class="spacer"></div>
     <img class="szorro" src="zorro.webp" alt="">
@@ -300,6 +310,6 @@ aside .brand img{transition:transform .4s var(--spring)}aside .brand img:hover{t
 <div id="modalRoot"></div>
 <div id="splash" class="out"><div class="in"><img src="logo.png" alt="ARVI">Cargando gestión<div class="bar"><i></i></div></div></div>
 <script src="xlsx.full.min.js"></script>
-<script type="module" src="app.js?v=14"></script>
+<script type="module" src="app.js?v=15"></script>
 </body>
 </html>
