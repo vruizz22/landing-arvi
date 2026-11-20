@@ -245,7 +245,7 @@
       r: A('Para eventos masivos conviene combinar juegos de alto flujo (personas atendidas en 6 horas):', ['Tagadá: 1.800', 'Globos Samba: 1.300', 'Muro Inflable: 1.300', 'Rueda Chicago: 1.296', 'Alfombra Mágica: 1.153', 'Barco Pirata: 1.152'], [['wa', 'Armar propuesta', 'Hola ARVI, estamos organizando un evento masivo y queremos una propuesta de juegos']], { after: 'Además, por cada 2 juegos mecánicos en arriendo sumamos decorativos sin costo.' }) },
     { id: 'rec_sinluz', q: 'Juegos sin electricidad', k: [['sin electricidad', 2.5], ['sin luz', 2], ['no necesitan luz', 2.5], ['no requieren electricidad', 2.5], ['no necesiten electricidad', 2.5], ['no necesiten luz', 2.5], ['no usen electricidad', 2.5], ['no ocupen luz', 2.5], ['no hay luz', 2], ['no hay electricidad', 2], 'no tenemos luz', 'sin enchufe', 'manual', 'manuales'],
       r: function () { return listRides(function (r) { return !r.elec && !r.noride; }, 'Estos juegos funcionan sin electricidad (algunos usan energía solo para montar):'); } },
-    { id: 'rec_verano', q: 'Juegos acuáticos', k: ['agua', 'acuatico', 'acuaticos', 'piscina', 'mojarse', 'dia de calor', 'refrescar'],
+    { id: 'rec_verano', q: 'Juegos acuáticos', k: [['verano', 1.5], 'playa', 'vacaciones', 'agua', 'acuatico', 'acuaticos', 'piscina', 'mojarse', 'dia de calor', 'refrescar'],
       r: function () { return listRides(function (r) { return r.cat === 'acu'; }, 'Para días de calor tenemos juegos acuáticos con operador y control sanitario (limpieza, cloración y pH):'); } },
     { id: 'complementarios', q: 'Promoción decorativos', k: ['complementario', 'complementarios', 'decorativos', 'decoracion del evento', 'promocion', 'promo', 'oferta', 'descuento', 'regalo', 'gratis', 'sin costo', 'bonus'],
       r: A('Por cada 2 juegos mecánicos en arriendo, te sumamos elementos decorativos complementarios sin costo. También puedes agregar stands de Feria Americana o una Zona de Circo para animar el evento.', null, [['wa', 'Cotizar con la promoción', 'Hola ARVI, quiero cotizar 2 o más juegos mecánicos con los decorativos sin costo']]) },
@@ -271,9 +271,6 @@
       r: A('Nadie se queda abajo. Nuestro Carrusel Inclusivo tiene rampa de acceso a la plataforma, espacio y cinturón de seguridad para silla de ruedas junto a las figuras, señalética inclusiva y un operador acompañando. También tenemos Paneles Deportivos Inclusivos para todas las edades y capacidades.', null, [['#inclusivo', 'Ver carrusel inclusivo'], ['wa', 'Cotizar carrusel inclusivo', 'Hola ARVI, quiero cotizar el carrusel inclusivo']]) },
     { id: 'seguro', q: 'ARVI Seguro (NEE)', k: [['arvi seguro', 4], ['nee', 2], ['necesidades educativas', 2.5], ['necesidades especiales', 2.5], ['autismo', 2.5], ['autista', 2.5], ['tea', 2], ['tdah', 2.5], ['sindrome de down', 2.5], ['sensorial', 2], 'terapia', ['educacion especial', 2], ['integracion', 1.5]],
       r: A('ARVI Seguro, parte de ARVI Happy, crea espacios inclusivos y seguros para niños con Necesidades Educativas Especiales (NEE): diseño inclusivo y accesible, seguridad certificada y juego y aprendizaje adaptado. Está pensado para establecimientos educativos, municipios y programas de educación inclusiva, y fundaciones y organizaciones sociales.', null, [['#arvi-seguro', 'Ver ARVI Seguro'], [PDF.seguro, 'Descargar propuesta'], ['wa', 'Agendar una visita', 'Hola, quiero conocer ARVI Seguro y agendar una visita', WA_HAPPY]]) },
-    /* ---------- verano 2027 ---------- */
-    { id: 'verano', q: 'Verano 2027', k: [['verano', 2], ['papudo', 3], 'playa', 'vacaciones', '2027', 'costa', 'litoral', 'balneario', 'temporada', 'boleto', 'boletos', 'entrada', 'entradas', 'ticket', 'fichas', '2000', '2 000', 'dos mil', 'parque arvi', 'enero', 'febrero'],
-      r: A('¡Llegamos a Papudo! Este verano 2027, por primer año, Parque ARVI estará en Papudo, un balneario familiar, con juegos para niños y familias. Los boletos para juegos cuestan solo $2.000.', null, [['#verano', 'Ver Verano 2027'], ['wa', 'Avísame las fechas', 'Hola ARVI, quiero información del verano 2027 en Papudo']], { after: 'Las fechas, horarios y ubicación exacta se publicarán muy pronto en nuestras redes (@arvi.cl).' }) },
     /* ---------- ARVI Happy ---------- */
     { id: 'happy', q: 'ARVI Happy (cumpleaños)', k: ['arvi happy', 'happy', 'cumpleanos', 'salon', 'salon de cumpleanos', 'fiesta infantil', 'celebrar', 'celebracion', 'festejo', 'fiesta de mi hijo', 'fiesta de mi hija', 'cumpleanos de mi hijo', 'cumpleanos de mi hija', 'arrendar el salon', 'local para cumpleanos'],
       r: A('ARVI Happy es nuestro salón de cumpleaños en ' + C.happyDir + ', pensado para niños y niñas de 1 a 10 años, con 3 horas de uso exclusivo y capacidad para 70 personas. Los niños se divierten en la zona de juegos (laberinto, piscina de pelotas, inflables y más) y los papás disfrutan tranquilos en la zona de padres, con vista directa a las atracciones. Valores desde $150.000. ¿Qué te gustaría saber?', null, [['/happy/', 'Ver valores y detalles'], ['wa', 'Reservar fecha', 'Hola ARVI HAPPY, quiero reservar un cumpleaños', WA_HAPPY], [PDF.happy, 'Descargar información']], { ctx: 'happy' }) },
@@ -315,7 +312,7 @@
     { id: 'contacto', q: 'Horarios y contacto', k: [['whatsapp', 1.5], 'numero de whatsapp', 'contacto', 'contactar', 'telefono', 'telefonos', 'fono', 'numero', 'celular', 'correo', 'mail', 'email', 'llamar', 'horario de atencion', 'horario', ['atienden', 0.8], 'oficina', 'direccion', 'donde estan', 'donde se ubican', 'ubicacion'],
       r: A('Atendemos ' + C.horario + '.', ['WhatsApp: ' + C.wa, 'Teléfonos: ' + C.tel2 + ' · ' + C.fijo, 'Correo: ' + C.mail + ' · ' + C.mail2, 'Llevamos los juegos a tu evento en todo Chile; nuestro salón ARVI Happy está en ' + C.happyDir], [['wa', 'Escribir por WhatsApp', 'Hola ARVI, tengo una consulta'], ['tel:+56988082320', 'Llamar']]) },
     { id: 'redes', q: 'Redes sociales', k: ['instagram', 'redes', 'redes sociales', 'reels', 'tiktok', 'facebook', 'pagina', 'seguirlos', 'ig'],
-      r: A('Síguenos en Instagram: @arvi.cl para juegos, eventos y el Verano 2027, y @arvihappy para cumpleaños.', null, [['https://www.instagram.com/arvi.cl/', '@arvi.cl'], ['https://www.instagram.com/arvihappy/', '@arvihappy'], ['#redes', 'Ver publicaciones']]) },
+      r: A('Síguenos en Instagram: @arvi.cl para juegos y eventos, y @arvihappy para cumpleaños.', null, [['https://www.instagram.com/arvi.cl/', '@arvi.cl'], ['https://www.instagram.com/arvihappy/', '@arvihappy'], ['#redes', 'Ver publicaciones']]) },
     { id: 'descargas', q: 'Catálogos y descargas', k: ['catalogo', 'pdf', 'descargar', 'descarga', 'brochure', 'ficha tecnica', 'fichas tecnicas', 'folleto', 'presentacion', 'informacion completa', 'documento'],
       r: A('Revisa el catálogo completo de juegos en arvi.cl/catalogo, y puedes descargar:', ['Convenio y proyectos sustentables para municipalidades', 'Información de ARVI Happy', 'Convenio ARVI Happy para funcionarios municipales', 'Propuesta ARVI Seguro'], [[PDF.muni, 'Municipalidades'], [PDF.happy, 'ARVI Happy'], [PDF.conv, 'Convenio funcionarios'], [PDF.seguro, 'ARVI Seguro'], ['/catalogo/', 'Catálogo de juegos (web)']]) },
     /* ---------- conversación ---------- */
@@ -328,7 +325,7 @@
     { id: 'chao', st: true, q: 'Chao', k: ['chao', 'adios', 'hasta luego', 'nos vemos', 'bye', 'chaito'],
       r: A('¡Gracias por escribirnos! Que tengas un día muy entretenido. 🎡') },
     { id: 'saludo', st: true, q: 'Hola', k: ['hola', 'holi', 'holaa', 'buenas', 'buen dia', 'buenos dias', 'buenas tardes', 'buenas noches', 'alo', 'hey', 'saludos'],
-      r: A('¡Hola! 🦊 Soy el Zorro ARVI. ¿En qué te ayudo? Puedes preguntarme por juegos, precios, montaje, ARVI Happy, el Verano 2027 o cualquier duda de tu evento.') },
+      r: A('¡Hola! 🦊 Soy el Zorro ARVI. ¿En qué te ayudo? Puedes preguntarme por juegos, precios, montaje, ARVI Happy o cualquier duda de tu evento.') },
     { id: 'insulto', st: true, q: '', k: ['weon', 'weona', 'conchetumare', 'ctm', 'csm', 'mierda', 'idiota', 'estupido', 'tonto', 'culiao', 'aweonao'],
       r: A('Uf, parece que algo no salió bien. Si quieres, te dejo con el equipo por WhatsApp para que te ayuden directamente.', null, [['wa', 'Hablar con el equipo', 'Hola ARVI, necesito ayuda']]) }
   ];
@@ -433,7 +430,7 @@
       if (greet && out.msgs[0].p) out.msgs[0].p[0] = '¡Hola! ' + out.msgs[0].p[0];
       var ctx = (first.it.ctx === 'happy' || first.it.id === 'happy' || first.it.id === 'convenio' || (first.it.id === 'seguro')) ? 'happy' : (inHappy && !content.some(function (x) { return !x.it.ctx && x.s > first.s; }) && happyHere ? 'happy' : null);
       if (first.it.ctx !== 'happy' && first.it.id !== 'happy' && first.it.id !== 'convenio' && first.it.id !== 'seguro') ctx = null;
-      out.ctx = ctx; out.ride = null; out.chips = ctx === 'happy' ? 'happy' : (first.it.id === 'verano' ? 'verano' : 'main');
+      out.ctx = ctx; out.ride = null; out.chips = ctx === 'happy' ? 'happy' : 'main';
       out.debug = { intent: first.it.id, second: second ? second.it.id : null };
       return out;
     }
@@ -462,9 +459,8 @@
   function build(it) { var r = typeof it.r === 'function' ? it.r() : it.r; return JSON.parse(JSON.stringify(r)); }
 
   var CHIPS = {
-    main: ['precio', 'incluye', 'juegos', 'verano', 'happy', 'regiones', 'electricidad', 'espacio', 'montaje', 'sustentable', 'inclusivo', 'b2b', 'seguridad', 'contacto'],
+    main: ['precio', 'incluye', 'juegos', 'rec_verano', 'happy', 'regiones', 'electricidad', 'espacio', 'montaje', 'sustentable', 'inclusivo', 'b2b', 'seguridad', 'contacto'],
     happy: ['h_precio', 'h_incluye', 'h_horario', 'h_donde', 'h_reserva', 'h_cancela', 'h_comida', 'h_deco', 'h_reglas', 'h_cocina', 'h_edad', 'h_jardin', 'convenio', 'h_contacto'],
-    verano: ['verano', 'redes', 'juegos', 'contacto'],
     ride: [['cap', 'Capacidad'], ['mon', 'Montaje'], ['med', 'Medidas'], ['en', 'Energía'], ['est', 'Edad y estatura'], ['precio', 'Cotizar']]
   };
 
@@ -536,7 +532,7 @@
       if (guide) guide.classList.remove('off');
       if (!started) {
         started = true;
-        add(render({ p: ['¡Hola! Soy el Zorro ARVI 🦊 Te respondo al instante sobre juegos, precios, montaje, ARVI Happy, el Verano 2027 y más. Escríbeme como quieras o elige una opción.'] }), 'bot');
+        add(render({ p: ['¡Hola! Soy el Zorro ARVI 🦊 Te respondo al instante sobre juegos, precios, montaje, ARVI Happy y más. Escríbeme como quieras o elige una opción.'] }), 'bot');
         setChips('main');
       }
       setTimeout(function () { if (window.matchMedia('(hover:hover)').matches) inp.focus(); }, 300);
