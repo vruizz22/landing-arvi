@@ -230,6 +230,7 @@ const shiftMonth = (ym, d) => { const [y, m] = ym.split('-').map(Number); const 
 
 /* ================= VISTAS ================= */
 const VIEWS = {};
+I.dl = I.dl || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
 I.doc = I.doc || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
 const KI = {
   cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
@@ -808,6 +809,44 @@ async function jpgDisp(ym, nMonths) {
     download(b, name); toast('Imagen de fechas disponibles lista');
   }, 'image/jpeg', 0.93);
 }
+
+
+/* ================= ARCHIVOS IMPORTANTES (descargas) ================= */
+const ARCH_DIR = 'archivos-x9t4/';
+const ARCHIVOS = [
+  { g: 'ARVI Juegos', f: 'ARVI-Catalogo-2026.pdf', t: 'Catálogo 2026', d: 'Todos los juegos con fotos, capacidad, montaje y requisitos.', mb: 31.6, tag: 'Más nuevo' },
+  { g: 'ARVI Juegos', f: 'ARVI-Propuesta-de-Valor-2026.pdf', t: 'Propuesta de valor y diferenciadores', d: 'Por qué elegir ARVI: experiencia, fabricación propia y sustentabilidad.', mb: 7.9 },
+  { g: 'ARVI Juegos', f: 'ARVI-Colegios-Privados-y-Productoras-2026.pdf', t: 'Colegios privados y productoras', d: 'Propuesta para eventos escolares y productoras.', mb: 14.9 },
+  { g: 'ARVI Juegos', f: 'ARVI-Sustentable-2026.pdf', t: 'ARVI Sustentable 2026', d: 'Proyectos y juegos sustentables (energía humana).', mb: 4.2 },
+  { g: 'Para clientes', f: 'ARVI-Datos-de-Montaje.pdf', t: 'Datos de montaje (formulario)', d: 'Planilla para que el cliente complete los datos del evento.', mb: 0.3 },
+  { g: 'Para clientes', f: 'ARVI-Datos-para-tu-evento.jpg', t: 'Datos para tu evento (imagen)', d: 'Imagen para enviar por WhatsApp con los 7 datos que necesitamos.', mb: 0.2 },
+  { g: 'ARVI Happy', f: 'ARVI-Happy-Informacion-Salon-2026.pdf', t: 'Información del salón 2026', d: 'Guía completa del salón: capacidad, horarios, paquetes y reglas.', mb: 7.5 },
+  { g: 'ARVI Happy', f: 'ARVI-Happy-Convenios-Cumpleanos-2026.pdf', t: 'Convenios de cumpleaños 2026', d: 'Beneficio para funcionarios municipales.', mb: 5.0 },
+  { g: 'ARVI Happy', f: 'ARVI-Happy-Datos-de-Facturacion.pdf', t: 'Datos de facturación', d: 'Razón social, RUT, giro y dirección para boletas y facturas.', mb: 0.3 },
+];
+VIEWS.archivos = () => {
+  const v = $('#view'), q = (ST.archQ || '').toLowerCase();
+  const list = ARCHIVOS.filter(a => !q || (a.t + ' ' + a.d + ' ' + a.g).toLowerCase().includes(q));
+  const groups = [...new Set(list.map(a => a.g))];
+  v.innerHTML = head('Archivos importantes', 'Documentos listos para descargar o enviar a clientes.', `<input id="aq" placeholder="Buscar archivo…" value="${esc(ST.archQ || '')}" style="padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);min-width:220px">`) +
+    groups.map(g => `<div class="sec" style="margin-top:6px">${esc(g)}</div><div class="arch-grid">${list.filter(a => a.g === g).map(a => {
+      const url = ARCH_DIR + a.f, ext = a.f.split('.').pop().toUpperCase(), th = ARCH_DIR + a.f.replace(/\.(pdf|jpg)$/, '-min.jpg');
+      return `<div class="card arch"><div class="arch-th"><img src="${th}" alt="" loading="lazy"><span class="arch-ext">${ext}</span>${a.tag ? `<span class="arch-tag">${esc(a.tag)}</span>` : ''}</div>
+        <div class="arch-b"><b>${esc(a.t)}</b><p class="muted">${esc(a.d)}</p><div class="muted" style="font-size:12px">${ext} · ${a.mb.toFixed(1).replace('.', ',')} MB</div>
+        <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap"><a class="btn y sm" href="${url}" download="${a.f}">${I.dl || '⬇'} Descargar</a><a class="btn ghost sm" href="${url}" target="_blank" rel="noopener">Abrir</a><button class="btn ghost sm" data-share="${a.f}">Compartir</button></div></div></div>`; }).join('')}</div>`).join('') +
+    (list.length ? '' : '<div class="card empty">No hay archivos que coincidan.</div>');
+  $('#aq').oninput = e => { ST.archQ = e.target.value; const p = e.target.selectionStart; render(); const n = $('#aq'); n.focus(); n.setSelectionRange(p, p); };
+  $$('[data-share]', v).forEach(b => b.onclick = async () => {
+    const a = ARCHIVOS.find(x => x.f === b.dataset.share), url = new URL(ARCH_DIR + a.f, location.href).href;
+    try {
+      if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        const blob = await (await fetch(url)).blob(); const file = new File([blob], a.f, { type: blob.type });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: a.t }); return; }
+      }
+      await navigator.clipboard.writeText(url); toast('Enlace copiado: pégalo en WhatsApp o correo');
+    } catch (e) { if (e.name !== 'AbortError') toast('No se pudo compartir'); }
+  });
+};
 
 /* ---------- importadores ---------- */
 function matchWorker(name) { const n = norm(name); if (!n) return null; let best = null, bd = 99; for (const w of DB.workers) { const d = lev(norm(w.nombre), n); if (d < bd) { bd = d; best = w; } } return bd <= Math.max(1, Math.floor(n.length / 8)) ? best : null; }
