@@ -493,32 +493,25 @@ function fichaDefaults(e) {
 }
 VIEWS.fichas = () => {
   const v = $('#view'); const evs = DB.events.filter(e => !isExt(e)).sort((a, b) => (b.inicio || '').localeCompare(a.inicio || ''));
-  v.innerHTML = head('Fichas técnicas', 'Documento formal en PDF para el cliente y el equipo: datos del evento, juegos, operadores, requerimientos y firmas.', `<button class="btn y" id="fBl">${I.plus}Ficha en blanco</button>`) +
+  v.innerHTML = head('Fichas técnicas', 'PDF con 3 partes: datos del evento, juegos solicitados y personal ARVI con firmas.', `<button class="btn y" id="fBl">${I.plus}Ficha en blanco</button>`) +
     `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Evento</th><th class="hide-m">Cliente</th><th>Equipo</th><th>Ficha</th><th></th></tr></thead><tbody>${evs.map(e => `<tr><td>${fdate(e.inicio)}</td><td><b>${esc(e.nombre)}</b></td><td class="hide-m">${esc(cliName(e.clienteId))}</td><td>${new Set(DB.shifts.filter(s => s.eventId === e.id).map(s => s.workerId)).size} personas</td><td>${e.ficha && e.ficha.numero ? `<span class="pill p-pagada">${esc(e.ficha.numero)}</span>` : '<span class="pill p-pend">Sin ficha</span>'}</td><td class="num"><button class="btn sm" data-fi="${e.id}">${I.doc || ''}${e.ficha ? 'Abrir' : 'Crear'} ficha</button></td></tr>`).join('') || '<tr><td colspan="6" class="empty">Aún no hay eventos.</td></tr>'}</tbody></table></div></div>`;
   $('#fBl').onclick = () => fichaModal(null);
   $$('[data-fi]', v).forEach(b => b.onclick = () => fichaModal(byId('events', b.dataset.fi)));
 };
 function fichaModal(e) {
-  const d = Object.assign(fichaDefaults(e), JSON.parse(JSON.stringify((e && e.ficha) || {}))); d.sec = Object.assign(fichaDefaults(e).sec, d.sec || {});
+  const d = Object.assign(fichaDefaults(e), JSON.parse(JSON.stringify((e && e.ficha) || {})));
   const T = (k, l, ph = '', type = 'text', full = false) => `<label class="f ${full ? 'full' : ''}">${l}<input name="${k}" type="${type}" value="${esc(d[k] || '')}" placeholder="${esc(ph)}"></label>`;
-  const A = (k, l, ph = '') => `<label class="f full">${l}<textarea name="${k}" placeholder="${esc(ph)}" style="min-height:90px">${esc(d[k] || '')}</textarea></label>`;
-  const SEC = [['juegos', 'Juegos solicitados'], ['equipo', 'Personal ARVI'], ['vehiculos', 'Vehículos'], ['req', 'Requerimientos del lugar'], ['control', 'Control en terreno (para rellenar)'], ['obs', 'Observaciones'], ['cond', 'Condiciones de servicio'], ['firmas', 'Firmas y recepción conforme']];
   const ws = sortedWorkers().filter(w => w.activo !== false || d.equipo.includes(w.id));
-  const { m, close } = modal(`<header><div><h3>Ficha técnica ${esc(d.numero)}</h3><div class="muted">${e ? esc(e.nombre) : 'Ficha en blanco'} · los campos vacíos salen en el PDF con línea para rellenar</div></div><button class="btn sm ghost" data-close>Cerrar</button></header>
+  const { m, close } = modal(`<header><div><h3>Ficha técnica ${esc(d.numero)}</h3><div class="muted">${e ? esc(e.nombre) : 'Ficha en blanco'} · lo que dejes vacío sale con línea para rellenar</div></div><button class="btn sm ghost" data-close>Cerrar</button></header>
   <div class="form" id="ff">
-    <div class="sec full">1. Datos generales</div>${T('numero', 'N° de ficha')}${T('emision', 'Fecha de emisión', '', 'date')}${T('cliente', 'Cliente / razón social')}${T('rutCliente', 'RUT cliente')}${T('propuesta', 'Propuesta / cotización', 'Ej: COT-10673')}${T('evento', 'Nombre del evento')}
-    <div class="sec full">2. Fechas y horarios</div>${T('fechaMontaje', 'Fecha de montaje', '', 'date')}${T('horaMontaje', 'Horario de montaje', 'Ej: 08:00 a 12:00')}${T('fechaDesde', 'Funcionamiento desde', '', 'date')}${T('fechaHasta', 'Funcionamiento hasta', '', 'date')}${T('horaFunc', 'Horario de funcionamiento', 'Ej: 11:00 a 18:00')}${T('fechaDesmontaje', 'Fecha de desmontaje', '', 'date')}${T('horaDesmontaje', 'Horario de desmontaje')}
-    <div class="sec full">3. Lugar y contacto</div>${T('direccion', 'Dirección de destino', '', 'text', true)}${T('comuna', 'Comuna')}${T('referencia', 'Referencia / ingreso', 'Ej: entrada por portón 2')}${T('contacto', 'Contacto en terreno')}${T('telefono', 'Teléfono contacto')}${T('email', 'Correo contacto')}${T('encargado', 'Encargado ARVI en terreno')}${T('encargadoTel', 'Teléfono encargado ARVI')}
-    <div class="sec full">4. Juegos</div>${A('juegos', 'Juegos solicitados (uno por línea, cantidad con x2, x3…)', 'Sillas voladoras\nBarco\nInflable simple x3')}${T('personajes', 'Personajes / corpóreos', 'Ej: Kitty y Mickey', 'text', true)}${T('blankJ', 'Filas extra en blanco (juegos)', '', 'number')}
-    <div class="sec full">5. Personal ARVI <span class="muted" style="font-weight:500">· viene de los turnos del evento</span></div>
-    <div class="full chips" id="fEq">${ws.map(w => `<label class="check"><input type="checkbox" value="${w.id}" ${d.equipo.includes(w.id) ? 'checked' : ''}>${esc(w.nombre)}${w.rut ? '' : ' <span class="muted">(sin RUT)</span>'}</label>`).join('')}</div>${T('blankEq', 'Filas extra en blanco (personal)', '', 'number')}
-    <div class="sec full">6. Vehículos</div><div class="full chips" id="fVh">${DB.vehicles.map(vh => `<label class="check"><input type="checkbox" value="${vh.id}" ${d.vehiculos.includes(vh.id) ? 'checked' : ''}>${esc(vh.patente)} ${esc(vh.descripcion || '')}</label>`).join('') || '<span class="muted">Sin vehículos registrados (se deja espacio para rellenar).</span>'}</div>
-    <div class="sec full">7. Requerimientos, observaciones y condiciones</div>${A('req', 'Requerimientos del lugar (casillas para marcar)')}${A('obs', 'Observaciones')}${A('cond', 'Condiciones de servicio')}
-    <div class="sec full">Secciones a incluir en el PDF</div><div class="full chips" id="fSec">${SEC.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" ${d.sec[k] ? 'checked' : ''}>${l}</label>`).join('')}</div>
-    <label class="f">Tamaño de hoja<select name="papel">${opts(['letter', 'a4'], d.papel, x => x === 'letter' ? 'Carta' : 'A4')}</select></label>
+    <div class="sec full">1. Datos generales, fechas y lugar</div>${T('cliente', 'Cliente')}${T('propuesta', 'Propuesta', 'Ej: COT-10673')}${T('fechaMontaje', 'Fecha de montaje', '', 'date')}${T('horaMontaje', 'Horario de montaje', 'Ej: 08:00')}${T('fechaDesde', 'Fecha de funcionamiento (desde)', '', 'date')}${T('fechaHasta', 'Hasta (si es más de un día)', '', 'date')}${T('horaFunc', 'Horario de funcionamiento', 'Ej: 11:00 a 18:00')}${T('direccion', 'Dirección de destino', '', 'text', true)}${T('contacto', 'Contacto en terreno')}${T('telefono', 'Teléfono contacto', '+569 …')}
+    <div class="sec full">2. Juegos solicitados</div><label class="f full">Juegos (uno por línea, cantidad con x2, x3…)<textarea name="juegos" style="min-height:110px" placeholder="Sillas voladoras\nBarco\nInflable simple x3">${esc(d.juegos || '')}</textarea></label>${T('personajes', 'Personajes', 'Ej: Kitty y Mickey')}${T('blankJ', 'Filas en blanco extra', '', 'number')}
+    <div class="sec full">3. Personal ARVI y firmas <span class="muted" style="font-weight:500">· viene de los turnos del evento</span></div>
+    <div class="full chips" id="fEq">${ws.map(w => `<label class="check"><input type="checkbox" value="${w.id}" ${d.equipo.includes(w.id) ? 'checked' : ''}>${esc(w.nombre)}${w.rut ? '' : ' <span class="muted">(sin RUT)</span>'}</label>`).join('')}</div>${T('blankEq', 'Filas en blanco extra', '', 'number')}
+    <label class="f">Tamaño de hoja<select name="papel">${opts(['letter', 'a4'], d.papel, x => x === 'letter' ? 'Carta' : 'A4')}</select></label>${T('numero', 'N° de ficha')}
   </div>
-  <div class="row" style="justify-content:space-between;margin-top:16px"><span class="muted">${e ? 'Los datos quedan guardados en el evento.' : ''}</span><div class="row">${e ? '<button class="btn ghost" id="fSave">Guardar</button>' : ''}<button class="btn y" id="fPdf">${I.doc || ''}Descargar PDF</button></div></div>`);
-  const read = () => { const o = formData($('#ff', m)); Object.assign(d, o); d.equipo = $$('#fEq input:checked', m).map(x => x.value); d.vehiculos = $$('#fVh input:checked', m).map(x => x.value); d.sec = Object.fromEntries(SEC.map(([k]) => [k, !!$(`#fSec input[value="${k}"]`, m).checked])); d.blankEq = Math.max(0, Math.min(20, num(d.blankEq))); d.blankJ = Math.max(0, Math.min(20, num(d.blankJ))); return d; };
+  <div class="row" style="justify-content:space-between;margin-top:16px"><span class="muted">${e ? 'Los datos quedan guardados en el evento.' : ''}</span><div class="row">${e ? '<button class="btn ghost" id="fSave">Guardar</button>' : ''}<button class="btn y" id="fPdf">${I.doc}Descargar PDF</button></div></div>`);
+  const read = () => { Object.assign(d, formData($('#ff', m))); d.equipo = $$('#fEq input:checked', m).map(x => x.value); d.blankEq = Math.max(0, Math.min(20, num(d.blankEq))); d.blankJ = Math.max(0, Math.min(20, num(d.blankJ))); return d; };
   const save = () => { if (!e) return; read(); const ev = byId('events', e.id); upsert('events', { ...ev, ficha: JSON.parse(JSON.stringify(d)) }); };
   if (e) $('#fSave', m).onclick = () => { save(); toast('Ficha guardada en el evento'); };
   $('#fPdf', m).onclick = async () => { const b = $('#fPdf', m); b.classList.add('loading'); try { read(); save(); await pdfFicha(d); } catch (x) { console.error(x); toast('No se pudo crear el PDF: ' + x.message); } b.classList.remove('loading'); };
@@ -582,28 +575,19 @@ async function pdfFicha(d) {
   function para(t) { font('normal', 9.5, INK); const L2 = String(t).split('\n').filter(Boolean); L2.forEach(p => { const ls = doc.splitTextToSize(p, CW - 16); ensure(ls.length * 12 + 6); font('normal', 9.5, INK); star(M + 4, y + 4, 3.5, YY); doc.text(ls, M + 14, y + 8); y += ls.length * 12 + 6; }); y += 8; }
 
   header(true);
-  section('Datos generales');
-  grid([['Cliente / razón social', d.cliente], ['RUT cliente', d.rutCliente], ['Propuesta / cotización', d.propuesta], ['Evento', d.evento]]);
-  section('Fechas y horarios');
-  grid([['Fecha de montaje', fd(d.fechaMontaje)], ['Horario de montaje', d.horaMontaje], ['Funcionamiento', d.fechaDesde ? (d.fechaHasta && d.fechaHasta !== d.fechaDesde ? `Del ${fd(d.fechaDesde)} al ${fd(d.fechaHasta)}` : fd(d.fechaDesde)) : '', 2], ['Horario de funcionamiento', d.horaFunc], ['Fecha y horario de desmontaje', [fd(d.fechaDesmontaje), d.horaDesmontaje].filter(Boolean).join(' · ')]]);
-  section('Lugar y contacto');
-  grid([['Dirección de destino', d.direccion, 2], ['Comuna', d.comuna], ['Referencia / ingreso', d.referencia], ['Contacto en terreno', d.contacto], ['Teléfono contacto', d.telefono], ['Correo contacto', d.email], ['Encargado ARVI en terreno', [d.encargado, d.encargadoTel].filter(Boolean).join(' · ')]]);
-  if (d.sec.juegos) { section('Juegos solicitados', 130); const js = parseJuegos(d.juegos); table([{ h: 'Juego', w: 4.2 }, { h: 'Cant.', w: 0.9, a: 'c' }, { h: 'Estado en la entrega', w: 3.2 }, { h: 'Estado en el retiro', w: 3.2 }], js.map(j => [j.n, String(j.q), '', '']), d.blankJ, 30); if (d.personajes) grid([['Personajes / corpóreos', d.personajes, 2]]); }
-  if (d.sec.equipo) { section('Personal ARVI', 130); const rolOf = id => [...new Set(DB.shifts.filter(s => s.workerId === id && d.evento && evName(s.eventId) === d.evento).map(s => s.rol))].join(' y ') || (byId('workers', id) || {}).funcion || 'Operador';
-    table([{ h: 'Nombre', w: 4 }, { h: 'C.I. / RUT', w: 2.4 }, { h: 'Función', w: 2.6 }, { h: 'Firma', w: 2.6 }], d.equipo.map(id => byId('workers', id)).filter(Boolean).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(w => [w.nombre, w.rut || '', rolOf(w.id), '']), d.blankEq); }
-  if (d.sec.vehiculos) { section('Vehículos', 130); table([{ h: 'Patente', w: 2 }, { h: 'Descripción', w: 4 }, { h: 'Conductor', w: 3.5 }, { h: 'Hora llegada', w: 2 }], d.vehiculos.map(v => byId('vehicles', v)).filter(Boolean).map(v => [v.patente, v.descripcion || '', '', '']), d.vehiculos.length ? 0 : 2); }
-  if (d.sec.req) { section('Requerimientos del lugar', 130); checks(String(d.req || '').split('\n').map(x => x.trim()).filter(Boolean)); }
-  if (d.sec.control) { section('Control en terreno', 130); grid([['Hora de llegada del equipo', ''], ['Hora de término de montaje', ''], ['Hora de inicio de funcionamiento', ''], ['Hora de término de funcionamiento', ''], ['Hora de retiro', ''], ['Asistentes aproximados', '']]); lines(3, 'Incidentes o novedades'); }
-  if (d.sec.obs) { section('Observaciones'); if (d.obs) para(d.obs); lines(d.obs ? 2 : 4); }
-  if (d.sec.cond && d.cond) { section('Condiciones de servicio'); para(d.cond); }
-  if (d.sec.firmas) {
-    section('Firmas y recepción conforme'); ensure(150);
-    font('normal', 9, MU); doc.text(doc.splitTextToSize('Con su firma, las partes confirman la información de esta ficha y la recepción conforme del servicio.', CW), M, y + 4); y += 26;
-    const parts = ['Encargado ARVI', 'Ventas ARVI', 'Cliente']; const w3 = (CW - 24) / 3;
-    parts.forEach((p, i) => { const x = M + i * (w3 + 12); doc.setDrawColor(...LN); doc.roundedRect(x, y, w3, 118, 6, 6); doc.setDrawColor(...INK); doc.line(x + 12, y + 56, x + w3 - 12, y + 56); font('bold', 10, G9); doc.text(p.toUpperCase(), x + w3 / 2, y + 72, { align: 'center' });
-      font('normal', 8.5, MU); ['Nombre', 'RUT', 'Fecha'].forEach((k, j) => { doc.text(k + ':', x + 12, y + 88 + j * 11); doc.setDrawColor(190, 198, 188); doc.line(x + 46, y + 89 + j * 11, x + w3 - 12, y + 89 + j * 11); }); });
-    y += 130;
-  }
+  const rango = d.fechaDesde ? (d.fechaHasta && d.fechaHasta !== d.fechaDesde ? `Del ${fd(d.fechaDesde)} al ${fd(d.fechaHasta)}` : fd(d.fechaDesde)) : '';
+  section('Datos generales, fechas y lugar');
+  grid([['Cliente', d.cliente], ['Propuesta', d.propuesta], ['Fecha de montaje', [fd(d.fechaMontaje), d.horaMontaje].filter(Boolean).join(' · ')], ['Fecha de funcionamiento', rango], ['Horario de funcionamiento', d.horaFunc], ['Contacto en terreno', [d.contacto, d.telefono].filter(Boolean).join(' · ')], ['Dirección de destino', d.direccion, 2]]);
+  section('Juegos solicitados', 130);
+  table([{ h: 'Juego', w: 4.2 }, { h: 'Cant.', w: 0.9, a: 'c' }, { h: 'Observaciones', w: 6.4 }], parseJuegos(d.juegos).map(j => [j.n, String(j.q), '']), d.blankJ, 28);
+  grid([['Personajes', d.personajes, 2]]);
+  section('Personal ARVI y firmas', 130);
+  const rolOf = id => [...new Set(DB.shifts.filter(s => s.workerId === id && d.evento && evName(s.eventId) === d.evento).map(s => s.rol))].join(' y ') || (byId('workers', id) || {}).funcion || 'Operador';
+  table([{ h: 'Nombre', w: 4 }, { h: 'C.I. / RUT', w: 2.4 }, { h: 'Función', w: 2.6 }, { h: 'Firma', w: 2.6 }], d.equipo.map(id => byId('workers', id)).filter(Boolean).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(w => [w.nombre, w.rut || '', rolOf(w.id), '']), d.blankEq, 30);
+  ensure(120); y += 6;
+  ['Firma Ventas ARVI', 'Firma Cliente'].forEach((p, i) => { const w2 = (CW - 30) / 2, x = M + i * (w2 + 30); doc.setDrawColor(...INK); doc.setLineWidth(.8); doc.line(x + 10, y + 50, x + w2 - 10, y + 50); font('bold', 10.5, G9); doc.text(p.toUpperCase(), x + w2 / 2, y + 66, { align: 'center' });
+    font('normal', 8.5, MU); ['Nombre', 'RUT', 'Fecha'].forEach((k, j) => { doc.text(k + ':', x + 10, y + 84 + j * 12); doc.setDrawColor(190, 198, 188); doc.setLineWidth(.6); doc.line(x + 46, y + 85 + j * 12, x + w2 - 10, y + 85 + j * 12); }); });
+  y += 125;
   // pie en todas las páginas
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFillColor(...G9); doc.rect(0, PH - 34, PW, 34, 'F'); doc.setFillColor(...YY); doc.rect(0, PH - 34, PW, 3, 'F'); star(M + 4, PH - 16, 6, YY);
