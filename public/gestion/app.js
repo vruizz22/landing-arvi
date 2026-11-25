@@ -61,8 +61,8 @@ const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 function b64big(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
 
 /* ---------- datos (Firestore en vivo) ---------- */
-const COLS = ['workers', 'vehicles', 'clients', 'events', 'shifts', 'invoices', 'dias', 'material'];
-const blank = () => ({ workers: [], vehicles: [], clients: [], events: [], shifts: [], invoices: [], dias: [], material: [] });
+const COLS = ['workers', 'vehicles', 'clients', 'events', 'shifts', 'invoices', 'dias'];
+const blank = () => ({ workers: [], vehicles: [], clients: [], events: [], shifts: [], invoices: [], dias: [] });
 let DB = blank(), FS = null, db = null, auth = null, authMod = null, USER = '';
 const byId = (col, id) => DB[col].find(x => x.id === id);
 const clean = o => JSON.parse(JSON.stringify(o));
@@ -698,7 +698,7 @@ VIEWS.ajustes = () => {
     <div class="grid two"><div><div class="sec">Roles en turnos</div><div class="chips">${ROLES.map(r => `<span class="pill ${RCLS[r] || ''}">${esc(r)}${BASE_ROLES.includes(r) ? '' : ` <a href="#" data-rmr="${esc(r)}" style="color:inherit;text-decoration:none">✕</a>`}</span>`).join('')}</div><div class="row" style="margin-top:10px"><input id="nr" placeholder="Nuevo rol" style="padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><button class="btn sm" id="nrB">${I.plus}Agregar</button></div></div>
     <div><div class="sec">Grupos</div><div class="chips">${GRUPOS.map(g => `<span class="pill p-real">${esc(g)}${BASE_GRUPOS.includes(g) ? '' : ` <a href="#" data-rmg="${esc(g)}" style="color:inherit;text-decoration:none">✕</a>`}</span>`).join('')}</div><div class="row" style="margin-top:10px"><input id="ng" placeholder="Nuevo grupo" style="padding:9px 12px;border-radius:11px;border:1.5px solid var(--line)"><button class="btn sm" id="ngB">${I.plus}Agregar</button></div></div></div></div>
   <div class="card" style="margin-top:16px"><h3>Papelera</h3><p class="muted">Nada se borra de forma definitiva. Lo que eliminas queda aquí y puedes recuperarlo cuando quieras.</p>
-  ${TRASH.length ? `<table class="tbl"><thead><tr><th>Tipo</th><th>Registro</th><th>Eliminado</th><th></th></tr></thead><tbody>${TRASH.slice().sort((a, b) => b.rec.borradoEl - a.rec.borradoEl).map(t => `<tr><td>${({ workers: 'Persona', vehicles: 'Vehículo', clients: 'Cliente', events: 'Evento', shifts: 'Turno', invoices: 'Factura', dias: 'Fecha', material: 'Material' })[t.col]}</td><td>${esc(t.rec.titulo || t.rec.nombre || t.rec.name || t.rec.patente || (t.rec.numero ? 'Factura N° ' + t.rec.numero : '') || t.rec.fecha || t.rec.id)}</td><td class="muted">${new Date(t.rec.borradoEl).toLocaleString('es-CL')} · ${esc(t.rec.borradoPor || '')}</td><td><button class="btn ghost" onclick="restoreRec('${t.col}','${t.rec.id}')">Recuperar</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">La papelera está vacía.</p>'}</div>`;
+  ${TRASH.length ? `<table class="tbl"><thead><tr><th>Tipo</th><th>Registro</th><th>Eliminado</th><th></th></tr></thead><tbody>${TRASH.slice().sort((a, b) => b.rec.borradoEl - a.rec.borradoEl).map(t => `<tr><td>${({ workers: 'Persona', vehicles: 'Vehículo', clients: 'Cliente', events: 'Evento', shifts: 'Turno', invoices: 'Factura', dias: 'Fecha' })[t.col]}</td><td>${esc(t.rec.titulo || t.rec.nombre || t.rec.name || t.rec.patente || (t.rec.numero ? 'Factura N° ' + t.rec.numero : '') || t.rec.fecha || t.rec.id)}</td><td class="muted">${new Date(t.rec.borradoEl).toLocaleString('es-CL')} · ${esc(t.rec.borradoPor || '')}</td><td><button class="btn ghost" onclick="restoreRec('${t.col}','${t.rec.id}')">Recuperar</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">La papelera está vacía.</p>'}</div>`;
   $('#fEv').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellStyles: true, cellDates: true }); $('#imR').innerHTML = importEventos(wb, +$('#imY').value, +$('#imM').value + 1); e.target.value = ''; };
   $('#fCo').onchange = async e => { const file = e.target.files[0]; if (!file) return; const wb = XLSX.read(await file.arrayBuffer(), { cellDates: true }); $('#imR').innerHTML = importCobranza(wb); e.target.value = ''; };
   $('#bx').onclick = exportAllXlsx;
@@ -926,86 +926,6 @@ VIEWS.catalogo = () => {
   };
 };
 
-
-/* ================= MATERIAL DE REDES (subida directa a Firebase Storage) ================= */
-const MAT_CATS = [
-  { k: 'stories', t: 'Stories', ic: '📱' }, { k: 'posts', t: 'Posts', ic: '🖼️' }, { k: 'reels', t: 'Reels', ic: '🎬' },
-  { k: 'horizontal', t: 'Videos horizontales', ic: '🖥️' }, { k: 'linkedin', t: 'LinkedIn', ic: '💼' }, { k: 'otros', t: 'Otros', ic: '📦' },
-];
-const MAT_ACC = { arvi: '@arvi.cl', happy: '@arvihappy', ambas: 'Ambas' };
-let STG = null;
-async function storage() {
-  if (STG) return STG;
-  const mod = await import(FB + 'firebase-storage.js'); const { getApps } = await import(FB + 'firebase-app.js');
-  STG = { mod, st: mod.getStorage(getApps()[0]) }; return STG;
-}
-const fmtMB = b => b > 1e6 ? (b / 1e6).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
-function matUpload(files, cat, acc, titulo) {
-  if (DEMO) return toast('En modo demo no se pueden subir archivos');
-  const box = $('#mat-prog'); let done = 0;
-  [...files].forEach(async f => {
-    const id = uid(), row = document.createElement('div'); row.className = 'mat-pr'; row.innerHTML = `<span>${esc(f.name)}</span><i><b style="width:0%"></b></i><em>0%</em>`; box.appendChild(row);
-    try {
-      const { mod, st } = await storage(); const safe = f.name.replace(/[^\w.\-]+/g, '_');
-      const ref = mod.ref(st, `material/${cat}/${id}_${safe}`);
-      const task = mod.uploadBytesResumable(ref, f, { contentType: f.type || 'application/octet-stream', contentDisposition: `attachment; filename="${safe}"` });
-      task.on('state_changed', s => { const p = Math.round(s.bytesTransferred / s.totalBytes * 100); row.querySelector('b').style.width = p + '%'; row.querySelector('em').textContent = p + '%'; });
-      await task; const url = await mod.getDownloadURL(ref);
-      upsert('material', { id, cat, acc, titulo: titulo || f.name.replace(/\.[^.]+$/, ''), nombre: f.name, tipo: f.type.startsWith('video') ? 'video' : f.type.startsWith('image') ? 'imagen' : 'archivo', mime: f.type, size: f.size, path: ref.fullPath, url, subido: Date.now(), subidoPor: USER });
-      row.querySelector('em').textContent = '✓'; row.classList.add('ok');
-    } catch (e) {
-      console.warn(e); row.classList.add('bad');
-      row.querySelector('em').textContent = /bucket|not-found|404|unknown/i.test((e.code || '') + e.message) ? 'Falta activar Storage' : e.code === 'storage/unauthorized' ? 'Sin permiso (reglas)' : 'Error';
-    }
-    if (++done === files.length) { setTimeout(() => render(), 600); }
-  });
-}
-VIEWS.redes = () => {
-  const v = $('#view'), cat = ST.matCat || 'todo', acc = ST.matAcc || 'todas', q = (ST.matQ || '').toLowerCase();
-  if (!$('#mat-css')) document.head.insertAdjacentHTML('beforeend', `<style id="mat-css">
-    .mat-up{background:#fff;border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.06);margin-bottom:16px}
-    .mat-drop{display:block!important;width:100%;box-sizing:border-box;border:2.5px dashed #9bc7a2;border-radius:14px;padding:22px;text-align:center;cursor:pointer;background:#f6fbf4;transition:.2s}
-    .mat-drop.hov{background:#e6f5e2;border-color:#3aa848}.mat-drop b{display:block;font-size:17px;margin-bottom:4px}.mat-drop span{display:block}
-    .mat-opts{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.mat-opts select,.mat-opts input{padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);font:inherit;flex:1;min-width:150px}
-    .mat-pr{display:flex;align-items:center;gap:10px;font-size:13px;margin-top:8px}.mat-pr span{flex:0 1 40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mat-pr i{flex:1;height:8px;border-radius:8px;background:#e8eee6;overflow:hidden}.mat-pr b{display:block;height:100%;background:#3aa848;transition:width .2s}.mat-pr em{font-style:normal;font-weight:800;min-width:40px;text-align:right}.mat-pr.bad em{color:#d33}.mat-pr.bad b{background:#d33}
-    .mat-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.mat-chips button{font:inherit;font-weight:700;font-size:13px;padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:#fff;cursor:pointer}.mat-chips button.on{background:var(--g900,#0f4d24);color:#ffc61a;border-color:var(--g900,#0f4d24)}
-    .mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
-    .mat-it{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.08);display:flex;flex-direction:column}
-    .mat-th{position:relative;aspect-ratio:1;background:#0f4d24;display:grid;place-items:center}.mat-th img,.mat-th video{width:100%;height:100%;object-fit:contain;background:#0f4d24}
-    .mat-th .tg{position:absolute;top:8px;left:8px;background:rgba(255,198,26,.95);color:#0f4d24;font-size:11px;font-weight:800;padding:3px 8px;border-radius:8px}
-    .mat-b{padding:10px;display:flex;flex-direction:column;gap:6px;flex:1}.mat-b b{font-size:14px;line-height:1.25}.mat-b small{color:var(--mute);font-size:11.5px}
-    .mat-b .row{display:flex;gap:6px;margin-top:auto}
-    @media(max-width:700px){.mat-grid{grid-template-columns:1fr 1fr;gap:8px}}
-  </style>`);
-  const all = (DB.material || []).slice().sort((x, y) => (y.subido || 0) - (x.subido || 0));
-  const list = all.filter(m => (cat === 'todo' || m.cat === cat) && (acc === 'todas' || m.acc === acc || m.acc === 'ambas') && (!q || (m.titulo + ' ' + m.nombre).toLowerCase().includes(q)));
-  const cnt = k => all.filter(m => m.cat === k).length;
-  v.innerHTML = head('Material de redes', 'Sube aquí stories, posts, reels, LinkedIn y más. Queda guardado y cualquiera del equipo lo puede descargar.') +
-    `<div class="mat-up"><label class="mat-drop" id="mat-drop"><input type="file" id="mat-file" multiple accept="image/*,video/*,application/pdf" hidden>
-       <b>⬆ Arrastra tus archivos aquí o haz clic para elegirlos</b><span class="muted">Fotos, videos o PDF · puedes subir varios a la vez</span></label>
-     <div class="mat-opts"><select id="mat-ucat">${MAT_CATS.map(c => `<option value="${c.k}" ${c.k === (ST.matUCat || (cat !== 'todo' ? cat : 'stories')) ? 'selected' : ''}>${c.ic} ${c.t}</option>`).join('')}</select>
-       <select id="mat-uacc">${Object.entries(MAT_ACC).map(([k, t]) => `<option value="${k}" ${k === (ST.matUAcc || 'arvi') ? 'selected' : ''}>${t}</option>`).join('')}</select>
-       <input id="mat-utit" placeholder="Nombre (opcional)"></div><div id="mat-prog"></div></div>` +
-    `<div class="mat-chips"><button data-mc="todo" class="${cat === 'todo' ? 'on' : ''}">Todo (${all.length})</button>${MAT_CATS.map(c => `<button data-mc="${c.k}" class="${cat === c.k ? 'on' : ''}">${c.ic} ${c.t} (${cnt(c.k)})</button>`).join('')}</div>
-     <div class="mat-chips"><button data-ma="todas" class="${acc === 'todas' ? 'on' : ''}">Todas las cuentas</button><button data-ma="arvi" class="${acc === 'arvi' ? 'on' : ''}">@arvi.cl</button><button data-ma="happy" class="${acc === 'happy' ? 'on' : ''}">@arvihappy</button>
-       <input id="mat-q" placeholder="Buscar…" value="${esc(ST.matQ || '')}" style="margin-left:auto;padding:8px 12px;border-radius:10px;border:1.5px solid var(--line);font:inherit;min-width:180px"></div>` +
-    (list.length ? `<div class="mat-grid">${list.map(m => {
-      const c = MAT_CATS.find(x => x.k === m.cat) || { t: m.cat, ic: '' };
-      const th = m.tipo === 'imagen' ? `<img src="${esc(m.url)}" loading="lazy" alt="">` : m.tipo === 'video' ? `<video src="${esc(m.url)}#t=0.5" preload="metadata" muted playsinline></video>` : `<span style="font-size:42px">📄</span>`;
-      return `<div class="mat-it"><div class="mat-th">${th}<span class="tg">${c.ic} ${esc(c.t)}</span></div><div class="mat-b"><b>${esc(m.titulo)}</b>
-        <small>${MAT_ACC[m.acc] || ''} · ${fmtMB(m.size || 0)} · ${new Date(m.subido).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })}${m.subidoPor ? ' · ' + esc(m.subidoPor) : ''}</small>
-        <div class="row"><a class="btn y sm" href="${esc(m.url)}" target="_blank" rel="noopener" style="flex:1;justify-content:center">⬇ Descargar</a><button class="btn ghost sm" data-mdel="${m.id}" title="Quitar (queda en la papelera)">🗑</button></div></div></div>`;
-    }).join('')}</div>` : `<div class="card empty">${all.length ? 'No hay material con ese filtro.' : 'Todavía no hay material. ¡Sube el primero arriba!'}</div>`);
-  const fi = $('#mat-file'), dz = $('#mat-drop');
-  const go = fs => { if (!fs.length) return; ST.matUCat = $('#mat-ucat').value; ST.matUAcc = $('#mat-uacc').value; matUpload(fs, ST.matUCat, ST.matUAcc, $('#mat-utit').value.trim()); };
-  fi.onchange = () => go(fi.files);
-  dz.ondragover = e => { e.preventDefault(); dz.classList.add('hov'); }; dz.ondragleave = () => dz.classList.remove('hov');
-  dz.ondrop = e => { e.preventDefault(); dz.classList.remove('hov'); go(e.dataTransfer.files); };
-  $$('[data-mc]', v).forEach(b => b.onclick = () => { ST.matCat = b.dataset.mc; render(); });
-  $$('[data-ma]', v).forEach(b => b.onclick = () => { ST.matAcc = b.dataset.ma; render(); });
-  $('#mat-q').oninput = e => { ST.matQ = e.target.value; const p = e.target.selectionStart; render(); const n = $('#mat-q'); n.focus(); n.setSelectionRange(p, p); };
-  $$('[data-mdel]', v).forEach(b => b.onclick = () => { if (!confirm('¿Quitar este archivo de la lista? Queda en la papelera (Ajustes) y se puede recuperar.')) return; removeRec('material', b.dataset.mdel); render(); toast('Movido a la papelera'); });
-};
 
 /* ---------- importadores ---------- */
 function matchWorker(name) { const n = norm(name); if (!n) return null; let best = null, bd = 99; for (const w of DB.workers) { const d = lev(norm(w.nombre), n); if (d < bd) { bd = d; best = w; } } return bd <= Math.max(1, Math.floor(n.length / 8)) ? best : null; }
