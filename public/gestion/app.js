@@ -814,7 +814,7 @@ async function jpgDisp(ym, nMonths) {
 /* ================= ARCHIVOS IMPORTANTES (descargas) ================= */
 const ARCH_DIR = 'archivos-x9t4/';
 const ARCHIVOS = [
-  { g: 'ARVI Juegos', f: 'ARVI-Catalogo-2026.pdf', t: 'Catálogo 2026', d: 'Todos los juegos con fotos, capacidad, montaje y requisitos.', mb: 31.6, tag: 'Más nuevo' },
+  { g: 'ARVI Juegos', f: 'ARVI-Catalogo-2026.pdf', t: 'Catálogo 2026', d: 'Todos los juegos con fotos, capacidad, montaje y requisitos (37 páginas).', mb: 3.6, tag: 'Más nuevo' },
   { g: 'ARVI Juegos', f: 'ARVI-Propuesta-de-Valor-2026.pdf', t: 'Propuesta de valor y diferenciadores', d: 'Por qué elegir ARVI: experiencia, fabricación propia y sustentabilidad.', mb: 7.9 },
   { g: 'ARVI Juegos', f: 'ARVI-Colegios-Privados-y-Productoras-2026.pdf', t: 'Colegios privados y productoras', d: 'Propuesta para eventos escolares y productoras.', mb: 14.9 },
   { g: 'ARVI Juegos', f: 'ARVI-Sustentable-2026.pdf', t: 'ARVI Sustentable 2026', d: 'Proyectos y juegos sustentables (energía humana).', mb: 4.2 },
@@ -846,6 +846,84 @@ VIEWS.archivos = () => {
       await navigator.clipboard.writeText(url); toast('Enlace copiado: pégalo en WhatsApp o correo');
     } catch (e) { if (e.name !== 'AbortError') toast('No se pudo compartir'); }
   });
+};
+
+
+/* ================= CATÁLOGO (armar PDF con fichas seleccionadas) ================= */
+const CAT_PDF = ARCH_DIR + 'ARVI-Catalogo-2026.pdf';
+const CAT_PAGES = [
+  [1, 'Portada', 'Inicio y contacto'], [2, 'Somos ARVI', 'Inicio y contacto'], [3, 'Nuestra misión', 'Inicio y contacto'], [4, 'Seguridad certificada', 'Inicio y contacto'], [5, 'Índice: encuentra tu juego', 'Inicio y contacto'],
+  [6, 'Montaña Rusa Dragón', 'Juegos mecánicos'], [7, 'Tagada Samba', 'Juegos mecánicos'], [8, 'Rueda Chicago', 'Juegos mecánicos'], [9, 'Barco Pirata', 'Juegos mecánicos'],
+  [10, 'Alfombra Mágica', 'Juegos mecánicos'], [11, 'Globos Samba', 'Juegos mecánicos'], [12, 'Sillitas Voladoras', 'Juegos mecánicos'], [13, 'Carrusel Mecánico', 'Juegos mecánicos'],
+  [15, 'Cine 9D', 'Juegos mecánicos'], [16, 'Tren de Fantasía', 'Juegos mecánicos'], [18, 'Reloj Derribador', 'Juegos mecánicos'], [19, 'Pista Go Kart', 'Juegos mecánicos'],
+  [20, 'Martillo Mecánico', 'Juegos mecánicos'], [21, 'Muro Inflable', 'Juegos mecánicos'], [22, 'Gladiadores', 'Juegos mecánicos'], [23, 'Inflables', 'Juegos mecánicos'], [24, 'Toro Mecánico', 'Juegos mecánicos'],
+  [27, 'Acuáticos', 'Juegos acuáticos'], [28, 'Piscinas Recreativas', 'Juegos acuáticos'], [29, 'Lanchitas a Manivela', 'Juegos acuáticos'],
+  [30, 'Giroscopio Manual', 'Juegos sustentables'], [31, 'Sillitas Voladoras Sustentables', 'Juegos sustentables'], [32, 'Carrusel Sustentable', 'Juegos sustentables'], [33, 'Muro ECO', 'Juegos sustentables'], [34, 'Próximamente (en fabricación)', 'Juegos sustentables'],
+  [14, 'Carrusel Inclusivo', 'Juegos inclusivos'], [35, 'Paneles Deportivos Inclusivos', 'Juegos inclusivos'],
+  [17, 'Stand Feria Americana', 'Complementarios'], [25, 'Zona de Circo', 'Complementarios'], [26, 'Complementarios decorativos', 'Complementarios'], [36, 'Generadores', 'Complementarios'],
+  [37, 'Contáctanos (cierre)', 'Inicio y contacto'],
+].map(([n, t, g]) => ({ n, t, g }));
+const CAT_GROUPS = ['Inicio y contacto', 'Juegos mecánicos', 'Juegos acuáticos', 'Juegos sustentables', 'Juegos inclusivos', 'Complementarios'];
+function catSel() { try { const v = JSON.parse(localStorage.getItem('arvi_cat_sel') || 'null'); if (Array.isArray(v)) return new Set(v); } catch (e) { } return new Set(CAT_PAGES.map(p => p.n)); }
+function catSave(sel) { try { localStorage.setItem('arvi_cat_sel', JSON.stringify([...sel])); } catch (e) { } }
+let CAT_BYTES = null;
+function loadScript(src) { return new Promise((ok, ko) => { if ([...document.scripts].some(s => s.src.endsWith(src))) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
+VIEWS.catalogo = () => {
+  const v = $('#view'); ST.catSel = ST.catSel || catSel(); const sel = ST.catSel;
+  if (!$('#cat-css')) document.head.insertAdjacentHTML('beforeend', `<style id="cat-css">
+    .cat-bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;margin-bottom:14px;border-radius:16px;background:var(--g900,#0f4d24);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+    .cat-bar .cnt{font-weight:800;margin-right:auto}.cat-bar .cnt b{color:#ffc61a;font-size:20px}
+    .cat-bar input{padding:9px 12px;border-radius:10px;border:0;min-width:200px;font:inherit}
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:14px}
+    .cat-it{position:relative;border-radius:16px;overflow:hidden;background:#fff;border:3px solid transparent;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.08);transition:transform .2s,border-color .2s,opacity .2s}
+    .cat-it:hover{transform:translateY(-3px)}
+    .cat-it img{display:block;width:100%;aspect-ratio:660/372;object-fit:cover;background:#eef4ea}
+    .cat-it .nm{display:flex;align-items:center;gap:10px;padding:10px 12px;font-weight:700}
+    .cat-it .ck{flex:none;width:26px;height:26px;border-radius:8px;border:2.5px solid #9bb5a2;display:grid;place-items:center;color:#fff;font-weight:900}
+    .cat-it.on{border-color:#3aa848}.cat-it.on .ck{background:#3aa848;border-color:#3aa848}
+    .cat-it:not(.on){opacity:.55}.cat-it:not(.on) img{filter:grayscale(.6)}
+    .cat-it .pg{position:absolute;top:8px;left:8px;background:rgba(15,77,36,.9);color:#ffc61a;font-weight:800;font-size:12px;padding:3px 8px;border-radius:8px}
+    .cat-sec{display:flex;align-items:center;gap:10px;margin:18px 0 10px}.cat-sec h3{margin:0;font-size:18px}
+    .cat-b1,.cat-b2{font:inherit;font-weight:800;font-size:14px;padding:9px 14px;border-radius:10px;cursor:pointer;border:2px solid #3aa848}
+    .cat-b1{background:#3aa848;color:#fff}.cat-b2{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+    @media(max-width:700px){.cat-bar{top:0;gap:8px;padding:10px}.cat-bar .cnt{width:100%}.cat-bar input{min-width:0;flex:1 1 100%}.cat-b1,.cat-b2{flex:1}#cat-exp{flex:1 1 100%}}
+  </style>`);
+  const n = sel.size;
+  v.innerHTML = head('Catálogo', 'Marca las fichas que quieres y descarga un PDF solo con esas. Mismas fotos y datos del catálogo 2026.') +
+    `<div class="cat-bar"><div class="cnt"><b>${n}</b> de ${CAT_PAGES.length} páginas marcadas</div>
+      <button class="cat-b1" id="cat-all">✔ Seleccionar todo</button><button class="cat-b2" id="cat-none">✖ Desmarcar todo</button>
+      <input id="cat-name" placeholder="Nombre del PDF (opcional)" value="${esc(ST.catName || '')}">
+      <button class="btn y" id="cat-exp" ${n ? '' : 'disabled'}>⬇ Exportar PDF</button></div>` +
+    CAT_GROUPS.map(g => {
+      const items = CAT_PAGES.filter(p => p.g === g); const allOn = items.every(p => sel.has(p.n));
+      return `<div class="cat-sec"><h3>${esc(g)}</h3><button class="btn ghost sm" data-grp="${esc(g)}">${allOn ? 'Quitar este grupo' : 'Marcar este grupo'}</button></div>
+      <div class="cat-grid">${items.map(p => `<div class="cat-it ${sel.has(p.n) ? 'on' : ''}" data-pg="${p.n}" title="Clic para marcar o desmarcar">
+        <span class="pg">Pág. ${p.n}</span><img src="${ARCH_DIR}cat/p-${String(p.n).padStart(2, '0')}.jpg" alt="" loading="lazy">
+        <div class="nm"><span class="ck">${sel.has(p.n) ? '✓' : ''}</span>${esc(p.t)}</div></div>`).join('')}</div>`;
+    }).join('') +
+    `<p class="muted" style="margin-top:8px">Las páginas salen en el mismo orden del catálogo. Lo que marques queda guardado para la próxima vez.</p>`;
+  const upd = () => { catSave(sel); const y = window.scrollY; render(); window.scrollTo(0, y); };
+  $$('.cat-it', v).forEach(el => el.onclick = () => { const k = +el.dataset.pg; sel.has(k) ? sel.delete(k) : sel.add(k); upd(); });
+  $$('[data-grp]', v).forEach(b => b.onclick = () => { const it = CAT_PAGES.filter(p => p.g === b.dataset.grp); const allOn = it.every(p => sel.has(p.n)); it.forEach(p => allOn ? sel.delete(p.n) : sel.add(p.n)); upd(); });
+  $('#cat-all').onclick = () => { CAT_PAGES.forEach(p => sel.add(p.n)); upd(); };
+  $('#cat-none').onclick = () => { sel.clear(); upd(); };
+  $('#cat-name').oninput = e => { ST.catName = e.target.value; };
+  $('#cat-exp').onclick = async () => {
+    const pages = [...sel].sort((a, b) => a - b); if (!pages.length) return toast('Marca al menos una página');
+    const btn = $('#cat-exp'); btn.disabled = true; btn.textContent = 'Armando PDF…';
+    try {
+      await loadScript('pdf/pdf-lib.min.js');
+      if (!CAT_BYTES) CAT_BYTES = await (await fetch(CAT_PDF)).arrayBuffer();
+      const src = await PDFLib.PDFDocument.load(CAT_BYTES), out = await PDFLib.PDFDocument.create();
+      (await out.copyPages(src, pages.map(p => p - 1))).forEach(pg => out.addPage(pg));
+      out.setTitle('ARVI · Catálogo 2026'); out.setAuthor('ARVI.cl');
+      const bytes = await out.save();
+      let name = (ST.catName || '').trim().replace(/[\\/:*?"<>|]+/g, '') || (pages.length === CAT_PAGES.length ? 'ARVI Catálogo 2026' : 'ARVI Catálogo 2026 - ' + (pages.length <= 3 ? pages.map(n => CAT_PAGES.find(p => p.n === n).t).join(', ') : pages.length + ' páginas'));
+      download(new Blob([bytes], { type: 'application/pdf' }), name.slice(0, 120) + '.pdf');
+      toast(`PDF listo: ${pages.length} página${pages.length > 1 ? 's' : ''}`);
+    } catch (e) { console.error(e); toast('No se pudo armar el PDF. Revisa tu conexión e intenta de nuevo.'); }
+    btn.disabled = false; btn.textContent = '⬇ Exportar PDF';
+  };
 };
 
 /* ---------- importadores ---------- */
