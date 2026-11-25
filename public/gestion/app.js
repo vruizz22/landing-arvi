@@ -814,7 +814,7 @@ async function jpgDisp(ym, nMonths) {
 /* ================= ARCHIVOS IMPORTANTES (descargas) ================= */
 const ARCH_DIR = 'archivos-x9t4/';
 const ARCHIVOS = [
-  { g: 'ARVI Juegos', f: 'ARVI-Catalogo-2026.pdf', t: 'Catálogo 2026', d: 'Todos los juegos con fotos, capacidad, montaje y requisitos (37 páginas).', mb: 3.6, tag: 'Más nuevo' },
+  { g: 'ARVI Juegos', f: 'ARVI-Catalogo-2026.pdf', t: 'Catálogo 2026', d: 'Todos los juegos con fotos, capacidad, montaje y requisitos (37 páginas).', mb: 4.1, tag: 'Más nuevo' },
   { g: 'ARVI Juegos', f: 'ARVI-Propuesta-de-Valor-2026.pdf', t: 'Propuesta de valor y diferenciadores', d: 'Por qué elegir ARVI: experiencia, fabricación propia y sustentabilidad.', mb: 7.9 },
   { g: 'ARVI Juegos', f: 'ARVI-Colegios-Privados-y-Productoras-2026.pdf', t: 'Colegios privados y productoras', d: 'Propuesta para eventos escolares y productoras.', mb: 14.9 },
   { g: 'ARVI Juegos', f: 'ARVI-Sustentable-2026.pdf', t: 'ARVI Sustentable 2026', d: 'Proyectos y juegos sustentables (energía humana).', mb: 4.2 },
