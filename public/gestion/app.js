@@ -104,7 +104,7 @@ function subscribe() {
     if (!snap.metadata.hasPendingWrites) scheduleRender();
   }, err => { console.warn(err); setSync('bad', err.code === 'permission-denied' ? 'Sin permisos' : 'Sin conexión'); });
 }
-function setSync(s, txt) { const d = $('#syncDot'); if (d) { d.className = 'dot ' + s; $('#syncTxt').textContent = txt; } const m = $('#syncM'); if (m) { m.textContent = '● ' + (s === 'ok' ? 'En vivo' : s === 'busy' ? 'Guardando' : s === 'bad' ? 'Error' : 'Demo'); m.className = 'pill ' + (s === 'ok' ? 'p-pagada' : s === 'bad' ? 'p-venc' : 'p-pend'); } }
+function setSync(s, txt) { const td = $('#tdot'); if (td) { td.className = 'dot ' + s; $('#tsync').textContent = s === 'ok' ? 'En vivo' : s === 'busy' ? 'Guardando…' : s === 'bad' ? 'Error al guardar' : 'Modo demo'; } const d = $('#syncDot'); if (d) { d.className = 'dot ' + s; $('#syncTxt').textContent = txt; } const m = $('#syncM'); if (m) { m.textContent = '● ' + (s === 'ok' ? 'En vivo' : s === 'busy' ? 'Guardando' : s === 'bad' ? 'Error' : 'Demo'); m.className = 'pill ' + (s === 'ok' ? 'p-pagada' : s === 'bad' ? 'p-venc' : 'p-pend'); } }
 
 /* ---------- ingreso (mismos usuarios que la agenda ARVI HAPPY) ---------- */
 const prettyUser = k => ({ arviadmin: 'ArviAdmin', coniadmin: 'ConiAdmin', bastianadmin: 'BastiánAdmin' })[k] || k;
@@ -138,7 +138,7 @@ $('#loginForm').addEventListener('submit', async e => {
 let entered = false;
 function hideSplash() { const sp = $('#splash'); if (sp.classList.contains('out')) return; sp.classList.add('out'); if (VIEW) render(true); }
 function enter(user) {
-  USER = user; $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#who').textContent = user;
+  USER = user; $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#who').textContent = user; const av = $('#tav'); if (av) { av.textContent = String(user).replace(/admin$/i, '').trim().slice(0, 1).toUpperCase() || 'A'; av.title = user; } crumb(VIEW);
   if (entered) return; entered = true;
   if (!DEMO) { $('#splash').classList.remove('out'); setTimeout(hideSplash, 6000); }
   try { go(location.hash.replace('#', '').split('?')[0] || 'inicio'); } catch (e) { console.error(e); $('#view').innerHTML = '<div class="card"><h3>Error al mostrar</h3><p class="muted">' + esc(e.message) + '</p></div>'; }
@@ -150,7 +150,7 @@ $('#logout').onclick = async () => { if (DEMO) sessionStorage.removeItem('arviGe
 let VIEW = 'inicio', ST = { month: today().slice(0, 7), evMode: 'lista', evQ: '', evEst: '', invQ: '', invEst: '', invCli: '', invYear: '', eqTab: 'personas' };
 $$('.nav[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 window.go = go;
-function go(v) { if (!VIEWS[v]) v = 'inicio'; VIEW = v; history.replaceState(null, '', '#' + v); $$('.nav[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); render(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function go(v) { if (!VIEWS[v]) v = 'inicio'; VIEW = v; history.replaceState(null, '', '#' + v); $$('.nav[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); crumb(v); render(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 function render(anim) {
   applyCfg(); const v = $('#view'); v.classList.remove('enter'); v.innerHTML = ''; VIEWS[VIEW]();
   if (!anim) { $$('.val[data-n]', v).forEach(x => x.textContent = x.dataset.f === 'm' ? money(+x.dataset.n) : x.dataset.n); return; }
@@ -926,6 +926,45 @@ VIEWS.catalogo = () => {
   };
 };
 
+
+
+/* ---------- barra superior y paleta de comandos (Ctrl/Cmd + K) ---------- */
+function navInfo() {
+  let grp = 'General'; const out = [];
+  $$('aside > .ngrp, aside > .nav[data-v]').forEach(el => { if (el.classList.contains('ngrp')) grp = el.textContent.trim(); else out.push({ v: el.dataset.v, t: el.textContent.trim(), g: grp, svg: el.querySelector('svg') ? el.querySelector('svg').outerHTML : '' }); });
+  return out;
+}
+function crumb(v) { const c = $('#crumb'); if (!c) return; const n = navInfo().find(x => x.v === v); c.innerHTML = n ? (n.g !== 'General' && n.g !== n.t ? `<span>${esc(n.g)}</span><i>/</i>` : '') + `<b>${esc(n.t)}</b>` : ''; }
+addEventListener('scroll', () => { const t = $('#tbar'); if (t) t.classList.toggle('scrolled', scrollY > 6); }, { passive: true });
+function cmdk() {
+  if ($('.cmdk') || $('#app').classList.contains('hidden')) return;
+  const items = navInfo(), acts = [
+    { t: 'Nuevo evento', k: 'eventos', btn: /nuevo evento/i }, { t: 'Nueva factura', k: 'cobranza', btn: /nueva factura/i },
+    { t: 'Nueva persona', k: 'equipo', btn: /nueva persona/i }, { t: 'Nueva ficha técnica', k: 'fichas', btn: /nueva ficha/i },
+    { t: 'Exportar catálogo en PDF', k: 'catalogo' },
+  ];
+  const el = document.createElement('div'); el.className = 'cmdk';
+  el.innerHTML = `<div class="box"><div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input placeholder="¿A dónde quieres ir? Escribe: eventos, factura, catálogo…"><kbd>Esc</kbd></div><ul></ul><div class="ft"><span><kbd>↑</kbd> <kbd>↓</kbd> moverse</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> cerrar</span></div></div>`;
+  document.body.appendChild(el); const inp = $('input', el), ul = $('ul', el); let sel = 0, rows = [];
+  const plus = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+  const draw = () => {
+    const q = norm(inp.value); const m = x => !q || norm(x.t + ' ' + (x.g || '')).includes(q);
+    const a = items.filter(m).map(x => ({ ...x, kind: 'nav' })), b = acts.filter(m).map(x => ({ ...x, kind: 'act' }));
+    rows = [...a, ...b]; sel = Math.min(sel, Math.max(0, rows.length - 1));
+    ul.innerHTML = (a.length ? '<div class="hd">Ir a</div>' : '') + a.map((x, i) => `<li data-i="${i}" class="${i === sel ? 'sel' : ''}">${x.svg}${esc(x.t)}<small>${esc(x.g)}</small></li>`).join('') +
+      (b.length ? '<div class="hd">Acciones rápidas</div>' : '') + b.map((x, j) => `<li data-i="${a.length + j}" class="${a.length + j === sel ? 'sel' : ''}">${plus}${esc(x.t)}</li>`).join('') +
+      (rows.length ? '' : '<div class="hd" style="text-transform:none;letter-spacing:0;font-size:13px;padding:14px">Sin resultados</div>');
+    $$('li', ul).forEach(li => { li.onclick = () => run(+li.dataset.i); li.onmousemove = () => { if (sel !== +li.dataset.i) { sel = +li.dataset.i; $$('li', ul).forEach(z => z.classList.toggle('sel', +z.dataset.i === sel)); } }; });
+  };
+  const close = () => el.remove();
+  const run = i => { const r = rows[i]; if (!r) return; close(); go(r.k || r.v); if (r.btn) setTimeout(() => { const b = $$('#view .btn').find(x => r.btn.test(x.textContent)); if (b) b.click(); }, 120); };
+  inp.oninput = () => { sel = 0; draw(); };
+  inp.onkeydown = e => { if (e.key === 'ArrowDown') { sel = Math.min(rows.length - 1, sel + 1); draw(); e.preventDefault(); } else if (e.key === 'ArrowUp') { sel = Math.max(0, sel - 1); draw(); e.preventDefault(); } else if (e.key === 'Enter') run(sel); else if (e.key === 'Escape') close(); };
+  el.onclick = e => { if (e.target === el) close(); };
+  draw(); inp.focus();
+}
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); cmdk(); } });
+if ($('#kbtn')) { $('#kbtn').onclick = cmdk; if (/Mac/.test(navigator.platform)) $('#kbtn kbd').textContent = '⌘ K'; }
 
 /* ---------- importadores ---------- */
 function matchWorker(name) { const n = norm(name); if (!n) return null; let best = null, bd = 99; for (const w of DB.workers) { const d = lev(norm(w.nombre), n); if (d < bd) { bd = d; best = w; } } return bd <= Math.max(1, Math.floor(n.length / 8)) ? best : null; }
