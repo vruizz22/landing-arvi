@@ -927,63 +927,50 @@ VIEWS.catalogo = () => {
 };
 
 
-/* ================= INSTAGRAM (material de @arvi.cl y @arvihappy) ================= */
-const IG_URL = 'ig-r7w2.json';
-let IG = null, IG_ERR = '';
-async function igLoad() { if (IG) return IG; try { IG = await (await fetch(IG_URL + '?t=' + Date.now(), { cache: 'no-store' })).json(); } catch (e) { IG_ERR = 'No se pudo cargar el material.'; IG = { accounts: {} }; } return IG; }
-function igName(acc, p, i, it) { const d = (p.d || '').slice(0, 10); return `${acc}_${d}${p.m.length > 1 ? '_' + (i + 1) : ''}.${it.t === 'v' ? 'mp4' : 'jpg'}`; }
-async function igDownload(acc, p) {
-  let ok = 0;
-  for (let i = 0; i < p.m.length; i++) {
-    const it = p.m[i];
-    try { const r = await fetch(it.u); if (!r.ok) throw 0; download(await r.blob(), igName(acc, p, i, it)); ok++; await new Promise(r => setTimeout(r, 350)); }
-    catch (e) { if (i === 0) window.open(it.u, '_blank', 'noopener'); }
-  }
-  toast(ok ? `Descargando ${ok} archivo${ok > 1 ? 's' : ''}` : 'Se abrió el archivo: mantén presionado o clic derecho → Guardar');
-}
+/* ================= MATERIAL DE REDES (carpetas de Google Drive) ================= */
+const MAT_CATS = [
+  { k: 'stories', t: 'Stories', d: 'Videos e imágenes verticales 9:16', ic: '📱' },
+  { k: 'posts', t: 'Posts', d: 'Imágenes y carruseles para el feed', ic: '🖼️' },
+  { k: 'reels', t: 'Reels', d: 'Videos verticales para Instagram / TikTok', ic: '🎬' },
+  { k: 'horizontal', t: 'Videos horizontales', d: '16:9 para YouTube, web y pantallas', ic: '🖥️' },
+  { k: 'linkedin', t: 'LinkedIn', d: 'Piezas y videos para LinkedIn', ic: '💼' },
+  { k: 'otros', t: 'Otros', d: 'Afiches, logos, material para imprimir', ic: '📦' },
+];
+const matCfg = () => DB.dias.find(d => d.id === 'material') || { id: 'material', links: {} };
+const driveId = u => { const m = String(u || '').match(/folders\/([\w-]{10,})|[?&]id=([\w-]{10,})/); return m ? (m[1] || m[2]) : ''; };
 VIEWS.redes = () => {
-  const v = $('#view');
-  if (!$('#ig-css')) document.head.insertAdjacentHTML('beforeend', `<style id="ig-css">
-    .ig-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.ig-tabs button{font:inherit;font-weight:800;padding:10px 16px;border-radius:12px;border:2px solid var(--line);background:#fff;cursor:pointer}
-    .ig-tabs button.on{background:var(--g900,#0f4d24);color:#ffc61a;border-color:var(--g900,#0f4d24)}
-    .ig-fil{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.ig-fil button{font:inherit;font-weight:700;font-size:13px;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
-    .ig-fil button.on{background:#3aa848;color:#fff;border-color:#3aa848}.ig-fil input{padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);min-width:200px;font:inherit;margin-left:auto}
-    .ig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}@media(max-width:700px){.ig-grid{grid-template-columns:1fr 1fr;gap:8px}.ig-b .row .btn{flex:1 1 100%;justify-content:center}.ig-fil input{margin-left:0;flex:1 1 100%}}
-    .ig-it{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.08);display:flex;flex-direction:column}
-    .ig-th{position:relative;aspect-ratio:4/5;background:#e9f1e6}.ig-th img{width:100%;height:100%;object-fit:cover;display:block}
-    .ig-ty{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:800;padding:3px 8px;border-radius:8px}
-    .ig-b{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1}.ig-b .cap{font-size:12.5px;color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
-    .ig-b .row{display:flex;gap:6px;flex-wrap:wrap}.ig-b .dt{font-size:12px;font-weight:700}
+  const v = $('#view'), cfg = matCfg(), links = cfg.links || {}, cat = ST.matCat || 'stories', c = MAT_CATS.find(x => x.k === cat), id = driveId(links[cat]);
+  if (!$('#mat-css')) document.head.insertAdjacentHTML('beforeend', `<style id="mat-css">
+    .mat-tabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+    .mat-tab{font:inherit;text-align:left;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;display:flex;gap:10px;align-items:center}
+    .mat-tab .i{font-size:22px}.mat-tab b{display:block}.mat-tab small{color:var(--mute);font-size:11.5px}
+    .mat-tab.on{background:var(--g900,#0f4d24);border-color:var(--g900,#0f4d24);color:#fff}.mat-tab.on small{color:#bfe8c9}
+    .mat-tab .st{margin-left:auto;width:9px;height:9px;border-radius:50%;background:#d0d6d0;flex:none}.mat-tab .st.ok{background:#3aa848}
+    .mat-frame{width:100%;height:min(70vh,640px);border:0;border-radius:14px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+    .mat-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.mat-bar h3{margin:0 auto 0 0;font-size:20px}
+    .mat-help{background:#fff;border-radius:14px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);line-height:1.55}
+    .mat-help ol{margin:8px 0 0 18px;padding:0}.mat-help input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);font:inherit;margin:12px 0 8px}
   </style>`);
-  v.innerHTML = head('Instagram', 'Todo lo publicado en @arvi.cl y @arvihappy, listo para descargar.') + '<div class="card empty">Cargando publicaciones…</div>';
-  igLoad().then(data => {
-    if (VIEW !== 'redes') return;
-    const acc = ST.igAcc || 'arvi', A = data.accounts || {}, cur = A[acc] || { posts: [] };
-    const f = ST.igF || 'all', q = (ST.igQ || '').toLowerCase(), lim = ST.igLim || 36;
-    const list = (cur.posts || []).filter(p => (f === 'all' || (f === 'v' ? p.ty === 'VIDEO' : f === 'c' ? p.ty === 'CAROUSEL_ALBUM' : p.ty === 'IMAGE')) && (!q || p.cap.toLowerCase().includes(q)));
-    const upd = data.updated ? new Date(data.updated).toLocaleString('es-CL', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '—';
-    const tab = (k, lbl) => `<button data-acc="${k}" class="${acc === k ? 'on' : ''}">${lbl} <span style="opacity:.7">(${(A[k]?.posts || []).length})</span></button>`;
-    const fb = (k, lbl) => `<button data-f="${k}" class="${f === k ? 'on' : ''}">${lbl}</button>`;
-    v.innerHTML = head('Instagram', `Todo lo publicado en @arvi.cl y @arvihappy, listo para descargar. Se actualiza solo cada día (última: ${upd}).`) +
-      `<div class="ig-tabs">${tab('arvi', '@arvi.cl')}${tab('happy', '@arvihappy')}</div>
-       <div class="ig-fil">${fb('all', 'Todo')}${fb('i', 'Fotos')}${fb('v', 'Videos / Reels')}${fb('c', 'Carruseles')}<input id="igq" placeholder="Buscar por texto del post…" value="${esc(ST.igQ || '')}"></div>` +
-      (IG_ERR || cur.error && !(cur.posts || []).length ? `<div class="card empty">${esc(IG_ERR || 'Todavía no hay material de esta cuenta. Se cargará en la próxima actualización automática.')}</div>` : '') +
-      `<div class="ig-grid">${list.slice(0, lim).map(p => {
-        const th = p.m[0].th || p.m[0].u, ty = p.ty === 'VIDEO' ? '▶ Video' : p.ty === 'CAROUSEL_ALBUM' ? `▦ ${p.m.length}` : 'Foto';
-        const dt = new Date(p.d).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
-        return `<div class="ig-it"><div class="ig-th"><img src="${esc(th)}" alt="" loading="lazy" referrerpolicy="no-referrer"><span class="ig-ty">${ty}</span></div>
-          <div class="ig-b"><div class="dt">${dt}</div><div class="cap">${esc(p.cap || 'Sin texto')}</div>
-          <div class="row"><button class="btn y sm" data-dl="${p.id}">⬇ Descargar${p.m.length > 1 ? ' (' + p.m.length + ')' : ''}</button><button class="btn ghost sm" data-cp="${p.id}">Copiar texto</button><a class="btn ghost sm" href="${esc(p.link)}" target="_blank" rel="noopener">Ver</a></div></div></div>`;
-      }).join('')}</div>` +
-      (list.length > lim ? `<div style="text-align:center;margin:16px 0"><button class="btn" id="igmore">Ver más (${list.length - lim} restantes)</button></div>` : '') +
-      (!list.length && (cur.posts || []).length ? '<div class="card empty">No hay publicaciones con ese filtro.</div>' : '');
-    $$('[data-acc]', v).forEach(b => b.onclick = () => { ST.igAcc = b.dataset.acc; ST.igLim = 36; render(); });
-    $$('[data-f]', v).forEach(b => b.onclick = () => { ST.igF = b.dataset.f; ST.igLim = 36; render(); });
-    $('#igq').oninput = e => { ST.igQ = e.target.value; const pos = e.target.selectionStart; render(); setTimeout(() => { const n = $('#igq'); if (n) { n.focus(); n.setSelectionRange(pos, pos); } }, 30); };
-    if ($('#igmore')) $('#igmore').onclick = () => { ST.igLim = lim + 36; const y = scrollY; render(); setTimeout(() => scrollTo(0, y), 40); };
-    $$('[data-dl]', v).forEach(b => b.onclick = () => igDownload(cur.handle, cur.posts.find(p => p.id === b.dataset.dl)));
-    $$('[data-cp]', v).forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(cur.posts.find(p => p.id === b.dataset.cp).cap); toast('Texto copiado'); } catch (e) { toast('No se pudo copiar'); } });
-  });
+  v.innerHTML = head('Material de redes', 'Stories, posts, reels, LinkedIn y más: súbelo a su carpeta y queda listo para que cualquiera del equipo lo descargue.') +
+    `<div class="mat-tabs">${MAT_CATS.map(x => `<button class="mat-tab ${x.k === cat ? 'on' : ''}" data-mc="${x.k}"><span class="i">${x.ic}</span><span><b>${x.t}</b><small>${x.d}</small></span><span class="st ${driveId(links[x.k]) ? 'ok' : ''}"></span></button>`).join('')}</div>` +
+    (id ? `<div class="mat-bar"><h3>${c.ic} ${c.t}</h3>
+        <a class="btn y sm" href="https://drive.google.com/drive/folders/${id}" target="_blank" rel="noopener">⬆ Subir material</a>
+        <a class="btn ghost sm" href="https://drive.google.com/drive/folders/${id}" target="_blank" rel="noopener">Abrir carpeta</a>
+        <button class="btn ghost sm" id="mat-edit">Cambiar carpeta</button></div>
+        <iframe class="mat-frame" src="https://drive.google.com/embeddedfolderview?id=${id}#grid" loading="lazy"></iframe>
+        <p class="muted" style="margin-top:8px">Haz clic en un archivo para verlo y descargarlo (botón ⬇ arriba a la derecha). Para subir, usa “Subir material”: se abre la carpeta en Google Drive y arrastras los archivos o los subes desde el celular con la app de Drive.</p>`
+      : `<div class="mat-help"><b>${c.ic} Conecta la carpeta de ${c.t}</b> (se hace una sola vez)
+        <ol><li>En Google Drive crea una carpeta, por ejemplo “ARVI · ${c.t}”.</li>
+        <li>Clic derecho → <b>Compartir</b> → en “Acceso general” elige <b>Cualquier persona con el enlace</b> (Lector). Para que alguien del equipo pueda subir, agrégalo como <b>Editor</b>.</li>
+        <li>Copia el enlace y pégalo aquí:</li></ol>
+        <input id="mat-link" placeholder="https://drive.google.com/drive/folders/…" value="${esc(links[cat] || '')}">
+        <button class="btn y" id="mat-save">Guardar carpeta</button></div>`);
+  $$('[data-mc]', v).forEach(b => b.onclick = () => { ST.matCat = b.dataset.mc; render(); });
+  if ($('#mat-save')) $('#mat-save').onclick = () => {
+    const u = $('#mat-link').value.trim(); if (!driveId(u)) return toast('Ese enlace no parece una carpeta de Google Drive');
+    upsert('dias', { ...cfg, links: { ...links, [cat]: u } }); toast('Carpeta guardada'); render();
+  };
+  if ($('#mat-edit')) $('#mat-edit').onclick = () => { const u = prompt('Pega el nuevo enlace de la carpeta de ' + c.t + ':', links[cat] || ''); if (u === null) return; if (!driveId(u)) return toast('Ese enlace no parece una carpeta de Google Drive'); upsert('dias', { ...cfg, links: { ...links, [cat]: u.trim() } }); toast('Carpeta actualizada'); render(); };
 };
 
 /* ---------- importadores ---------- */
