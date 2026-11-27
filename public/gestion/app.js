@@ -299,7 +299,7 @@ function calView(b, list) {
 function eventModal(e, preset = {}) {
   const isNew = !e; e = e ? JSON.parse(JSON.stringify(e)) : Object.assign({ id: uid(), nombre: '', clienteId: '', inicio: today(), fin: today(), ubicacion: '', direccion: '', contacto: '', telefonoContacto: '', horarioMontaje: '', horarioFunc: '', ingreso: '', juegos: '', estado: 'Por confirmar', monto: '', vehiculos: [], notas: '' }, preset);
   let shifts = DB.shifts.filter(s => s.eventId === e.id).map(s => ({ ...s }));
-  const { m, close } = modal(`<header><h3>${isNew ? 'Nuevo evento' : esc(e.nombre)}</h3><div class="row">${isNew ? '' : `<button class="btn sm ghost" id="pFi">${I.doc}Ficha técnica PDF</button><button class="btn sm ghost" id="jCli">${I.img}JPG cliente</button><button class="btn sm ghost" id="jEq">${I.img}JPG equipo</button><button class="btn sm ghost" id="xls1">${I.xls}Excel</button>`}<button class="btn sm ghost" data-close>Cerrar</button></div></header>
+  const { m, close } = modal(`<header><h3>${isNew ? 'Nuevo evento' : esc(e.nombre)}</h3><div class="row">${isNew ? '' : `<button class="btn sm ghost" id="pFiM">${I.doc}Ficha montaje</button><button class="btn sm ghost" id="pFiF">${I.doc}Ficha funcionamiento</button><button class="btn sm ghost" id="jCli">${I.img}JPG cliente</button><button class="btn sm ghost" id="jEq">${I.img}JPG equipo</button><button class="btn sm ghost" id="xls1">${I.xls}Excel</button>`}<button class="btn sm ghost" data-close>Cerrar</button></div></header>
     <div class="form" id="f">
       <label class="f full">Nombre del evento<input name="nombre" value="${esc(e.nombre)}" placeholder="Ej: Feria Mi Barrio Emprende 2026" required></label>
       <label class="f">Cliente<select name="clienteId"><option value="">— Elegir cliente —</option>${opts([...DB.clients].sort((a, b) => a.nombre.localeCompare(b.nombre)), e.clienteId, c => c.nombre, c => c.id)}<option value="__new">+ Nuevo cliente…</option></select></label>
@@ -360,7 +360,7 @@ function eventModal(e, preset = {}) {
   }
   $('#save', m).onclick = () => saveEv(true);
   const del = $('#del', m); if (del) del.onclick = () => { if (!confirm('¿Eliminar este evento y sus turnos? Las facturas se mantienen.')) return; DB.shifts.filter(s => s.eventId === e.id).forEach(s => removeRec('shifts', s.id)); DB.invoices.filter(x => (x.eventIds || []).includes(e.id)).forEach(x => upsert('invoices', { ...x, eventIds: x.eventIds.filter(i => i !== e.id) })); removeRec('events', e.id); close(); render(); };
-  if (!isNew) { $('#pFi', m).onclick = () => { if (saveEv(false)) { close(); fichaModal(byId('events', e.id)); } }; $('#jCli', m).onclick = () => { if (saveEv(false)) jpgEventClient(byId('events', e.id)); }; $('#jEq', m).onclick = () => { if (saveEv(false)) jpgEventTeam(byId('events', e.id)); }; $('#xls1', m).onclick = () => { if (saveEv(false)) exportEventXlsx(byId('events', e.id)); }; }
+  if (!isNew) { $('#pFiM', m).onclick = () => { if (saveEv(false)) { close(); fichaModal(byId('events', e.id), 'montaje'); } }; $('#pFiF', m).onclick = () => { if (saveEv(false)) { close(); fichaModal(byId('events', e.id), 'funcionamiento'); } }; $('#jCli', m).onclick = () => { if (saveEv(false)) jpgEventClient(byId('events', e.id)); }; $('#jEq', m).onclick = () => { if (saveEv(false)) jpgEventTeam(byId('events', e.id)); }; $('#xls1', m).onclick = () => { if (saveEv(false)) exportEventXlsx(byId('events', e.id)); }; }
   drawSh();
 }
 
@@ -477,45 +477,102 @@ const REQ_DEF = ['Punto eléctrico 220V a menos de 30 m', 'Superficie plana (pas
 function parseJuegos(t) {
   return String(t || '').split(/\n|[–-](?=\s*[A-Za-zÁÉÍÓÚÑáéíóúñ(])|,|;|•/).map(x => x.trim()).filter(Boolean).map(x => { const q = x.match(/\bx\s*(\d+)\b/i); return { n: x.replace(/\bx\s*\d+\b/i, '').replace(/\s+/g, ' ').trim(), q: q ? +q[1] : 1 }; }).filter(j => j.n);
 }
-function fichaDefaults(e) {
-  e = e || {}; const c = byId('clients', e.clienteId) || {};
-  const ids = [...new Set(DB.shifts.filter(s => s.eventId === e.id).map(s => s.workerId))];
-  const montaje = DB.shifts.filter(s => s.eventId === e.id && s.rol === 'Montaje').map(s => s.fecha).sort()[0] || '';
-  const desm = DB.shifts.filter(s => s.eventId === e.id && s.rol === 'Desmontaje').map(s => s.fecha).sort().pop() || '';
-  const n = DB.events.filter(x => x.ficha && x.ficha.numero).length + 1;
+/* Dos fichas por evento: MONTAJE (montaje + desmontaje) y FUNCIONAMIENTO. El personal sale de los turnos del evento (los mismos que se pagan). */
+const FT = {
+  montaje: { label: 'Montaje', titulo: 'FICHA TÉCNICA DE MONTAJE', roles: ['Montaje', 'Desmontaje'], suf: 'M', rolDef: 'Montaje' },
+  funcionamiento: { label: 'Funcionamiento', titulo: 'FICHA TÉCNICA DE FUNCIONAMIENTO', roles: ['Funcionamiento'], suf: 'F', rolDef: 'Funcionamiento' }
+};
+const tipoDeRol = r => FT.montaje.roles.includes(r) ? 'montaje' : FT.funcionamiento.roles.includes(r) ? 'funcionamiento' : '';
+// fichas guardadas del evento; la ficha antigua (una sola) pasa a ser la de funcionamiento sin borrar nada
+function evFichas(e) { const f = { ...((e && e.fichas) || {}) }; if (e && e.ficha && !f.funcionamiento && !f._migrada) f.funcionamiento = e.ficha; return f; }
+function fichaBase(e) {
+  if (e && e.fichaBase) return e.fichaBase;
+  if (e && e.ficha && e.ficha.numero) return String(e.ficha.numero).replace(/-[MF]$/, '');
+  const n = DB.events.filter(x => x.fichaBase || (x.ficha && x.ficha.numero)).length + 1;
+  return `FT-${new Date().getFullYear()}-${String(n).padStart(3, '0')}`;
+}
+function fichaNumDeTurno(s) { const e = byId('events', s.eventId); const t = tipoDeRol(s.rol); if (!e || !t) return ''; const f = evFichas(e)[t]; return f && f.numero ? f.numero : ''; }
+function fichaDefaults(e, tipo = 'funcionamiento') {
+  e = e || {}; const c = byId('clients', e.clienteId) || {}; const T = FT[tipo];
+  const sh = DB.shifts.filter(s => s.eventId === e.id);
+  const montaje = sh.filter(s => s.rol === 'Montaje').map(s => s.fecha).sort()[0] || '';
+  const desm = sh.filter(s => s.rol === 'Desmontaje').map(s => s.fecha).sort().pop() || '';
+  const fun = sh.filter(s => s.rol === 'Funcionamiento').map(s => s.fecha).sort();
   return {
-    numero: `FT-${new Date().getFullYear()}-${String(n).padStart(3, '0')}`, emision: today(), cliente: c.nombre || '', rutCliente: c.rut || '', propuesta: '', evento: e.nombre || '',
-    fechaMontaje: montaje, horaMontaje: e.horarioMontaje || '', fechaDesde: e.inicio || '', fechaHasta: e.fin || e.inicio || '', horaFunc: e.horarioFunc || '', fechaDesmontaje: desm, horaDesmontaje: '',
+    tipo, numero: `${fichaBase(e)}-${T.suf}`, emision: today(), cliente: c.nombre || '', rutCliente: c.rut || '', propuesta: '', evento: e.nombre || '',
+    fechaMontaje: montaje, horaMontaje: e.horarioMontaje || '', fechaDesde: fun[0] || e.inicio || '', fechaHasta: fun[fun.length - 1] || e.fin || e.inicio || '', horaFunc: e.horarioFunc || '', fechaDesmontaje: desm, horaDesmontaje: '',
     direccion: [e.ubicacion, e.direccion].filter(Boolean).join(' · '), comuna: '', referencia: e.ingreso || '', contacto: e.contacto || '', telefono: e.telefonoContacto || '', email: c.email || '',
     encargado: '', encargadoTel: '', juegos: parseJuegos(e.juegos).map(j => j.q > 1 ? `${j.n} x${j.q}` : j.n).join('\n'), personajes: '', obs: /importado desde excel/i.test(e.notas || '') ? '' : (e.notas || ''),
-    equipo: ids, vehiculos: e.vehiculos || [], blankEq: 2, blankJ: 2, papel: 'letter', cond: COND_DEF, req: REQ_DEF.join('\n'),
+    equipo: [...new Set(sh.filter(s => T.roles.includes(s.rol)).map(s => s.workerId))], vehiculos: e.vehiculos || [], blankEq: 2, blankJ: 2, papel: 'letter', cond: COND_DEF, req: REQ_DEF.join('\n'),
     sec: { juegos: true, equipo: true, vehiculos: true, req: true, control: true, obs: true, cond: true, firmas: true }
   };
 }
+function fichaPill(e, tipo) {
+  const f = evFichas(e)[tipo]; const T = FT[tipo]; const n = DB.shifts.filter(s => s.eventId === e.id && T.roles.includes(s.rol)).length;
+  return `<button class="btn sm ${f ? '' : 'ghost'}" data-fi="${e.id}" data-ti="${tipo}" title="${n} turno${n === 1 ? '' : 's'} de ${T.label.toLowerCase()}">${I.doc || ''}${T.label}${f && f.numero ? ` <span style="font-weight:500;opacity:.8">${esc(f.numero)}</span>` : ' · crear'}</button>`;
+}
 VIEWS.fichas = () => {
   const v = $('#view'); const evs = DB.events.filter(e => !isExt(e)).sort((a, b) => (b.inicio || '').localeCompare(a.inicio || ''));
-  v.innerHTML = head('Fichas técnicas', 'PDF con 3 partes: datos del evento, juegos solicitados y personal ARVI con firmas.', `<button class="btn y" id="fBl">${I.plus}Ficha en blanco</button>`) +
-    `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Evento</th><th class="hide-m">Cliente</th><th>Equipo</th><th>Ficha</th><th></th></tr></thead><tbody>${evs.map(e => `<tr><td>${fdate(e.inicio)}</td><td><b>${esc(e.nombre)}</b></td><td class="hide-m">${esc(cliName(e.clienteId))}</td><td>${new Set(DB.shifts.filter(s => s.eventId === e.id).map(s => s.workerId)).size} personas</td><td>${e.ficha && e.ficha.numero ? `<span class="pill p-pagada">${esc(e.ficha.numero)}</span>` : '<span class="pill p-pend">Sin ficha</span>'}</td><td class="num"><button class="btn sm" data-fi="${e.id}">${I.doc || ''}${e.ficha ? 'Abrir' : 'Crear'} ficha</button></td></tr>`).join('') || '<tr><td colspan="6" class="empty">Aún no hay eventos.</td></tr>'}</tbody></table></div></div>`;
-  $('#fBl').onclick = () => fichaModal(null);
-  $$('[data-fi]', v).forEach(b => b.onclick = () => fichaModal(byId('events', b.dataset.fi)));
+  const pers = (e, t) => new Set(DB.shifts.filter(s => s.eventId === e.id && FT[t].roles.includes(s.rol)).map(s => s.workerId)).size;
+  v.innerHTML = head('Fichas técnicas', 'Cada evento tiene dos fichas: una de montaje y una de funcionamiento. El personal y los pagos salen de los turnos del evento.', `<button class="btn y" id="fBl">${I.plus}Ficha en blanco</button>`) +
+    `<div class="card" style="padding:0"><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Evento</th><th class="hide-m">Cliente</th><th>Equipo</th><th class="num">Fichas</th></tr></thead><tbody>${evs.map(e => `<tr><td>${fdate(e.inicio)}</td><td><b>${esc(e.nombre)}</b></td><td class="hide-m">${esc(cliName(e.clienteId))}</td><td><span class="muted">Montaje</span> ${pers(e, 'montaje')} · <span class="muted">Func.</span> ${pers(e, 'funcionamiento')}</td><td class="num"><div class="row" style="justify-content:flex-end;gap:6px;flex-wrap:wrap">${fichaPill(e, 'montaje')}${fichaPill(e, 'funcionamiento')}</div></td></tr>`).join('') || '<tr><td colspan="5" class="empty">Aún no hay eventos.</td></tr>'}</tbody></table></div></div>`;
+  $('#fBl').onclick = () => fichaModal(null, 'montaje');
+  $$('[data-fi]', v).forEach(b => b.onclick = () => fichaModal(byId('events', b.dataset.fi), b.dataset.ti));
 };
-function fichaModal(e) {
-  const d = Object.assign(fichaDefaults(e), JSON.parse(JSON.stringify((e && e.ficha) || {})));
-  const T = (k, l, ph = '', type = 'text', full = false) => `<label class="f ${full ? 'full' : ''}">${l}<input name="${k}" type="${type}" value="${esc(d[k] || '')}" placeholder="${esc(ph)}"></label>`;
+function fichaModal(e, tipo = 'funcionamiento') {
+  let T = FT[tipo];
+  const saved = e ? evFichas(e)[tipo] : null;
+  const d = Object.assign(fichaDefaults(e, tipo), JSON.parse(JSON.stringify(saved || {})), { tipo });
+  if (!saved || !/-[MF]$/.test(d.numero || '')) d.numero = fichaDefaults(e, tipo).numero;
+  // turnos de este tipo: misma fuente que Programación y pagos
+  let shifts = e ? DB.shifts.filter(s => s.eventId === e.id && T.roles.includes(s.rol)).map(s => ({ ...s })) : [];
+  const evDays = () => { const a = d.fechaMontaje || (e && e.inicio) || today(); const b = [d.fechaHasta, d.fechaDesmontaje, e && e.fin].filter(Boolean).sort().pop() || a; const lo = [a, e && e.inicio].filter(Boolean).sort()[0]; return daysBetween(addDays(lo, -2), addDays(b, 1)); };
+  const Tf = (k, l, ph = '', type = 'text', full = false) => `<label class="f ${full ? 'full' : ''}">${l}<input name="${k}" type="${type}" value="${esc(d[k] || '')}" placeholder="${esc(ph)}"></label>`;
+  const fechas = tipo === 'montaje'
+    ? `${Tf('fechaMontaje', 'Fecha de montaje', '', 'date')}${Tf('horaMontaje', 'Horario de montaje', 'Ej: 08:00')}${Tf('fechaDesmontaje', 'Fecha de desmontaje', '', 'date')}${Tf('horaDesmontaje', 'Horario de desmontaje', 'Ej: 18:30')}${Tf('fechaDesde', 'Evento desde', '', 'date')}${Tf('fechaHasta', 'Evento hasta', '', 'date')}`
+    : `${Tf('fechaDesde', 'Fecha de funcionamiento (desde)', '', 'date')}${Tf('fechaHasta', 'Hasta (si es más de un día)', '', 'date')}${Tf('horaFunc', 'Horario de funcionamiento', 'Ej: 11:00 a 18:00')}`;
   const ws = sortedWorkers().filter(w => w.activo !== false || d.equipo.includes(w.id));
-  const { m, close } = modal(`<header><div><h3>Ficha técnica ${esc(d.numero)}</h3><div class="muted">${e ? esc(e.nombre) : 'Ficha en blanco'} · lo que dejes vacío sale con línea para rellenar</div></div><button class="btn sm ghost" data-close>Cerrar</button></header>
+  const otro = tipo === 'montaje' ? 'funcionamiento' : 'montaje';
+  const { m, close } = modal(`<header><div><h3>Ficha de ${T.label.toLowerCase()} ${esc(d.numero)}</h3><div class="muted">${e ? esc(e.nombre) : 'Ficha en blanco'} · lo que dejes vacío sale con línea para rellenar</div></div><div class="row">${e ? `<button class="btn sm ghost" id="fOtra">${I.doc}Ver ficha de ${FT[otro].label.toLowerCase()}</button>` : ''}<button class="btn sm ghost" data-close>Cerrar</button></div></header>
   <div class="form" id="ff">
-    <div class="sec full">1. Datos generales, fechas y lugar</div>${T('cliente', 'Cliente')}${T('propuesta', 'Propuesta', 'Ej: COT-10673')}${T('fechaMontaje', 'Fecha de montaje', '', 'date')}${T('horaMontaje', 'Horario de montaje', 'Ej: 08:00')}${T('fechaDesde', 'Fecha de funcionamiento (desde)', '', 'date')}${T('fechaHasta', 'Hasta (si es más de un día)', '', 'date')}${T('horaFunc', 'Horario de funcionamiento', 'Ej: 11:00 a 18:00')}${T('direccion', 'Dirección de destino', '', 'text', true)}${T('contacto', 'Contacto en terreno')}${T('telefono', 'Teléfono contacto', '+569 …')}
-    <div class="sec full">2. Juegos solicitados</div><label class="f full">Juegos (uno por línea, cantidad con x2, x3…)<textarea name="juegos" style="min-height:110px" placeholder="Sillas voladoras\nBarco\nInflable simple x3">${esc(d.juegos || '')}</textarea></label>${T('personajes', 'Personajes', 'Ej: Kitty y Mickey')}<label class="f">Espacios vacíos para escribir juegos a mano<select name="blankJ">${[0, 1, 2, 3, 4, 6].map(n => `<option value="${n}" ${num(d.blankJ) === n ? 'selected' : ''}>${n ? n + (n === 1 ? ' espacio' : ' espacios') : 'Ninguno'}</option>`).join('')}</select><span class="muted" style="font-size:12px;font-weight:500">Líneas vacías al final de la lista de juegos, por si el cliente pide algo más el mismo día.</span></label>
-    <div class="sec full">3. Personal ARVI y firmas <span class="muted" style="font-weight:500">· viene de los turnos del evento</span></div>
-    <div class="full chips" id="fEq">${ws.map(w => `<label class="check"><input type="checkbox" value="${w.id}" ${d.equipo.includes(w.id) ? 'checked' : ''}>${esc(w.nombre)}${w.rut ? '' : ' <span class="muted">(sin RUT)</span>'}</label>`).join('')}</div><label class="f">Espacios vacíos para escribir personal a mano<select name="blankEq">${[0, 1, 2, 3, 4, 6].map(n => `<option value="${n}" ${num(d.blankEq) === n ? 'selected' : ''}>${n ? n + (n === 1 ? ' espacio' : ' espacios') : 'Ninguno'}</option>`).join('')}</select><span class="muted" style="font-size:12px;font-weight:500">Líneas vacías al final de la tabla de personal, por si se suma alguien que no está en la lista.</span></label>
-    <label class="f">Tamaño de hoja<select name="papel">${opts(['letter', 'a4'], d.papel, x => x === 'letter' ? 'Carta' : 'A4')}</select></label>${T('numero', 'N° de ficha')}
+    ${e ? '' : `<label class="f full">Tipo de ficha<select id="fTipo">${opts(Object.keys(FT), tipo, k => FT[k].titulo)}</select></label>`}
+    <div class="sec full">1. Datos generales, fechas y lugar</div>${Tf('cliente', 'Cliente')}${Tf('propuesta', 'Propuesta', 'Ej: COT-10673')}${fechas}${Tf('direccion', 'Dirección de destino', '', 'text', true)}${Tf('contacto', 'Contacto en terreno')}${Tf('telefono', 'Teléfono contacto', '+569 …')}${tipo === 'montaje' ? Tf('referencia', 'Ingreso / a quién avisar', '', 'text', true) : ''}
+    <div class="sec full">2. Juegos solicitados</div><label class="f full">Juegos (uno por línea, cantidad con x2, x3…)<textarea name="juegos" style="min-height:110px" placeholder="Sillas voladoras\nBarco\nInflable simple x3">${esc(d.juegos || '')}</textarea></label>${Tf('personajes', 'Personajes', 'Ej: Kitty y Mickey')}<label class="f">Espacios vacíos para escribir juegos a mano<select name="blankJ">${[0, 1, 2, 3, 4, 6].map(n => `<option value="${n}" ${num(d.blankJ) === n ? 'selected' : ''}>${n ? n + (n === 1 ? ' espacio' : ' espacios') : 'Ninguno'}</option>`).join('')}</select></label>
+    <div class="sec full">3. Personal de ${T.label.toLowerCase()} y pagos <span class="muted" style="font-weight:500">· ${e ? 'son los mismos turnos del evento: lo que cambies aquí se refleja en Programación y pagos' : 'marca quiénes van'}</span></div>
+    ${e ? `<div class="full"><div class="tablewrap" style="max-height:none"><table class="mini"><thead><tr><th>Día</th><th>Persona</th><th>Rol</th><th class="num">Pago</th><th></th></tr></thead><tbody id="fSh"></tbody></table></div><div class="row" style="justify-content:space-between;margin-top:8px"><span id="fTot" class="muted"></span><button class="btn sm" id="fAdd">${I.plus}Agregar persona</button></div></div>`
+      : `<div class="full chips" id="fEq">${ws.map(w => `<label class="check"><input type="checkbox" value="${w.id}" ${d.equipo.includes(w.id) ? 'checked' : ''}>${esc(w.nombre)}</label>`).join('')}</div>`}
+    <label class="f">Espacios vacíos para escribir personal a mano<select name="blankEq">${[0, 1, 2, 3, 4, 6].map(n => `<option value="${n}" ${num(d.blankEq) === n ? 'selected' : ''}>${n ? n + (n === 1 ? ' espacio' : ' espacios') : 'Ninguno'}</option>`).join('')}</select></label>
+    <label class="f">Tamaño de hoja<select name="papel">${opts(['letter', 'a4'], d.papel, x => x === 'letter' ? 'Carta' : 'A4')}</select></label>${Tf('numero', 'N° de ficha')}
   </div>
-  <div class="row" style="justify-content:space-between;margin-top:16px"><span class="muted">${e ? 'Los datos quedan guardados en el evento.' : ''}</span><div class="row">${e ? '<button class="btn ghost" id="fSave">Guardar</button>' : ''}<button class="btn y" id="fPdf">${I.doc}Descargar PDF</button></div></div>`);
-  const read = () => { Object.assign(d, formData($('#ff', m))); d.equipo = $$('#fEq input:checked', m).map(x => x.value); d.blankEq = Math.max(0, Math.min(20, num(d.blankEq))); d.blankJ = Math.max(0, Math.min(20, num(d.blankJ))); return d; };
-  const save = () => { if (!e) return; read(); const ev = byId('events', e.id); upsert('events', { ...ev, ficha: JSON.parse(JSON.stringify(d)) }); };
-  if (e) $('#fSave', m).onclick = () => { save(); toast('Ficha guardada en el evento'); };
+  <div class="row" style="justify-content:space-between;margin-top:16px">${e ? '<button class="btn ghost" id="fSync" title="Vuelve a tomar fechas, horarios, lugar y juegos desde el evento">Actualizar con datos del evento</button>' : '<span></span>'}<div class="row">${e ? '<button class="btn ghost" id="fSave">Guardar</button>' : ''}<button class="btn y" id="fPdf">${I.doc}Descargar PDF</button></div></div>`, true);
+  if (!e) { $('#fTipo', m).onchange = ev => { close(); fichaModal(null, ev.target.value); }; }
+  function drawSh() {
+    if (!e) return; const ds = evDays(); const wsA = sortedWorkers().filter(w => w.activo !== false);
+    shifts.sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '') || T.roles.indexOf(a.rol) - T.roles.indexOf(b.rol));
+    $('#fSh', m).innerHTML = shifts.map((s, i) => `<tr><td><select data-i="${i}" data-k="fecha">${opts([...new Set([...ds, s.fecha])].filter(Boolean), s.fecha, fshort)}</select></td><td><select data-i="${i}" data-k="workerId"><option value="">—</option>${opts(wsA.concat(wsA.find(w => w.id === s.workerId) ? [] : DB.workers.filter(w => w.id === s.workerId)), s.workerId, w => w.nombre, w => w.id)}</select></td><td><select data-i="${i}" data-k="rol">${opts(T.roles, s.rol)}</select></td><td><input data-i="${i}" data-k="pago" inputmode="numeric" value="${esc(s.pago)}" style="text-align:right;max-width:110px"></td><td><button class="x" data-rm="${i}">×</button></td></tr>`).join('') || `<tr><td colspan="5" class="muted" style="padding:14px">Aún no hay personas de ${T.label.toLowerCase()} en este evento</td></tr>`;
+    $$('#fSh [data-k]', m).forEach(x => x.onchange = () => { const sh = shifts[+x.dataset.i]; sh[x.dataset.k] = x.dataset.k === 'pago' ? num(x.value) : x.value; if (x.dataset.k === 'workerId' && !num(sh.pago)) { const wk = byId('workers', sh.workerId); if (wk && num(wk.pagoDia)) { sh.pago = num(wk.pagoDia); drawSh(); return; } } tot(); });
+    $$('#fSh [data-rm]', m).forEach(x => x.onclick = () => { shifts.splice(+x.dataset.rm, 1); drawSh(); });
+    tot();
+  }
+  function tot() { if (!e) return; const p = new Set(shifts.map(s => s.workerId).filter(Boolean)).size; $('#fTot', m).innerHTML = `${p} persona${p === 1 ? '' : 's'} · ${shifts.filter(s => s.workerId).length} turnos · <b>Pago ${T.label.toLowerCase()}: ${money(shifts.reduce((a, s) => a + (s.workerId ? num(s.pago) : 0), 0))}</b>`; }
+  if (e) {
+    $('#fAdd', m).onclick = () => { const last = shifts[shifts.length - 1]; const f0 = tipo === 'montaje' ? (d.fechaMontaje || e.inicio) : (d.fechaDesde || e.inicio); shifts.push({ id: uid(), eventId: e.id, workerId: '', fecha: last ? last.fecha : f0, rol: last ? last.rol : T.rolDef, pago: last ? last.pago : '' }); drawSh(); };
+    $('#fSync', m).onclick = () => { const def = fichaDefaults(byId('events', e.id), tipo); ['fechaMontaje', 'horaMontaje', 'fechaDesmontaje', 'fechaDesde', 'fechaHasta', 'horaFunc', 'direccion', 'contacto', 'telefono', 'cliente', 'juegos', 'referencia'].forEach(k => { const i = $(`[name=${k}]`, m); if (i) i.value = def[k] || ''; }); toast('Datos tomados del evento'); };
+    $('#fOtra', m).onclick = () => { save(); close(); fichaModal(byId('events', e.id), otro); };
+  }
+  const read = () => { Object.assign(d, formData($('#ff', m))); d.tipo = tipo; d.equipo = e ? [...new Set(shifts.filter(s => s.workerId).map(s => s.workerId))] : $$('#fEq input:checked', m).map(x => x.value); d.blankEq = Math.max(0, Math.min(20, num(d.blankEq))); d.blankJ = Math.max(0, Math.min(20, num(d.blankJ))); d._turnos = e ? shifts.filter(s => s.workerId).map(s => ({ workerId: s.workerId, fecha: s.fecha, rol: s.rol })) : null; return d; };
+  const save = () => {
+    if (!e) return; read();
+    // turnos de este tipo -> misma colección que pagos (los demás roles no se tocan)
+    const keep = new Set(shifts.filter(s => s.workerId).map(s => s.id));
+    DB.shifts.filter(s => s.eventId === e.id && T.roles.includes(s.rol) && !keep.has(s.id)).forEach(s => removeRec('shifts', s.id));
+    shifts.filter(s => s.workerId).forEach(s => { const o = DB.shifts.find(x => x.id === s.id); if (!o || JSON.stringify({ ...o, u: 0 }) !== JSON.stringify({ ...s, u: 0 })) upsert('shifts', { ...s, eventId: e.id, pago: num(s.pago) }); });
+    const ev = byId('events', e.id); const fichas = evFichas(ev); const { _turnos, ...store } = JSON.parse(JSON.stringify(d)); fichas[tipo] = store; fichas._migrada = true;
+    upsert('events', { ...ev, fichas, fichaBase: ev.fichaBase || fichaBase(ev) });
+  };
+  if (e) $('#fSave', m).onclick = () => { save(); toast(`Ficha de ${T.label.toLowerCase()} guardada · turnos y pagos actualizados`); render(); };
   $('#fPdf', m).onclick = async () => { const b = $('#fPdf', m); b.classList.add('loading'); try { read(); save(); await pdfFicha(d); } catch (x) { console.error(x); toast('No se pudo crear el PDF: ' + x.message); } b.classList.remove('loading'); };
+  drawSh();
 }
 async function pdfFicha(d) {
   const L = await loadPdf(); const { jsPDF } = window.jspdf;
@@ -532,10 +589,10 @@ async function pdfFicha(d) {
     for (let i = 0; i < 9; i++) star(PW - 30 - i * 47, first ? 20 : 14, 3 + (i % 3), [60, 140, 75]);
     if (first) {
       if (L.logo) { doc.setFillColor(255, 255, 255); const lw = Math.min(130, 64 / L.ratio); doc.roundedRect(M - 8, (HB - lw * L.ratio) / 2 - 8, lw + 16, lw * L.ratio + 16, 8, 8, 'F'); doc.addImage(L.logo, 'PNG', M, (HB - lw * L.ratio) / 2, lw, lw * L.ratio); }
-      font('bold', 19, [255, 255, 255]); doc.text('FICHA TÉCNICA DE FUNCIONAMIENTO', PW - M, 50, { align: 'right' });
+      font('bold', 19, [255, 255, 255]); doc.text((FT[d.tipo] || FT.funcionamiento).titulo, PW - M, 50, { align: 'right' });
       font('semibold', 10, [255, 228, 138]); doc.text(`N° ${d.numero || '________'}   ·   Emitida el ${d.emision ? fdate(d.emision) : '____/____/______'}`, PW - M, 70, { align: 'right' });
       y = 130;
-    } else { font('bold', 12, [255, 255, 255]); doc.text('FICHA TÉCNICA DE FUNCIONAMIENTO', M, 31); font('semibold', 10, [255, 228, 138]); doc.text(`N° ${d.numero || ''} · ${d.evento || ''}`, PW - M, 31, { align: 'right' }); y = 76; }
+    } else { font('bold', 12, [255, 255, 255]); doc.text((FT[d.tipo] || FT.funcionamiento).titulo, M, 31); font('semibold', 10, [255, 228, 138]); doc.text(`N° ${d.numero || ''} · ${d.evento || ''}`, PW - M, 31, { align: 'right' }); y = 76; }
   }
   const ensure = h => { if (y + h > BOT) { doc.addPage(); header(false); } };
   function section(t, need = 48) { ensure(need); secN++; doc.setFillColor(...G7); doc.roundedRect(M, y, CW, 22, 4, 4, 'F'); doc.setFillColor(...YY); doc.rect(M, y, 5, 22, 'F'); font('bold', 10.5, [255, 255, 255]); doc.text(`${secN}.  ${t.toUpperCase()}`, M + 14, y + 15); y += 30; }
@@ -578,13 +635,15 @@ async function pdfFicha(d) {
   header(true);
   const rango = d.fechaDesde ? (d.fechaHasta && d.fechaHasta !== d.fechaDesde ? `Del ${fd(d.fechaDesde)} al ${fd(d.fechaHasta)}` : fd(d.fechaDesde)) : '';
   section('Datos generales, fechas y lugar');
-  grid([['Cliente', d.cliente], ['Propuesta', d.propuesta], ['Fecha de montaje', [fd(d.fechaMontaje), d.horaMontaje].filter(Boolean).join(' · ')], ['Fecha de funcionamiento', rango], ['Horario de funcionamiento', d.horaFunc], ['Contacto en terreno', [d.contacto, d.telefono].filter(Boolean).join(' · ')], ['Dirección de destino', d.direccion, 2]]);
+  if (d.tipo === 'montaje') grid([['Cliente', d.cliente], ['Propuesta', d.propuesta], ['Fecha de montaje', [fd(d.fechaMontaje), d.horaMontaje].filter(Boolean).join(' · ')], ['Fecha de desmontaje', [fd(d.fechaDesmontaje), d.horaDesmontaje].filter(Boolean).join(' · ')], ['Fechas del evento', rango], ['Contacto en terreno', [d.contacto, d.telefono].filter(Boolean).join(' · ')], ['Dirección de destino', d.direccion, 2], ['Ingreso / a quién avisar', d.referencia, 2]]);
+  else grid([['Cliente', d.cliente], ['Propuesta', d.propuesta], ['Fecha de funcionamiento', rango], ['Horario de funcionamiento', d.horaFunc], ['Contacto en terreno', [d.contacto, d.telefono].filter(Boolean).join(' · ')], ['Dirección de destino', d.direccion, 2]]);
   section('Juegos solicitados', 130);
   table([{ h: 'Juego', w: 4.2 }, { h: 'Cant.', w: 0.9, a: 'c' }, { h: 'Observaciones', w: 6.4 }], parseJuegos(d.juegos).map(j => [j.n, String(j.q), '']), d.blankJ, 28);
   grid([['Personajes', d.personajes, 2]]);
-  section('Personal ARVI y firmas', 130);
-  const rolOf = id => [...new Set(DB.shifts.filter(s => s.workerId === id && d.evento && evName(s.eventId) === d.evento).map(s => s.rol))].join(' y ') || (byId('workers', id) || {}).funcion || 'Operador';
-  table([{ h: 'Nombre', w: 4 }, { h: 'C.I. / RUT', w: 2.4 }, { h: 'Función', w: 2.6 }, { h: 'Firma', w: 2.6 }], d.equipo.map(id => byId('workers', id)).filter(Boolean).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(w => [w.nombre, w.rut || '', rolOf(w.id), '']), d.blankEq, 30);
+  section(`Personal ARVI de ${(FT[d.tipo] || FT.funcionamiento).label.toLowerCase()} y firmas`, 130);
+  const tur = d._turnos || [];
+  const rolOf = id => { const m2 = tur.filter(x => x.workerId === id); if (m2.length) return [...new Set(m2.map(x => x.rol))].join(' y ') + ' · ' + [...new Set(m2.map(x => fshort(x.fecha)))].join(', '); return (FT[d.tipo] || {}).label || (byId('workers', id) || {}).funcion || 'Operador'; };
+  table([{ h: 'Nombre', w: 4 }, { h: 'C.I. / RUT', w: 2.4 }, { h: 'Función y día', w: 3.2 }, { h: 'Firma', w: 2.4 }], d.equipo.map(id => byId('workers', id)).filter(Boolean).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(w => [w.nombre, w.rut || '', rolOf(w.id), '']), d.blankEq, 30);
   ensure(120); y += 6;
   ['Firma Ventas ARVI', 'Firma Cliente'].forEach((p, i) => { const w2 = (CW - 30) / 2, x = M + i * (w2 + 30); doc.setDrawColor(...INK); doc.setLineWidth(.8); doc.line(x + 10, y + 50, x + w2 - 10, y + 50); font('bold', 10.5, G9); doc.text(p.toUpperCase(), x + w2 / 2, y + 66, { align: 'center' });
     font('normal', 8.5, MU); ['Nombre', 'RUT', 'Fecha'].forEach((k, j) => { doc.text(k + ':', x + 10, y + 84 + j * 12); doc.setDrawColor(190, 198, 188); doc.setLineWidth(.6); doc.line(x + 46, y + 85 + j * 12, x + w2 - 10, y + 85 + j * 12); }); });
@@ -593,7 +652,7 @@ async function pdfFicha(d) {
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFillColor(...G9); doc.rect(0, PH - 34, PW, 34, 'F'); doc.setFillColor(...YY); doc.rect(0, PH - 34, PW, 3, 'F'); star(M + 4, PH - 16, 6, YY);
     font('semibold', 8.5, [255, 255, 255]); doc.text('ARVI · Entretenciones infantiles · arvi.cl', M + 16, PH - 13); doc.text(`Ficha ${d.numero || ''} · Página ${i} de ${n}`, PW - M, PH - 13, { align: 'right' }); }
-  doc.save(`Ficha tecnica ${d.numero || ''} ${d.evento || ''}.pdf`.replace(/[\\/:*?"<>|]/g, '').trim());
+  doc.save(`Ficha ${(FT[d.tipo] || FT.funcionamiento).label.toLowerCase()} ${d.numero || ''} ${d.evento || ''}.pdf`.replace(/[\\/:*?"<>|]/g, '').trim());
   toast('PDF descargado');
 }
 function vehicleModal(vh) {
@@ -1066,7 +1125,7 @@ function evRows() { return [['EVENTO', 'CLIENTE', 'DESDE', 'HASTA', 'ESTADO', 'L
 function exportEventsXlsx() { saveWb([['Eventos', evRows(), [28, 30, 11, 11, 13, 24, 28, 22, 14, 18, 18, 30, 22, 14, 9, 13, 14, 14, 16, 30]]], 'Eventos ARVI ' + today()); }
 function exportEventXlsx(e) {
   const s = evStats(e); const info = [['EVENTO', e.nombre], ['CLIENTE', cliName(e.clienteId)], ['FECHAS', fdate(e.inicio) + (e.fin && e.fin !== e.inicio ? ' al ' + fdate(e.fin) : '')], ['LUGAR', e.ubicacion], ['DIRECCIÓN', e.direccion], ['CONTACTO EN TERRENO', `${e.contacto || ''} ${e.telefonoContacto || ''}`], ['HORARIO DE MONTAJE', e.horarioMontaje], ['HORARIO DE FUNCIONAMIENTO', e.horarioFunc], ['INGRESO', e.ingreso], ['JUEGOS', e.juegos], ['VEHÍCULOS', (e.vehiculos || []).map(v => (byId('vehicles', v) || {}).patente).join(', ')], [], ['DÍA', 'NOMBRE', 'RUT', 'ROL', 'PAGO']];
-  s.sh.sort((a, b) => a.fecha.localeCompare(b.fecha)).forEach(x => { const w = byId('workers', x.workerId) || {}; info.push([dX(x.fecha), w.nombre, w.rut, x.rol, num(x.pago)]); }); info.push([], ['', '', '', 'TOTAL EQUIPO', s.costo]);
+  s.sh.sort((a, b) => a.fecha.localeCompare(b.fecha)).forEach(x => { const w = byId('workers', x.workerId) || {}; info.push([dX(x.fecha), w.nombre, w.rut, x.rol + (fichaNumDeTurno(x) ? ' · ' + fichaNumDeTurno(x) : ''), num(x.pago)]); }); info.push([], ['', '', '', 'TOTAL EQUIPO', s.costo]);
   saveWb([['Evento', info, [26, 34, 16, 18, 12]]], 'Evento ' + e.nombre);
 }
 function monthGrid() {
@@ -1079,18 +1138,18 @@ function monthGrid() {
 function exportMonthXlsx() {
   const { aoa, ws, sh } = monthGrid();
   const liq = [['TRABAJADOR', 'RUT', 'GRUPO', 'TURNOS', 'TOTAL A PAGAR'], ...ws.map(w => { const m = sh.filter(s => s.workerId === w.id); return [w.nombre, w.rut, w.grupo, m.length, m.reduce((a, s) => a + num(s.pago), 0)]; }).filter(r => r[3])];
-  const det = [['FECHA', 'TRABAJADOR', 'RUT', 'EVENTO', 'ROL', 'PAGO'], ...sh.sort((a, b) => a.fecha.localeCompare(b.fecha)).map(s => { const w = byId('workers', s.workerId) || {}; return [dX(s.fecha), w.nombre, w.rut, evName(s.eventId), s.rol, num(s.pago)]; })];
+  const det = [['FECHA', 'TRABAJADOR', 'RUT', 'EVENTO', 'ROL', 'FICHA', 'PAGO'], ...sh.sort((a, b) => a.fecha.localeCompare(b.fecha)).map(s => { const w = byId('workers', s.workerId) || {}; return [dX(s.fecha), w.nombre, w.rut, evName(s.eventId), s.rol, fichaNumDeTurno(s), num(s.pago)]; })];
   saveWb([['Programación', aoa, [26, 12, ...Array(31).fill(16), 12]], ['Liquidación', liq, [28, 14, 14, 9, 14]], ['Detalle', det, [11, 26, 14, 28, 15, 11]]], 'Programación ' + monthLabel(ST.month));
 }
 function exportTeamXlsx() {
   const p = [['NOMBRE', 'RUT', 'TELÉFONO', 'GRUPO', 'FUNCIÓN', 'ACTIVO', 'TURNOS TOTALES', 'PAGADO TOTAL', 'NOTAS'], ...sortedWorkers().map(w => { const s = DB.shifts.filter(x => x.workerId === w.id); return [w.nombre, w.rut, w.telefono, w.grupo, w.funcion, w.activo !== false ? 'Sí' : 'No', s.length, s.reduce((a, x) => a + num(x.pago), 0), w.notas]; })];
   const v = [['PATENTE', 'DESCRIPCIÓN'], ...DB.vehicles.map(x => [x.patente, x.descripcion])];
-  const t = [['FECHA', 'TRABAJADOR', 'RUT', 'EVENTO', 'CLIENTE', 'ROL', 'PAGO'], ...[...DB.shifts].sort((a, b) => a.fecha.localeCompare(b.fecha)).map(s => { const w = byId('workers', s.workerId) || {}; const e = byId('events', s.eventId) || {}; return [dX(s.fecha), w.nombre, w.rut, e.nombre, cliName(e.clienteId), s.rol, num(s.pago)]; })];
+  const t = [['FECHA', 'TRABAJADOR', 'RUT', 'EVENTO', 'CLIENTE', 'ROL', 'FICHA', 'PAGO'], ...[...DB.shifts].sort((a, b) => a.fecha.localeCompare(b.fecha)).map(s => { const w = byId('workers', s.workerId) || {}; const e = byId('events', s.eventId) || {}; return [dX(s.fecha), w.nombre, w.rut, e.nombre, cliName(e.clienteId), s.rol, fichaNumDeTurno(s), num(s.pago)]; })];
   saveWb([['Personas', p, [28, 14, 14, 14, 26, 8, 10, 14, 30]], ['Vehículos', v, [14, 26]], ['Turnos', t, [11, 26, 14, 28, 30, 15, 11]]], 'Equipo ARVI ' + today());
 }
 function exportAllXlsx() {
   const cli = [['CLIENTE', 'RUT', 'CONTACTO', 'TELÉFONO', 'EMAIL', 'FACTURADO', 'SALDO', 'VENCIDO'], ...DB.clients.map(c => { const s = clientStats(c); return [c.nombre, c.rut, c.contacto, c.telefono, c.email, s.fact, s.saldo, s.venc]; })];
-  const t = [['FECHA', 'TRABAJADOR', 'RUT', 'EVENTO', 'ROL', 'PAGO'], ...[...DB.shifts].sort((a, b) => a.fecha.localeCompare(b.fecha)).map(s => { const w = byId('workers', s.workerId) || {}; return [dX(s.fecha), w.nombre, w.rut, evName(s.eventId), s.rol, num(s.pago)]; })];
+  const t = [['FECHA', 'TRABAJADOR', 'RUT', 'EVENTO', 'ROL', 'FICHA', 'PAGO'], ...[...DB.shifts].sort((a, b) => a.fecha.localeCompare(b.fecha)).map(s => { const w = byId('workers', s.workerId) || {}; return [dX(s.fecha), w.nombre, w.rut, evName(s.eventId), s.rol, fichaNumDeTurno(s), num(s.pago)]; })];
   const p = [['NOMBRE', 'RUT', 'TELÉFONO', 'GRUPO', 'FUNCIÓN', 'ACTIVO'], ...sortedWorkers().map(w => [w.nombre, w.rut, w.telefono, w.grupo, w.funcion, w.activo !== false ? 'Sí' : 'No'])];
   saveWb([['Eventos', evRows()], ['Turnos', t], ['Equipo', p], ['Vehículos', [['PATENTE', 'DESCRIPCIÓN'], ...DB.vehicles.map(x => [x.patente, x.descripcion])]], ['Cobranza', invRows(DB.invoices.map(f => [f, invCalc(f)]).sort((a, b) => num(a[0].numero) - num(b[0].numero)))], ['Clientes', cli]], 'Gestión ARVI completo ' + today());
 }
